@@ -16,16 +16,29 @@ def get_dashboard(req):
 
 def get_detailed_view(req, id):
     print(req.path)
-    context = static_pokemon[0]
+    context = {"pokemon_data": static_pokemon[0:1]}
+    set_images(context)
+    context = {"pokemon_data": context["pokemon_data"][0]}
     return render(req, 'detailed_view.html', context)
 
+def get_edit_pokemon(req, id):
+    print(req.path)
+    context = {"pokemon_data": static_pokemon[0:1]}
+    set_images(context)
+    context = {"pokemon_data": context["pokemon_data"][0]}
+    return render(req, 'edit_pokemon.html', context)
+
+
+
+# Retrieves images of pokemon from pokeapi based on its name
 def set_images(context):
     params = {"format": "json"}
+    # For each pokemon in array
     for pokemon in context["pokemon_data"]:
         print("Looking for " + pokemon["name"].lower())
+        # Query API for given pokemon and parse JSON
         try: 
             response = requests.get("https://pokeapi.co/api/v2/pokemon/" +pokemon["name"].lower(), params=params)
-            
             print("Found it: " + response.json()["sprites"]["front_default"])
             pokemon["img"] = response.json()["sprites"]["front_default"]
         except:
