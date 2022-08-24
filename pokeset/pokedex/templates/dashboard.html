@@ -47,7 +47,7 @@
             <thead>
             <tbody>
             {% for pokemon in pokemon_data %}
-            <tr>
+            <tr onclick="location.href='/detailed_view/{{pokemon.id}}'">
                 <td><div id = "name_col"><img src="{{pokemon.img}}">{{pokemon.name}}</div></td>
                 <td>{{pokemon.type1}} 
                     {%if pokemone.type2 is not None %}{{pokemon.type2}}{% endif %}

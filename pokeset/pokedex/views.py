@@ -14,6 +14,10 @@ def get_dashboard(req):
     set_images(context)
     return render(req, 'dashboard.html', context=context)
 
+def get_detailed_view(req, id):
+    print(req.path)
+    context = static_pokemon[0]
+    return render(req, 'detailed_view.html', context)
 
 def set_images(context):
     params = {"format": "json"}
@@ -31,6 +35,7 @@ def set_images(context):
 # To be deleted, using to test front-end
 static_pokemon = [
     {   
+        "id":"123",
         "name": "Charmander",
         "type1": "Fire",
         "type2": None,
@@ -49,6 +54,7 @@ static_pokemon = [
         "img": None
     },
     {   
+        "id":"111",
         "name": "Pikachu",
         "type1": "Electric",
         "type2": None,
@@ -62,6 +68,7 @@ static_pokemon = [
         "img": None
     },
     {   
+        "id":"114",
         "name": "Charizard",
         "type1": "Fire",
         "type2": None,
