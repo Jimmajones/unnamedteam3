@@ -10,8 +10,11 @@
 <section class="poke_table_section">
     <div id="poke_table_container">
         
+
+
+
         <table id="table_id" class="display">
-            <thead>
+            {% comment %} <thead>
                 <tr>
                     <th>Column 1</th>
                     <th>Column 2</th>
@@ -32,6 +35,28 @@
                     <td>Row 2 Data 1</td>
                     <td>Row 2 Data 2</td>
                 </tr>
+            </tbody> {% endcomment %}
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Location(s)</th>
+                    <th>Effective Against</th>
+                    <th>Weaknesses</th>
+                </tr>
+            <thead>
+            <tbody>
+            {% for pokemon in pokemon_data %}
+            <tr>
+                <td><div id = "name_col"><img src="{{pokemon.img}}">{{pokemon.name}}</div></td>
+                <td>{{pokemon.type1}} 
+                    {%if pokemone.type2 is not None %}{{pokemon.type2}}{% endif %}
+                </td>
+                <td>{{pokemon.location}}</td>
+                <td>{{pokemon.effective|join:" "}}</td>
+                <td>{{pokemon.weakness|join:" "}}</td>
+            </tr>
+            {% endfor %}
             </tbody>
         </table>
         

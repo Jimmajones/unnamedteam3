@@ -80,6 +80,17 @@ main #poke_table_container {
     background-color: var(--background_grey);
 }
 
+#name_col {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#name_col img {
+    width: 30px;
+    height: 30px;
+}
+
 footer {
     background-color: var(--secondary_grey);
     position: absolute;
