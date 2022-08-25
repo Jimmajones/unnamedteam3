@@ -77,11 +77,9 @@ WSGI_APPLICATION = 'pokeset.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'pokeset_db',
-        'HOST' : '127.0.0.1',
-        'PORT' : '3306',
-        'USER' : 'root',
-        'PASSWORD' : 'Password',
+        'OPTIONS': {
+            'read_default_file': 'my.cnf'
+        },
     }
 }
 
