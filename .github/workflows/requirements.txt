@@ -1,4 +1,4 @@
 # packages that are required for automated testing
 Django
 PyMySQL
-django-crispy-form
+django-crispy-forms
