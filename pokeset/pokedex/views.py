@@ -57,6 +57,12 @@ def get_register(req):
 
 def get_profiles(req):
 
+    if req.method == "GET":
+
+        if req.session.get('username') is None:
+            return redirect("login")
+
+
     if req.method == "POST":
 
         data = req.POST
@@ -66,7 +72,7 @@ def get_profiles(req):
             req.session['username'] = None
 
             return redirect("login")
-        
+    
 
 
     return render(req,'profiles.html')
