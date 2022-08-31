@@ -1,0 +1,207 @@
+
+
+.login_box{
+    box-sizing: border-box;
+    
+    position: auto;
+    width: 519px;
+    height: 549px;
+    left: 700px;
+    top: 265px;
+    text-align:center;
+    background: #FFF9F9;
+    border: 2px solid #000000;
+    box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+}
+
+.login_title{
+    position: auto;
+    width: 275px;
+    height: 63px;
+    left: 59px;
+    top: 41px;
+
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 48px;
+    line-height: 62px;
+
+    color: #000000;
+}
+
+.new_account_title{
+    position: auto;
+    width: 379px;
+    height: 63px;
+    left: 59px;
+    top: 41px;
+
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 48px;
+    line-height: 62px;
+
+    margin-bottom: 0px;
+
+
+    color: #000000;
+}
+.login_field{
+    font-family: 'IBM Plex Mono';
+    position: auto;
+    margin: center;
+    width: 397px;
+    height: 60px;
+    left: 51px;
+    top: 133px;
+    border-radius: 30px;
+    border: 1px solid #000000;
+    padding: 0px 20px;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 23px;
+    margin-bottom: 30px;
+}
+
+.confirm_button{
+    font-family: 'IBM Plex Mono';
+    width: 216px;
+    height: 60px;
+    left: 152px;
+    top: 329px;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 23px;
+    margin-bottom: 30px;
+    color: #FFFFFF;
+    background: #EE1515;
+    border: 1px solid #000000;
+    border-radius: 30px;
+ 
+}
+
+.confirm_button:hover{
+    background: #d41b1b;
+}
+      
+.link_button{
+    
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    width: 216px;
+    height: 60px;
+    left: 152px;
+    top: 329px;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 23px;
+    background: #FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 30px;
+
+}
+.link_button:hover{
+    background: #dddddd;
+}
+.link_back_button{
+    
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    width: 50px;
+    height: 50px;
+    left: 152px;
+    top: 329px;
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 23px;
+    background: #FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 30px;
+    margin-left: -10%;
+}
+
+.link_back_button:hover{
+    background: #dddddd;
+}
+
+
+.profiles_box{
+    box-sizing: border-box;
+
+    position: auto;
+    width: 1288px;
+    height: 549px;
+    left: 316px;
+    top: 265px;
+
+    background: #FFF9F9;
+    border: 1px solid #000000;
+    box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+}
+
+.profile_circles{
+    box-sizing: border-box;
+
+    position: absolute;
+    width: 155px;
+    height: 155px;
+    left: 46%;
+    top: 35%;
+
+    font-size: 30px;
+    background: url(.jpg), #FFFFFF;
+    border: 1px solid #000000;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 80px;
+}
+
+.profile_popup{
+    display: none;
+    position: fixed;
+    top: 0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    z-index: 9;
+    text-align:center;
+    backdrop-filter: blur(6px);
+}
+
+.profiler_add{
+    position: absolute;
+    width: 519px;
+    height: 449px;
+    top: 25%;
+    left: 37%;
+    z-index: 9;
+    background: #FFF9F9;
+    border: 2px solid #000000;
+    box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+}
+
+.logout_button{
+    position: absolute;
+    top: 8px;
+    right: 16px;
+    width: 212px;
+    height: 63px;
+    
+
+    align-items: center;
+    text-align: center;
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 23px;
+
+    
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+    color: #000000;
+    background: #FFFFFF;
+}

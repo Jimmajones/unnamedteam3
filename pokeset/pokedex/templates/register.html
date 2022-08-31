@@ -1,0 +1,31 @@
+{% extends './main.html' %} {% block content %}
+{% load crispy_forms_tags %}  
+
+<div class = "login_box">
+    <p class = "new_account_title"> New Account </p>
+    <form method = "POST">
+        {% csrf_token %}
+        
+        {{register_form.username}}
+        {{register_form.email}}
+        {{register_form.password1}}
+        {{register_form.password2}}
+        
+        
+        
+        <br>
+        <button type="button" class = "link_back_button" onclick="location.href='/pokedex/login/'">⬅</button> 
+        <button type="submit" class = "confirm_button">Create New Account</button> 
+    </form>
+</div>
+<div>
+    {% if messages %}
+        {%for messages in message%}
+        <div class = "alert alert-{{message.tags}}">{{message}}</div>
+        {%endfor%}
+    {%endif%}
+</div>
+
+<link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}">
+
+{% endblock %}

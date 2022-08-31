@@ -1,0 +1,40 @@
+{% extends './main.html' %}
+{% block content %}
+
+<link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}">
+
+<form method = "POST">
+    {% csrf_token %}
+    <button name = "logout" value = "logout" class = "logout_button" >Logout</button>
+</form>
+
+<div class = "profiles_box">
+    <button class = "profile_circles" onclick="open_add_profile()">
+        +
+    </button>
+    <div class="profile_popup" id="add_profile">
+        <div class="profiler_add">
+            <form action="" class="profile_container">
+            <h1>Add Save</h1>
+
+            <input type="text" class = "login_field" placeholder="Save Name" id="save_name" required>
+            <br><br>        
+            <button type="submit" class="confirm_button">Save</button>
+            <br><br>
+            <button type="button" class="link_button" onclick="close_add_profile()">Close</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function open_add_profile() {
+      document.getElementById("add_profile").style.display = "block";
+    }
+    
+    function close_add_profile() {
+      document.getElementById("add_profile").style.display = "none";
+    }
+</script>
+
+{% endblock %}

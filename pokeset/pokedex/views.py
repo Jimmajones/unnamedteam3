@@ -1,10 +1,76 @@
+from email import message_from_bytes
+from importlib.resources import contents
+from multiprocessing import context
 from urllib import response
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import requests
-import json
-
+from .forms import NewUserForm
+from django.contrib import messages
+from django.contrib.auth import authenticate
 
 # Create your views here.
+def get_login(req):
+
+    if req.method == "GET":
+        
+        if req.session.get("username") is not None:
+            return redirect("profiles")
+        
+
+    if req.method == "POST":
+        data = req.POST
+        username = data.get("username")
+        password = data.get("password")
+        user = authenticate(username = username, password = password)
+        
+        context = {}
+        context["user"] = username
+
+        if user is not None:
+            
+            req.session['username'] = username
+
+            return redirect('profiles')
+
+    return render(req, 'login.html')
+
+def get_register(req):
+
+    form = NewUserForm()
+    context= {}
+    context["register_form"] = form
+   
+    if req.method == "POST":
+
+        form = NewUserForm(req.POST)
+
+        if form.is_valid():
+
+            form.save()
+            username = form.cleaned_data.get('username')
+            messages.success(req, f'hi {username}, your account was created sucessfully')
+
+            return redirect('login')
+        
+    
+    return render(req, 'register.html', context)   
+
+def get_profiles(req):
+
+    if req.method == "POST":
+
+        data = req.POST
+
+        if data.get("logout") == "logout":
+
+            req.session['username'] = None
+
+            return redirect("login")
+        
+
+
+    return render(req,'profiles.html')
+      
 def get_main(req):
     return render(req, 'main.html')
 
@@ -27,6 +93,8 @@ def get_edit_pokemon(req, id):
     set_images(context)
     context = {"pokemon_data": context["pokemon_data"][0]}
     return render(req, 'edit_pokemon.html', context)
+
+
 
 
 
