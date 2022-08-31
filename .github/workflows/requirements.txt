@@ -1,0 +1,4 @@
+# packages that are required for automated testing
+Django
+PyMySQL
+django-crispy-forms
