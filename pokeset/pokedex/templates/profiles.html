@@ -1,7 +1,7 @@
 {% extends './main.html' %}
 {% block content %}
-
-<link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}">
+{% comment %} the now "U" thing is to make css refresh, remove later {% endcomment %}
+<link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}?{% now "U" %}">
 
 <form method = "POST">
     {% csrf_token %}
@@ -9,17 +9,30 @@
 </form>
 
 <div class = "profiles_box">
-    <button class = "profile_circles" onclick="open_add_profile()">
-        +
-    </button>
+        {% for profile in profiles %}
+        <div class="profile">
+            <button class = "profile_circles" style="background-color:red" onclick="location.href='/pokedex/dashboard/{{profile.name}}'">
+            
+            </button>
+            <h3>{{profile.name}}</h3>
+        </div>
+        {% endfor %}
+        <div class="profile">
+            <button class = "profile_circles" onclick="open_add_profile()">
+                +
+            </button>
+            <h3> </h3>
+        </div>
     <div class="profile_popup" id="add_profile">
         <div class="profiler_add">
-            <form action="" class="profile_container">
-            <h1>Add Save</h1>
+            
+            <form action="/pokedex/new_profile" method="POST" class="profile_container">
+            <h1>Add Save</h1> 
+            {% csrf_token %}
 
-            <input type="text" class = "login_field" placeholder="Save Name" id="save_name" required>
+            <input type="text" class = "profile_name_field" placeholder="Save Name" name="save_name" id="save_name" required>
             <br><br>        
-            <button type="submit" class="confirm_button">Save</button>
+            <button type="submit" class="confirm_button"  onclick="location.href='#'">Save</button>
             <br><br>
             <button type="button" class="link_button" onclick="close_add_profile()">Close</button>
             </form>

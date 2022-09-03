@@ -129,13 +129,14 @@
 
 
 .profiles_box{
-    box-sizing: border-box;
 
-    position: auto;
+    display: flex;
+    flex-direction: row;
+    align-items:center;
+    justify-content: space-around;
+
     width: 1288px;
     height: 549px;
-    left: 316px;
-    top: 265px;
 
     background: #FFF9F9;
     border: 1px solid #000000;
@@ -146,11 +147,8 @@
 .profile_circles{
     box-sizing: border-box;
 
-    position: absolute;
     width: 155px;
     height: 155px;
-    left: 46%;
-    top: 35%;
 
     font-size: 30px;
     background: url(.jpg), #FFFFFF;
@@ -184,14 +182,18 @@
     border-radius: 20px;
 }
 
-.logout_button{
+.profile {
+    height: 200px;
+    text-align: center;
+}
+
+.logout_button{ /* inspired by SimpleCSSButtons.com */
     position: absolute;
     top: 8px;
     right: 16px;
     width: 212px;
     height: 63px;
     
-
     align-items: center;
     text-align: center;
     font-family: 'IBM Plex Mono';
@@ -199,9 +201,16 @@
     font-weight: 400;
     font-size: 18px;
     line-height: 23px;
+    transition: 0.5s;
+    border: 0;
 
-    
-    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+    box-shadow: 0.1vmax 0.3vmax 0px 0px #3f3f3f; /* Button Shadows */
+    cursor: pointer; /* Cursor */
     color: #000000;
     background: #FFFFFF;
 }
+
+  
+.logout_button:hover {
+    box-shadow: 0px 0.3vmax 0px 0px gray,  0px 0px 0px 0px #3f3f3f; /* Button Shadows */
+  }

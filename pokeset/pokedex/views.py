@@ -1,12 +1,15 @@
 from email import message_from_bytes
 from importlib.resources import contents
 from multiprocessing import context
-from urllib import response
+from urllib import request, response
 from django.shortcuts import render, redirect
 import requests
 from .forms import NewUserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from . import models
+from django.core import serializers
 
 # Create your views here.
 def get_login(req):
@@ -34,6 +37,7 @@ def get_login(req):
 
     return render(req, 'login.html')
 
+
 def get_register(req):
 
     form = NewUserForm()
@@ -52,36 +56,41 @@ def get_register(req):
 
             return redirect('login')
         
-    
     return render(req, 'register.html', context)   
 
 def get_profiles(req):
-
     if req.method == "GET":
-
         if req.session.get('username') is None:
             return redirect("login")
-
-
     if req.method == "POST":
-
         data = req.POST
-
         if data.get("logout") == "logout":
-
             req.session['username'] = None
-
             return redirect("login")
-    
-
-
-    return render(req,'profiles.html')
+    user = req.user
+    profiles = models.Profile.objects.filter(user=user.id).iterator
+    context = {"username":req.session.get('username'), "profiles":profiles}
+    return render(req,'profiles.html', context)
       
+
+def new_profile(req):
+    if req.method == "POST" and req.session.get('username') is not None:
+        data = req.POST
+        user_id = req.session.get('_auth_user_id')
+        new_profile_entry = models.Profile.objects.create(name=data["save_name"],user_id=user_id)
+        new_profile_entry.save()
+    return redirect('profiles')
+
+
 def get_main(req):
     return render(req, 'main.html')
 
-def get_dashboard(req):
-    context = {"pokemon_data": static_pokemon}
+def get_dashboard(req, profile):
+    user_id = req.session.get('_auth_user_id')
+    profile_obj = models.Profile.objects.get(name=profile, user_id = user_id)
+    pokemon = models.Pokemon.objects.filter(profile=profile_obj).values()
+    print(pokemon)
+    context = {"pokemon_data": pokemon}
     print(context)
     set_images(context)
     return render(req, 'dashboard.html', context=context)
@@ -99,8 +108,6 @@ def get_edit_pokemon(req, id):
     set_images(context)
     context = {"pokemon_data": context["pokemon_data"][0]}
     return render(req, 'edit_pokemon.html', context)
-
-
 
 
 
