@@ -58,6 +58,7 @@ def get_register(req):
         
     return render(req, 'register.html', context)   
 
+
 def get_profiles(req):
     if req.method == "GET":
         if req.session.get('username') is None:
@@ -67,8 +68,12 @@ def get_profiles(req):
         if data.get("logout") == "logout":
             req.session['username'] = None
             return redirect("login")
-    user = req.user
-    profiles = models.Profile.objects.filter(user=user.id).iterator
+
+    print(req.session.keys())
+    username = req.session.get('username')
+    user_id = User.objects.get(username=username).id
+    print(user_id)
+    profiles = models.Profile.objects.filter(user=user_id).iterator
     context = {"username":req.session.get('username'), "profiles":profiles}
     return render(req,'profiles.html', context)
       
@@ -76,7 +81,8 @@ def get_profiles(req):
 def new_profile(req):
     if req.method == "POST" and req.session.get('username') is not None:
         data = req.POST
-        user_id = req.session.get('_auth_user_id')
+        username = req.session.get('username')
+        user_id = User.objects.get(username=username).id
         new_profile_entry = models.Profile.objects.create(name=data["save_name"],user_id=user_id)
         new_profile_entry.save()
     return redirect('profiles')
@@ -86,8 +92,11 @@ def get_main(req):
     return render(req, 'main.html')
 
 def get_dashboard(req, profile):
-    user_id = req.session.get('_auth_user_id')
+    # get profile based on session username
+    username = req.session.get('username') 
+    user_id = User.objects.get(username=username).id
     profile_obj = models.Profile.objects.get(name=profile, user_id = user_id)
+    # get pokemon list from database
     pokemon = models.Pokemon.objects.filter(profile=profile_obj).values()
     print(pokemon)
     context = {"pokemon_data": pokemon}

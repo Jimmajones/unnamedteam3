@@ -57,6 +57,7 @@ main #poke_table_container {
 
 .poke_table_section {
     width: 50%;
+    max-height: 30rem;
     background-color: var(--tertiary_pink);
     border: 1px solid #000000;
     border-radius: 20px;
