@@ -20,6 +20,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
@@ -32,18 +33,20 @@ jobs:
     
     - name: Make CNF File
        run: |
-        cat <<EOF > pokeset/my.cnf
-        [client]
-        database = "$DB_DATABASE"
-        host = localhost
-        user = "$DB_USER"
-        password = "$DB_PASSWORD"
-        default-character-set = utf8
+        touch pokeset/my.cnf
+        echo [client] >> pokeset/my.cnf
+        echo database = "$DB_DATABASE" >> pokeset/my.cnf
+        echo host = localhost >> pokeset/my.cnf
+        echo user = "$DB_USER" >> pokeset/my.cnf
+        echo password = "$DB_PASSWORD" >> pokeset/my.cnf
+        echo default-character-set = utf8 >> pokeset/my.cnf
+        cat pokeset/my.cnf
         
     - name: Set-up Database
       run: |
         sudo /etc/init.d/mysql start
         mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER}} -p${{ env.DB_PASSWORD}}
+
     - name: Run Tests
       run: |
         cd pokeset
