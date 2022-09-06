@@ -1,6 +1,7 @@
 # retrieved from https://djangowaves.com/tips-tricks/gitignore-for-a-django-project/ #
 
 # MySQL config file
+pokeset/my.cnf
 my.cnf
 
 # Django #
