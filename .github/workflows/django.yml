@@ -29,6 +29,16 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r .github/workflows/requirements.txt
+    
+    - name: Make CNF File
+       run: |
+        cat <<EOF > pokeset/my.cnf
+        [client]
+        database = "$DB_DATABASE"
+        host = localhost
+        user = "$DB_USER"
+        password = "$DB_PASSWORD"
+        default-character-set = utf8
         
     - name: Set-up Database
       run: |
