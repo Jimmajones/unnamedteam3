@@ -2,7 +2,7 @@ name: Pokeset Test CI
 
 on:
   push:
-    branches: [ "main", "front_end", "origin/back_end" ]
+    branches: [ "main", "ci_cd", "front_end", "back_end" ]
 
 jobs:
   build:
