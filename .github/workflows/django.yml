@@ -35,10 +35,10 @@ jobs:
        run: |
         touch pokeset/my.cnf
         echo [client] >> pokeset/my.cnf
-        echo database = "$DB_DATABASE" >> pokeset/my.cnf
+        echo database = ${{ env.DB_DATABASE }} >> pokeset/my.cnf
         echo host = localhost >> pokeset/my.cnf
-        echo user = "$DB_USER" >> pokeset/my.cnf
-        echo password = "$DB_PASSWORD" >> pokeset/my.cnf
+        echo user = ${{ env.DB_USER }} >> pokeset/my.cnf
+        echo password = ${{ env.DB_PASSWORD }} >> pokeset/my.cnf
         echo default-character-set = utf8 >> pokeset/my.cnf
         cat pokeset/my.cnf
         
