@@ -32,7 +32,7 @@ jobs:
         pip install -r .github/workflows/requirements.txt
     
     - name: Make CNF File
-       run: |
+      run: |
         touch pokeset/my.cnf
         echo [client] >> pokeset/my.cnf
         echo database = ${{ env.DB_DATABASE }} >> pokeset/my.cnf
