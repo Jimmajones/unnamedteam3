@@ -96,14 +96,15 @@ def get_dashboard(req, profile_id):
     # get pokemon list from database
     pokemon = models.Pokemon.objects.filter(profile=profile_obj).values()
     print(pokemon)
-    context = {"pokemon_data": pokemon}
+    context = {"pokemon_data": pokemon, "profile_id": profile_id}
     print(context)
     set_images(context)
     return render(req, 'dashboard.html', context=context)
 
 def get_detailed_view(req, id):
     print(req.path)
-    context = {"pokemon_data": static_pokemon[0:1]}
+    context = {"pokemon_data": [models.Pokemon.objects.get(id=id).__dict__]}
+    print(context)
     set_images(context)
     context = {"pokemon_data": context["pokemon_data"][0]}
     return render(req, 'detailed_view.html', context)
@@ -115,20 +116,24 @@ def get_edit_pokemon(req, id):
     context = {"pokemon_data": context["pokemon_data"][0]}
     return render(req, 'edit_pokemon.html', context)
 
-def get_create_pokemon(req):
-    if req.session.get(id) is None:
+def get_create_pokemon(req, profile_id):
+    if req.session.get('id') is None:
         return redirect('login')
-    if request.method == 'POST':
-        form = NewPokemonForm(request.POST)
+    if req.method == 'POST':
+        form = NewPokemonForm(req.POST)
         # check whether it's valid:
         if form.is_valid():
+            this_profile_id = profile_id
             # process the data in form.cleaned_data as required
-            # ...
+            form.save(this_profile_id)
             # redirect to a new URL:
-            return HttpResponseRedirect('/thanks/')
+            return redirect('/pokedex/dashboard/' + profile_id)
+        else:
+            error_msg =  "Incorrect Input"
+            return render(req, 'create_pokemon.html', {'form': form, 'error': error_msg, 'profile_id': profile_id })
     else:
         form = NewPokemonForm()
-        return render(req, 'create_pokemon.html', {'form': form})
+        return render(req, 'create_pokemon.html', {'form': form, 'profile_id': profile_id})
 
 # Retrieves images of pokemon from pokeapi based on its name
 def set_images(context):
@@ -142,7 +147,7 @@ def set_images(context):
             print("Found it: " + response.json()["sprites"]["front_default"])
             pokemon["img"] = response.json()["sprites"]["front_default"]
         except:
-            return
+            continue
 
 
 # To be deleted, using to test front-end

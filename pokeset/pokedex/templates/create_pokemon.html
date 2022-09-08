@@ -1,15 +1,16 @@
 {% extends './main.html' %} {% block content %}
 
-<section class="poke_view_section">
+<section class="poke_input_section">
 
-    <div id="stats">
 
-        <form action="/create_pokemon" method="post">
+        <form id="new_pokemon_form" action="/pokedex/create_pokemon/{{profile_id}}" method="POST">
             {% csrf_token %}
             {{ form }}
             <input type="submit" value="Submit">
         </form>
-       
+        
+
+
         {% comment %} <div id="profile">
             <h2>{{pokemon_data.name}}</h2>
             <img src="{{pokemon_data.img}}">
@@ -48,6 +49,5 @@
                 <textarea>{{pokemon_data.abilities}}</textarea>
             </div>
         </div> {% endcomment %}
-    </div>
 </section>
 {% endblock %}

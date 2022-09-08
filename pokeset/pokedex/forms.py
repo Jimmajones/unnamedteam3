@@ -1,10 +1,12 @@
 from operator import mod
+from pydoc import describe
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Submit
 from . import models
+from django.forms import ModelForm
 
 
 
@@ -31,16 +33,48 @@ class NewUserForm(UserCreationForm):
 		return user
 
 
-class NewPokemonForm(forms.Form):
-    name            = forms.CharField(max_length=20)
-    description     = forms.CharField(max_length=200)
+class NewPokemonForm(ModelForm):
+	class Meta:
+		model = models.Pokemon
+		fields = ['name', 'description', 'type_one', 'type_two', 'evolves_from', 'learnable', 'found_in']
+		widgets = {
+			'name': forms.TextInput(attrs = {
+				'id': 'pokemon_name_input',
+				'placeholder': 'Pokemon Name',
+				'class': 'new_pokemon_input'
+			}),
+			'description': forms.TextInput(attrs = {
+				'id': 'pokemon_description',
+				'class': 'new_pokemon_input',
+				'size': '60'
+			}),
+			'type_one': forms.Select(attrs = {
+				'id': 'pokemon_name_input',
+				'class': 'new_pokemon_input'
+			}),
+			'type_two': forms.Select(attrs = {
+				'id': 'pokemon_type_two_input',
+				'class': 'new_pokemon_input'
+			}),
+			'evolves_from': forms.SelectMultiple(attrs = {
+				'id': 'pokemon_evolves_from',
+				'class': 'new_pokemon_input'
+			}),
+			'learnable': forms.SelectMultiple(attrs = {
+				'id': 'pokemon_can_learn',
+				'class': 'new_pokemon_input'
 
-    # TO-DO: Want to ensure type_one and type_two are not the same.
-    type_one        = forms.ChoiceField(choices=models.Type.choices)
-    type_two        = forms.ChoiceField(choices=models.Type.choices)
+			}),
+			'found_in': forms.SelectMultiple(attrs = {
+				'id': 'pokemon_found_in',
+				'class': 'new_pokemon_input'
+			})
 
-    # TO-DO: Want to store information about evolution conditions. (Tertiary relationship?)
-    evolves_from    = forms.CharField()
+		}
 
-    learnable       = forms.ManyToManyField(Move, related_name="can_learn")
-    found_in        = forms.ManyToManyField(Location, related_name="can_be_found")
+	def save(self, profile_id, commit=True):
+		pokemon = super(NewPokemonForm, self).save(commit=False)
+		pokemon.profile_id = profile_id
+		if commit:
+			pokemon.save()
+		return pokemon
