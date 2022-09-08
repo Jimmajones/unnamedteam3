@@ -4,7 +4,7 @@ from multiprocessing import context
 from urllib import request, response
 from django.shortcuts import render, redirect
 import requests
-from .forms import NewUserForm
+from .forms import NewPokemonForm, NewUserForm
 from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -26,13 +26,13 @@ def get_login(req):
         password = data.get("password")
         user = authenticate(username = username, password = password)
         
+        id = user.id
         context = {}
         context["user"] = username
-
+        context["id"] = user.id
         if user is not None:
-            
             req.session['username'] = username
-
+            req.session['id'] = id
             return redirect('profiles')
 
     return render(req, 'login.html')
@@ -55,7 +55,7 @@ def get_register(req):
             messages.success(req, f'hi {username}, your account was created sucessfully')
 
             return redirect('login')
-        
+
     return render(req, 'register.html', context)   
 
 
@@ -70,8 +70,7 @@ def get_profiles(req):
             return redirect("login")
 
     print(req.session.keys())
-    username = req.session.get('username')
-    user_id = User.objects.get(username=username).id
+    user_id = req.session.get('id')
     print(user_id)
     profiles = models.Profile.objects.filter(user=user_id).iterator
     context = {"username":req.session.get('username'), "profiles":profiles}
@@ -81,8 +80,7 @@ def get_profiles(req):
 def new_profile(req):
     if req.method == "POST" and req.session.get('username') is not None:
         data = req.POST
-        username = req.session.get('username')
-        user_id = User.objects.get(username=username).id
+        user_id = req.session.get('id')
         new_profile_entry = models.Profile.objects.create(name=data["save_name"],user_id=user_id)
         new_profile_entry.save()
     return redirect('profiles')
@@ -91,11 +89,10 @@ def new_profile(req):
 def get_main(req):
     return render(req, 'main.html')
 
-def get_dashboard(req, profile):
+def get_dashboard(req, profile_id):
     # get profile based on session username
-    username = req.session.get('username') 
-    user_id = User.objects.get(username=username).id
-    profile_obj = models.Profile.objects.get(name=profile, user_id = user_id)
+    user_id = req.session.get('id')
+    profile_obj = models.Profile.objects.get(id=profile_id, user_id = user_id)
     # get pokemon list from database
     pokemon = models.Pokemon.objects.filter(profile=profile_obj).values()
     print(pokemon)
@@ -118,7 +115,20 @@ def get_edit_pokemon(req, id):
     context = {"pokemon_data": context["pokemon_data"][0]}
     return render(req, 'edit_pokemon.html', context)
 
-
+def get_create_pokemon(req):
+    if req.session.get(id) is None:
+        return redirect('login')
+    if request.method == 'POST':
+        form = NewPokemonForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            # redirect to a new URL:
+            return HttpResponseRedirect('/thanks/')
+    else:
+        form = NewPokemonForm()
+        return render(req, 'create_pokemon.html', {'form': form})
 
 # Retrieves images of pokemon from pokeapi based on its name
 def set_images(context):

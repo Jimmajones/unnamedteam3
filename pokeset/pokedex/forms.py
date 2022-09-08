@@ -1,3 +1,4 @@
+from operator import mod
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -30,17 +31,16 @@ class NewUserForm(UserCreationForm):
 		return user
 
 
-# class NewProfileForm(forms.Form):
+class NewPokemonForm(forms.Form):
+    name            = forms.CharField(max_length=20)
+    description     = forms.CharField(max_length=200)
 
-# 	name = forms.CharField(required=True, widget = forms.TextInput(attrs={'class':'profile_name_field'}))
-# 	class Meta:
-# 		model = models.Profile
-# 		fields = ("name")
+    # TO-DO: Want to ensure type_one and type_two are not the same.
+    type_one        = forms.ChoiceField(choices=models.Type.choices)
+    type_two        = forms.ChoiceField(choices=models.Type.choices)
 
-# 	def save(user, self, commit=True):
-# 		profile = super(NewProfileForm, self).save(commit=False)
-# 		profile.name = self.cleaned_data['name']
-# 		profile.user = user.id
-# 		if commit:
-# 			profile.save()
-# 		return profile
+    # TO-DO: Want to store information about evolution conditions. (Tertiary relationship?)
+    evolves_from    = forms.CharField()
+
+    learnable       = forms.ManyToManyField(Move, related_name="can_learn")
+    found_in        = forms.ManyToManyField(Location, related_name="can_be_found")
