@@ -36,7 +36,7 @@ class NewUserForm(UserCreationForm):
 class NewPokemonForm(ModelForm):
 	class Meta:
 		model = models.Pokemon
-		fields = ['name', 'description', 'type_one', 'type_two', 'evolves_from', 'learnable', 'found_in']
+		fields = ['name', 'description', 'type_one', 'type_two', 'evolves_from', 'can_learn', 'can_find_in']
 		widgets = {
 			'name': forms.TextInput(attrs = {
 				'id': 'pokemon_name_input',
