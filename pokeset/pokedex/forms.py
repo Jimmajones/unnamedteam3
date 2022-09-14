@@ -36,7 +36,7 @@ class NewUserForm(UserCreationForm):
 class NewPokemonForm(ModelForm):
 	class Meta:
 		model = models.Pokemon
-		fields = ['name', 'description', 'type_one', 'type_two', 'evolves_from', 'can_learn', 'can_find_in']
+		fields = ['name', 'description', 'type_one', 'type_two']
 		widgets = {
 			'name': forms.TextInput(attrs = {
 				'id': 'pokemon_name_input',
@@ -55,21 +55,7 @@ class NewPokemonForm(ModelForm):
 			'type_two': forms.Select(attrs = {
 				'id': 'pokemon_type_two_input',
 				'class': 'new_pokemon_input'
-			}),
-			'evolves_from': forms.SelectMultiple(attrs = {
-				'id': 'pokemon_evolves_from',
-				'class': 'new_pokemon_input'
-			}),
-			'learnable': forms.SelectMultiple(attrs = {
-				'id': 'pokemon_can_learn',
-				'class': 'new_pokemon_input'
-
-			}),
-			'found_in': forms.SelectMultiple(attrs = {
-				'id': 'pokemon_found_in',
-				'class': 'new_pokemon_input'
 			})
-
 		}
 
 	def save(self, profile_id, commit=True):
@@ -78,3 +64,11 @@ class NewPokemonForm(ModelForm):
 		if commit:
 			pokemon.save()
 		return pokemon
+
+
+class EditPokemonForm(ModelForm):
+	class Meta:
+		model = models.Pokemon
+		fields = '__all__'
+
+	

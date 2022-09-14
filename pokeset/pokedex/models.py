@@ -124,7 +124,7 @@ class Learnable(SelfValidate):
             raise ValidationError('Attempting to associate a Pokemon with a Move from a different profile.')
     
     def __str__(self):
-        return self.pokemon + ' can learn ' + self.move
+        return str(self.pokemon) + ' can learn ' + str(self.move)
 
 # Many-to-many table between Pokemon and Location.
 class Findable(SelfValidate):
@@ -136,7 +136,7 @@ class Findable(SelfValidate):
             raise ValidationError('Attempting to associate a Pokemon with a Location from a different profile.')
     
     def __str__(self):
-        return self.pokemon + ' can be found in ' + self.location
+        return str(self.pokemon) + ' can be found in ' + str(self.location)
 
 # Many-to-many table between Pokemon and Ability.
 class Capable(SelfValidate):

@@ -4,12 +4,13 @@ from multiprocessing import context
 from urllib import request, response
 from django.shortcuts import render, redirect
 import requests
-from .forms import NewPokemonForm, NewUserForm
+from .forms import NewPokemonForm, NewUserForm, EditPokemonForm
 from django.contrib import messages
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from . import models
 from django.core import serializers
+
 
 # Create your views here.
 def get_login(req):
@@ -25,15 +26,15 @@ def get_login(req):
         username = data.get("username")
         password = data.get("password")
         user = authenticate(username = username, password = password)
-        
-        id = user.id
-        context = {}
-        context["user"] = username
-        context["id"] = user.id
         if user is not None:
-            req.session['username'] = username
-            req.session['id'] = id
-            return redirect('profiles')
+            id = user.id
+            context = {}
+            context["user"] = username
+            context["id"] = user.id
+            if user is not None:
+                req.session['username'] = username
+                req.session['id'] = id
+                return redirect('profiles')
 
     return render(req, 'login.html')
 
@@ -103,18 +104,43 @@ def get_dashboard(req, profile_id):
 
 def get_detailed_view(req, id):
     print(req.path)
-    context = {"pokemon_data": [models.Pokemon.objects.get(id=id).__dict__]}
-    print(context)
-    set_images(context)
-    context = {"pokemon_data": context["pokemon_data"][0]}
+
+    pokemon = models.Pokemon.objects.get(id=id)
+    pokemon_dict = {"pokemon_data": [pokemon.__dict__]}
+    set_images(pokemon_dict)
+    single_pokemon_data = pokemon_dict["pokemon_data"][0]
+    
+    abilities = pokemon.can_learn.all()
+    locations = pokemon.can_find_in.all()
+
+    context = {"pokemon_data": single_pokemon_data, "abilities": abilities, "locations": locations}
     return render(req, 'detailed_view.html', context)
 
-def get_edit_pokemon(req, id):
-    print(req.path)
-    context = {"pokemon_data": static_pokemon[0:1]}
-    set_images(context)
-    context = {"pokemon_data": context["pokemon_data"][0]}
-    return render(req, 'edit_pokemon.html', context)
+
+def get_edit_pokemon(req, id):  
+    if req.session.get('id') is None:
+        return redirect('login')
+    if req.method == 'POST':
+        pokemon = models.Pokemon.objects.get(id=id)
+        form = EditPokemonForm(req.POST, instance=pokemon)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            form.save()
+            # redirect to a new URL:
+            return redirect('/pokedex/detailed_view/' + id)
+        else:
+
+            error_msg =  "Incorrect Input"
+            return redirect('/pokedex/edit_pokemon/' + id)
+    else:
+        print(req.path)
+        pokemon = models.Pokemon.objects.get(id=id)
+        context = {"pokemon_data": [pokemon.__dict__]}
+        set_images(context)
+        form = EditPokemonForm(instance=pokemon)
+        return render(req, 'edit_pokemon.html', {"pokemon_data": context["pokemon_data"][0], 'form': form, 'pokemon_id': id})
+
 
 def get_create_pokemon(req, profile_id):
     if req.session.get('id') is None:
@@ -125,9 +151,9 @@ def get_create_pokemon(req, profile_id):
         if form.is_valid():
             this_profile_id = profile_id
             # process the data in form.cleaned_data as required
-            form.save(this_profile_id)
+            new_pokemon = form.save(this_profile_id)
             # redirect to a new URL:
-            return redirect('/pokedex/dashboard/' + profile_id)
+            return redirect('/pokedex/edit_pokemon/' + str(new_pokemon.id))
         else:
             error_msg =  "Incorrect Input"
             return render(req, 'create_pokemon.html', {'form': form, 'error': error_msg, 'profile_id': profile_id })
