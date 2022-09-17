@@ -3,7 +3,7 @@
 <link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}?{% now "U" %}">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 
-
+<button onclick='location.href="/pokedex/detailed_view/{{pokemon_data.id}}"' class="back_button">Back</button>
 
 {% if form.errors %}
     {% for field in form %}
@@ -20,63 +20,71 @@
     {% endfor %}
 {% endif %}
 
-<section class="poke_view_section">
 
-    
-    <form id="new_pokemon_form" action="/pokedex/edit_pokemon/{{pokemon_id}}/" method="POST">
-        {% csrf_token %}
+<section class="poke_edit_section">
+
+    <h2>Editing {{pokemon_data.name}}</h2>
+    <div = "info">Hold ctrl to select multiple</div>
+    <form  action="/pokedex/edit_pokemon/{{pokemon_id}}/" method="POST">
+        <div id="edit_pokemon_form">
+            {% csrf_token %}
         {{ form.non_field_errors }}
-        <div class="fieldWrapper">
+         <div class="fieldWrapper" id = "poke_img">
+            <img src="{{pokemon_data.img}}">
+        </div> 
+        <div id = "name" class="fieldWrapper">
             {{ form.name.errors }}
             <label for="{{ form.name.id_for_label }}">Name:</label>
             {{ form.name}}
         </div>
-        <div class="fieldWrapper">
+        <div id = "description" class="fieldWrapper">
             {{ form.description.errors }}
             <label for="{{ form.description.id_for_label }}">Description:</label>
             {{ form.description }}
         </div>
-        <div class="fieldWrapper">
+        <div id ="type_one" class="fieldWrapper">
             {{ form.type_one.errors }}
             <label for="{{ form.type_one.id_for_label }}">Type One:</label>
             {{ form.type_one }}
         </div>
-        <div class="fieldWrapper">
+        <div id="type_two" class="fieldWrapper">
             {{ form.type_two.errors }}
             <label for="{{ form.type_two.id_for_label }}">Type Two:</label>
             {{ form.type_two }}
         </div>
-        <div class="fieldWrapper">
+        <div id="evolves" class="fieldWrapper">
             {{ form.type_two.errors }}
             <label for="{{ form.evolves_from.id_for_label }}">Evolves From:</label>
             {{ form.evolves_from }}
         </div>
-        <div class="fieldWrapper">
+        <div id="moves" class="fieldWrapper">
             {{ form.can_learn.errors }}
             <label for="{{ form.can_learn.id_for_label }}">Moves:</label>
             {{ form.can_learn }}
-            <button type="button" class = "profile_circles" onclick='open_modal("add_move")'>
+            <button type="button" class = "add_option" onclick='open_modal("add_move")'>
                 +
             </button>
         </div>
-        <div class="fieldWrapper">
+        <div id="location" class="fieldWrapper">
             {{ form.can_find_in.errors }}
             <label for="{{ form.can_find_in.id_for_label }}">Locations:</label>
             {{ form.can_find_in}}
-            <button type="button" class = "profile_circles" onclick='open_modal("add_location")'>
+            <button type="button" class = "add_option" onclick='open_modal("add_location")'>
                 +
             </button>
         </div>
-        <div class="fieldWrapper">
+        <div id="abilities" class="fieldWrapper">
             {{ form.abilities.errors }}
             <label for="{{ form.abilities.id_for_label }}">Abilities:</label>
             {{ form.abilities}}
-            <button type="button" class = "profile_circles" onclick='open_modal("add_ability")'>
+            <button type="button" class = "add_option" onclick='open_modal("add_ability")'>
                 +
             </button>
             
         </div>
-        <input type="submit" value="Save">
+        <input id="submit_edit" type="submit" value="Save">
+        </div>
+        
     </form>
     
 

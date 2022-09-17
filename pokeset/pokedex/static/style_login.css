@@ -187,28 +187,6 @@
     text-align: center;
 }
 
-.logout_button{ /* inspired by SimpleCSSButtons.com */
-    position: absolute;
-    top: 8px;
-    right: 16px;
-    width: 212px;
-    height: 63px;
-    
-    align-items: center;
-    text-align: center;
-    font-family: 'IBM Plex Mono';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 18px;
-    line-height: 23px;
-    transition: 0.5s;
-    border: 0;
-
-    box-shadow: 0.1vmax 0.3vmax 0px 0px #3f3f3f; /* Button Shadows */
-    cursor: pointer; /* Cursor */
-    color: #000000;
-    background: #FFFFFF;
-}
 
   
 .logout_button:hover {

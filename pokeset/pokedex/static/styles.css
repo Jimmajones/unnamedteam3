@@ -14,7 +14,7 @@ body {
 }
 
 nav {
-    height: 80px;
+    height: 10vh;
     background-color: var(--primary_red);
     padding-left: 30px;
     color: white;
@@ -25,12 +25,35 @@ nav {
     font-size: 24px;
 }
 
-main {
-    margin-top: 4%;
-    display: flex;
-    flex-direction: column;
+.back_button{ /* inspired by SimpleCSSButtons.com */
+    position: absolute;
+    top: 8px;
+    right: 16px;
+    width: 212px;
+    height: 63px;
+    
     align-items: center;
-    justify-content: center;
+    text-align: center;
+    font-family: 'IBM Plex Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 23px;
+    transition: 0.5s;
+    border: 0;
+
+    box-shadow: 0.1vmax 0.3vmax 0px 0px #3f3f3f; /* Button Shadows */
+    cursor: pointer; /* Cursor */
+    color: #000000;
+    background: #FFFFFF;
+}
+
+main {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction: column;
+    height:85vh;
 }
 
 .filters {
@@ -95,7 +118,7 @@ footer {
     background-color: var(--secondary_grey);
     position: fixed;
     bottom: 0px;
-    height: 50px;
+    height: 5vh;
     width: 100%;
 }
 
@@ -103,26 +126,18 @@ footer {
 /* ----------------------------- Grid for detailed view ------------- */
 
 .poke_view_section {
+    display: inline;
     background: var(--tertiary_pink);
     padding: 20px;
     border: 1px solid #000000;
     box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
     border-radius: 20px;
-    width: 40%;
+    width: 60%;
     height: 480px;
     text-align: center;
 }
 
-.poke_view_section button {
-    margin-top: 5px;
-    width: 100%;
-    background-color: var(--primary_red);
-    color: #FFFFFF;
-    border: 1px solid #000000;
-    font-weight: bold;
-    height: 40px;
-    bottom: 46px;
-}
+
 
 #stats h3 {
     margin: 0;
@@ -130,9 +145,9 @@ footer {
 
 #stats {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-rows: 200px 80px 160px;
-    grid-template-areas: "profile evolution evolution" "type locations abilities" "effective weakness abilities";
+    grid-template-areas: "profile evolution evolution evolution" "type locations abilities moves" "effective weakness abilities moves";
     column-gap: 30px;
     text-align: center;
 }
@@ -145,6 +160,11 @@ footer {
     display: flex;
     flex-direction: column;
     justify-items: center;
+    overflow-y: scroll;
+}
+
+.stat_bubble p {
+    margin: 0.5rem;
 }
 
 #profile {
@@ -154,15 +174,18 @@ footer {
 
 #profile img {
     position: relative;
-    top: -40px;
-    width: 200px;
-    height: 200px;
+    width: 150px;
+    height: 150px;
 }
 
 #profile h2 {
     margin-bottom: 0px;
     font-weight: 200;
     font-size: x-large;
+}
+
+#moves_section {
+    grid-area: moves
 }
 
 #evolution {
@@ -200,6 +223,74 @@ footer {
     margin-top: 5px;
 }
 
+.big_bottom_button {
+    background-color: var(--primary_red);
+    color: white;
+    font: inherit;
+    border-radius: 30px;
+    height: 30px;
+    border: none;
+    width: 100%;
+
+    position: relative;
+    border: 0;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+.big_bottom_button:hover {
+    top: 2px;
+    left: 1px;
+    box-shadow: none;
+}
+
+
+
+@media (max-width: 1400px) {
+    .poke_view_section {
+        width: 70%;
+    }
+}
+
+@media (max-width: 800px) {
+    #stats {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    #stats h2 {
+        font-size: 2rem;
+    }
+    #stats img {
+        width: 60%;
+        height: auto;
+    }
+    #stats div {
+        width: 80%;
+        margin-bottom:0.5rem;
+    }
+    .stat_section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .stat_bubble {
+        width: 90%;
+    }
+    .poke_view_section {
+        height: auto;
+        margin-bottom: 100px;
+        width: 80%;
+    }
+    #profile {
+        padding-bottom: 0;
+    }
+    main {
+        height: auto;
+        margin-top: 1rem;
+    }
+}
+
 /* ----------------------------- Grid for POKEMON CREATION ------------- */
 
 
@@ -210,7 +301,7 @@ footer {
     box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
     border-radius: 20px;
     width: 60%;
-    height: 480px;
+    height: 70vh;
     text-align: center;
 }
 
@@ -220,9 +311,9 @@ footer {
     display: flex;
     flex-direction: column;
     align-items: center;
-    flex-wrap: wrap;
+    justify-content: space-between;
     width: 100%;
-    height: 100%;
+    height: 90%;
 }
 
 .new_pokemon_input {
@@ -235,5 +326,137 @@ footer {
     border-radius: 30px;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+
+/* edit pokemon ------------------------------- */
+.poke_edit_section {
+    display: inline;
+    background: var(--tertiary_pink);
+    padding: 20px;
+    border: 1px solid #000000;
+    box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+    width: 50%;
+    height: 72vh;
+    text-align: center;
+}
+
+.poke_edit_section form {
+    height: 80%;
+}
+
+#edit_pokemon_form {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    grid-template-rows: 1fr 1fr 1fr 0.3fr;
+    grid-template-areas: 
+    "name image moves" 
+    "type_one type_two location" 
+    "evolution description abilities" 
+    "submit submit submit";
+    column-gap: 40px;
+    justify-items: center;
+    align-items: center;
+    row-gap: 10px;
+    height: 100%;
+}
+
+.add_option {
+    width: 20px;
+    height: 20px;
+    border-radius: 30px;
+    background-color: var(--primary_red);
+    color: white;
+}
+
+.fieldWrapper {
+    background-color: white;
+    border-radius: 30px;
+    /* border: 1px solid #000000; */
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    align-items: center;
+    justify-content: center;
+    height: 90%;
+    width: 90%;
+}
+
+.fieldWrapper input, .fieldWrapper select {
+    border: none;
+    text-align: center;
+    font: inherit;
+    font-size: 0.85rem;
+    max-width: 100%;
+    word-wrap: break-word;
+    background-color: rgb(238, 237, 237);
+}
+
+
+
+.fieldWrapper label {
+    font-weight: bold;
+}
+
+#poke_img {
+    grid-area: image;
+}
+
+#name {
+    grid-area: name;
+}
+
+#description {
+    grid-area: description;
+}
+
+#type_one {
+    grid-area: type_one;
+}
+
+#type_two {
+    grid-area: type_two;
+}
+
+#evolves {
+    grid-area: evolution;
+}
+
+#moves {
+    grid-area: moves;
+}
+
+#location {
+    grid-area: location;
+}
+
+#abilities {
+    grid-area: abilities;
+}
+
+#submit_edit {
+    grid-area: submit;
+    background-color: var(--primary_red);
+    color: white;
+    font: inherit;
+    border-radius: 30px;
+    height: 30px;
+    border: none;
+    width: 100%;
+
+    position: relative;
+    border: 0;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    float: bottom;
+}
+
+
+#submit_edit:hover {
+    top: 2px;
+    left: 1px;
+    box-shadow: none;
 }
 
