@@ -12,5 +12,8 @@ urlpatterns = [
     path('detailed_view/<str:id>/', views.get_detailed_view, name="detailed"),
     path('new_profile', views.new_profile, name="profile"),
     path('edit_pokemon/<str:id>/', views.get_edit_pokemon, name="edit"),
-    path('create_pokemon/<str:profile_id>', views.get_create_pokemon, name="create" )
+    path('create_pokemon/<str:profile_id>', views.get_create_pokemon, name="create" ),
+    path('new_location/<str:profile_id>', views.new_location, name="new_location"),
+    path('new_move/<str:profile_id>', views.new_move, name="new_location"),
+    path('new_ability/<str:profile_id>', views.new_ability, name="new_location"),
 ]

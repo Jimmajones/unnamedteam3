@@ -10,7 +10,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from . import models
 from django.core import serializers
-
+from django.http import JsonResponse
 
 # Create your views here.
 def get_login(req):
@@ -120,6 +120,7 @@ def get_detailed_view(req, id):
 def get_edit_pokemon(req, id):  
     if req.session.get('id') is None:
         return redirect('login')
+    types = models.Type.choices
     if req.method == 'POST':
         pokemon = models.Pokemon.objects.get(id=id)
         form = EditPokemonForm(req.POST, instance=pokemon)
@@ -130,16 +131,17 @@ def get_edit_pokemon(req, id):
             # redirect to a new URL:
             return redirect('/pokedex/detailed_view/' + id)
         else:
-
+            print("this hasn't worked")
             error_msg =  "Incorrect Input"
-            return redirect('/pokedex/edit_pokemon/' + id)
+            return render(req, 'edit_pokemon.html', {'form': form, 'pokemon_id': id, 'profile': pokemon.profile.id, 'types': types})
     else:
         print(req.path)
         pokemon = models.Pokemon.objects.get(id=id)
         context = {"pokemon_data": [pokemon.__dict__]}
         set_images(context)
         form = EditPokemonForm(instance=pokemon)
-        return render(req, 'edit_pokemon.html', {"pokemon_data": context["pokemon_data"][0], 'form': form, 'pokemon_id': id})
+        return render(req, 'edit_pokemon.html', 
+        {"pokemon_data": context["pokemon_data"][0], 'form': form, 'pokemon_id': id, 'profile': pokemon.profile.id, 'types':types})
 
 
 def get_create_pokemon(req, profile_id):
@@ -155,25 +157,72 @@ def get_create_pokemon(req, profile_id):
             # redirect to a new URL:
             return redirect('/pokedex/edit_pokemon/' + str(new_pokemon.id))
         else:
+            print("not working")
             error_msg =  "Incorrect Input"
             return render(req, 'create_pokemon.html', {'form': form, 'error': error_msg, 'profile_id': profile_id })
     else:
         form = NewPokemonForm()
         return render(req, 'create_pokemon.html', {'form': form, 'profile_id': profile_id})
 
+
+def new_location(req, profile_id):
+    if req.method == "POST" and req.session.get('username') is not None:
+        data = req.POST
+        # to-do: validate this data
+        profile = models.Profile.objects.get(id=profile_id)
+        new_location= models.Location.objects.create(name=data["location_name"],profile=profile)
+        new_location.save()
+        
+        location_dict = {"name": new_location.name, "pk": new_location.id}
+        # response = serializers.serialize('json', [new_location])
+        return JsonResponse(location_dict, status=200)
+
+def new_move(req, profile_id):
+    if req.method == "POST" and req.session.get('username') is not None:
+        data = req.POST
+        # to-do: validate this data
+        profile = models.Profile.objects.get(id=profile_id)
+        new_move= models.Move.objects.create(name=data["move_name"], type=data["move_type"], profile=profile)
+        new_move.save()
+
+        # getting the label rather than shorthand of the move's type
+        type = new_move.type
+        for option in models.Type.choices:
+            if type == option[0]:
+                label = option[1]
+
+        dict = {"name": new_move.name, "type": label, "pk": new_move.id}
+        return JsonResponse(dict, status=200)
+
+def new_ability(req, profile_id):
+    if req.method == "POST" and req.session.get('username') is not None:
+        data = req.POST
+        # to-do: validate this data
+        profile = models.Profile.objects.get(id=profile_id)
+        new_ability= models.Ability.objects.create(name=data["ability_name"], profile=profile)
+        new_ability.save()
+        
+        dict = {"name": new_ability.name, "pk": new_ability.id}
+        # response = serializers.serialize('json', [new_location])
+        return JsonResponse(dict, status=200)
+
+
 # Retrieves images of pokemon from pokeapi based on its name
 def set_images(context):
     params = {"format": "json"}
     # For each pokemon in array
     for pokemon in context["pokemon_data"]:
-        print("Looking for " + pokemon["name"].lower())
+        # print("Looking for " + pokemon["name"].lower())
         # Query API for given pokemon and parse JSON
         try: 
             response = requests.get("https://pokeapi.co/api/v2/pokemon/" +pokemon["name"].lower(), params=params)
-            print("Found it: " + response.json()["sprites"]["front_default"])
+            # print("Found it: " + response.json()["sprites"]["front_default"])
             pokemon["img"] = response.json()["sprites"]["front_default"]
         except:
             continue
+
+
+
 
 
 # To be deleted, using to test front-end

@@ -69,6 +69,6 @@ class NewPokemonForm(ModelForm):
 class EditPokemonForm(ModelForm):
 	class Meta:
 		model = models.Pokemon
-		fields = '__all__'
+		fields = ['name', 'description', 'type_one', 'type_two', 'evolves_from', 'can_learn', 'can_find_in', 'abilities']
 
 	

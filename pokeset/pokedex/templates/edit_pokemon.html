@@ -1,15 +1,204 @@
 {% extends './main.html' %} {% block content %}
 
+<link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}?{% now "U" %}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
+
+
+{% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+
 <section class="poke_view_section">
 
     
     <form id="new_pokemon_form" action="/pokedex/edit_pokemon/{{pokemon_id}}/" method="POST">
         {% csrf_token %}
-        {{ form }}
+        {{ form.non_field_errors }}
+        <div class="fieldWrapper">
+            {{ form.name.errors }}
+            <label for="{{ form.name.id_for_label }}">Name:</label>
+            {{ form.name}}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.description.errors }}
+            <label for="{{ form.description.id_for_label }}">Description:</label>
+            {{ form.description }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.type_one.errors }}
+            <label for="{{ form.type_one.id_for_label }}">Type One:</label>
+            {{ form.type_one }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.type_two.errors }}
+            <label for="{{ form.type_two.id_for_label }}">Type Two:</label>
+            {{ form.type_two }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.type_two.errors }}
+            <label for="{{ form.evolves_from.id_for_label }}">Evolves From:</label>
+            {{ form.evolves_from }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.can_learn.errors }}
+            <label for="{{ form.can_learn.id_for_label }}">Moves:</label>
+            {{ form.can_learn }}
+            <button type="button" class = "profile_circles" onclick='open_modal("add_move")'>
+                +
+            </button>
+        </div>
+        <div class="fieldWrapper">
+            {{ form.can_find_in.errors }}
+            <label for="{{ form.can_find_in.id_for_label }}">Locations:</label>
+            {{ form.can_find_in}}
+            <button type="button" class = "profile_circles" onclick='open_modal("add_location")'>
+                +
+            </button>
+        </div>
+        <div class="fieldWrapper">
+            {{ form.abilities.errors }}
+            <label for="{{ form.abilities.id_for_label }}">Abilities:</label>
+            {{ form.abilities}}
+            <button type="button" class = "profile_circles" onclick='open_modal("add_ability")'>
+                +
+            </button>
+            
+        </div>
         <input type="submit" value="Save">
     </form>
     
 
+    <div style="display:none" class="profile_popup" id="add_location">
+        <div class="profiler_add">
+            
+            <h1>Add Location</h1> 
+            {% csrf_token %}
+
+            <input type="text" class = "profile_name_field" placeholder="Location Name" name="location_name" id="location_name">
+            <br><br>        
+            <button type="submit" class="confirm_button"  onclick="submitLocation()">Save</button>
+            <br><br> 
+            <button type="button" class="link_button" onclick="close_modal('add_location')">Close</button> 
+        </div>
+    </div>
+
+    <div style="display:none" class="profile_popup" id="add_move">
+        <div class="profiler_add">
+            
+            <h1>Add Move</h1> 
+            {% csrf_token %}
+
+            <input type="text" class = "profile_name_field" placeholder="Move Name" name="move_name" id="move_name">
+            <br><br>
+            <select class = "type_field" placeholder="move_type" name="move_type" id="move_type">
+                {% for id, value in types %}
+                <option value={{id}}>{{value}}</option> 
+                {% endfor %}
+            </select>
+            <br><br>        
+            <button type="submit" class="confirm_button"  onclick="submitMove()">Save</button>
+            <br><br> 
+            <button type="button" class="link_button" onclick="close_modal('add_move')">Close</button> 
+        </div>
+    </div>
+
+    <div style="display:none" class="profile_popup" id="add_ability">
+        <div class="profiler_add">
+            
+            <h1>Add Ability</h1> 
+            {% csrf_token %}
+
+            <input type="text" class = "profile_name_field" placeholder="Ability Name" name="ability_name" id="ability_name">
+            <br><br>   
+            <button type="submit" class="confirm_button"  onclick="submitAbility()">Save</button>
+            <br><br> 
+            <button type="button" class="link_button" onclick="close_modal('add_ability')">Close</button> 
+        </div>
+    </div>
+ 
+
+
 </section>
+
+<script>
+
+    let cookie = document.cookie
+    let csrfToken = cookie.substring(cookie.indexOf('=') + 1)
+
+    function open_modal(id) {
+      document.getElementById(id).style.display = "block";
+    }
+    
+    function close_modal(id) {
+      document.getElementById(id).style.display = "none";
+    }
+
+    function submitLocation() {
+        $.ajax({
+            url: '/pokedex/new_location/{{profile}}',
+            type: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken
+            },
+            data: {
+                location_name: $('#location_name').val()
+            }
+        }).done( function (returned_data) {
+                opt_value = returned_data.pk
+                opt_text = returned_data.name
+                $('#id_can_find_in').append(`<option value="${opt_value}"}>${opt_text}`)
+                close_modal('add_location')})
+    }  
+    
+    function submitMove() {
+        $.ajax({
+            url: '/pokedex/new_move/{{profile}}',
+            type: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken
+            },
+            data: {
+                move_name: $('#move_name').val(),
+                move_type: $('#move_type').val()
+            }
+        }).done( function (returned_data) {
+                opt_value = returned_data.pk
+                opt_text = returned_data.name
+                opt_type = returned_data.type
+                $('#id_can_learn').append(`<option value="${opt_value}"}>${opt_text} (${opt_type})`)
+                close_modal('add_move')})
+    }
+
+    function submitAbility() {
+        $.ajax({
+            url: '/pokedex/new_ability/{{profile}}',
+            type: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken
+            },
+            data: {
+                ability_name: $('#ability_name').val()
+            }
+        }).done( function (returned_data) {
+                opt_value = returned_data.pk
+                opt_text = returned_data.name
+                $('#id_abilities').append(`<option value="${opt_value}"}>${opt_text}`)
+                close_modal('add_ability')})
+    }   
+</script>
+   
+
 
 {% endblock %}

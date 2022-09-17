@@ -28,6 +28,7 @@ class Type(models.TextChoices):
     FAIRY       = 'FAI', ('Fairy')
     UNKNOWN     = '???', ('???')
 
+
 # SelfValidate is an abstract base class that we use whenever a model
 # needs additional validation. Validation should be implemented in "clean()".
 # WARNING: Even though we overwrite "save()", some methods will circumvent 
@@ -148,4 +149,4 @@ class Capable(SelfValidate):
             raise ValidationError('Attempting to associate a Pokemon with an Ability from a different profile.')
     
     def __str__(self):
-        return self.pokemon + ' can possess ' + self.ability
+        return str(self.pokemon) + ' can possess ' + str(self.ability)
