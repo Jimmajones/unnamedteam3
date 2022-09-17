@@ -45,16 +45,26 @@ class SelfValidate(models.Model):
 # Users can have multiple Profiles: We want users to be able to 
 # maintain a Pokedex for different games or save files.
 class Profile(models.Model):
-    name            = models.CharField(max_length=20, unique=True)
+    name            = models.CharField(max_length=20)
     user            = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    # We want a user's profiles to be unique, but not
+    # EVERY profile across the table to be unique (i.e users Bob and Jane 
+    # should both be able to make a profile named "AwesomeProfile", but not
+    # two profiles named that). We repeat this in most models.
+    class Meta:
+        unique_together = [['name', 'user']]
 
     def __str__(self):
         return self.name
 
 # We want users to be able to record where they have seen a Pokemon.
 class Location(models.Model):
-    name            = models.CharField(max_length=20, unique=True)
+    name            = models.CharField(max_length=20)
     profile         = models.ForeignKey(Profile, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = [['name', 'profile']]
 
     def __str__(self):
         return self.name
@@ -62,9 +72,12 @@ class Location(models.Model):
 # We want users to be able to record what moves they know a Pokemon can learn.
 # Moves are skills or attacks Pokemon use during battles. Moves have one type.
 class Move(models.Model):
-    name            = models.CharField(max_length=20, unique=True)
+    name            = models.CharField(max_length=20)
     type            = models.CharField(max_length=3, choices=Type.choices)
     profile         = models.ForeignKey(Profile, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = [['name', 'profile']]
 
     def __str__(self):
         return self.name + ' (' + self.get_type_display() + ')'
@@ -72,8 +85,11 @@ class Move(models.Model):
 # We want users to be able to record what abilities a Pokemon can have.
 # Abilities provide passive effects in battle or in the overworld.
 class Ability(models.Model):
-    name            = models.CharField(max_length=20, unique=True)
+    name            = models.CharField(max_length=20)
     profile         = models.ForeignKey(Profile, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = [['name', 'profile']]
 
     def __str__(self):
         return self.name
@@ -84,7 +100,7 @@ class Ability(models.Model):
 # (but can have two, plus one special "hidden" ability), and may be found
 # in various locations.
 class Pokemon(SelfValidate):
-    name            = models.CharField(max_length=20, unique=True)
+    name            = models.CharField(max_length=20)
     description     = models.CharField(max_length=200, blank=True)
 
     type_one        = models.CharField(max_length=3, choices=Type.choices)
@@ -97,6 +113,9 @@ class Pokemon(SelfValidate):
     can_find_in     = models.ManyToManyField(Location, through='Findable', blank=True, related_name='can_find')
     abilities       = models.ManyToManyField(Ability, through='Capable', blank=True, related_name='can_be_possessed_by')
     profile         = models.ForeignKey(Profile, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = [['name', 'profile']]
 
     def clean(self):
         # Want to raise multiple errors at a time, rather than just one.
