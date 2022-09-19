@@ -111,11 +111,11 @@ def get_detailed_view(req, id):
     single_pokemon_data = pokemon_dict["pokemon_data"][0]
     
     profile_id = pokemon.profile.id
-
-    abilities = pokemon.can_learn.all()
+    moves = pokemon.can_learn.all()
+    abilities = pokemon.abilities.all()
     locations = pokemon.can_find_in.all()
 
-    context = {"pokemon_data": single_pokemon_data, "abilities": abilities, "locations": locations, "profile_id": profile_id}
+    context = {"pokemon_data": single_pokemon_data, "abilities": abilities,"moves": moves, "locations": locations, "profile_id": profile_id}
     return render(req, 'detailed_view.html', context)
 
 
