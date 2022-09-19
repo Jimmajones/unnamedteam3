@@ -3,3 +3,4 @@ Django
 PyMySQL
 django-crispy-forms
 requests
+coverage
