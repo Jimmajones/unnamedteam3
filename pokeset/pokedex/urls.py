@@ -1,11 +1,12 @@
-from django.urls import path
+from django.urls import include, path
 
 from . import views
 
 urlpatterns = [
-    path('',views.get_login, name = 'login'),
-    path('login/', views.get_login, name = "login"),
-    path('register/', views.get_register, name = "register"),
+    path("", views.index, name="index"),
+    #path("login/", views.login_page, name="login"),
+    #path("logout/", views.logout_view, name ="logout"),
+    path('register/', views.get_register, name="register"),
     path('main/', views.get_main, name='main'),
     path('profiles/', views.get_profiles, name = "profiles"),
     path('dashboard/<str:profile_id>', views.get_dashboard, name='dashboard'),

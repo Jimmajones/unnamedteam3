@@ -6,37 +6,18 @@ from django.shortcuts import render, redirect
 import requests
 from .forms import NewPokemonForm, NewUserForm, EditPokemonForm
 from django.contrib import messages
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from . import models
 from django.core import serializers
 from django.http import JsonResponse
 
-# Create your views here.
-def get_login(req):
+# Landing page with basic info about website and links to other parts
+# of website - if not sure where to redirect, should generally go here.
+def index(req):
+    return render(req, "index.html")
 
-    if req.method == "GET":
-        
-        if req.session.get("username") is not None:
-            return redirect("profiles")
-        
-
-    if req.method == "POST":
-        data = req.POST
-        username = data.get("username")
-        password = data.get("password")
-        user = authenticate(username = username, password = password)
-        if user is not None:
-            id = user.id
-            context = {}
-            context["user"] = username
-            context["id"] = user.id
-            if user is not None:
-                req.session['username'] = username
-                req.session['id'] = id
-                return redirect('profiles')
-
-    return render(req, 'login.html')
 
 
 def get_register(req):
@@ -60,15 +41,8 @@ def get_register(req):
     return render(req, 'register.html', context)   
 
 
+@login_required
 def get_profiles(req):
-    if req.method == "GET":
-        if req.session.get('username') is None:
-            return redirect("login")
-    if req.method == "POST":
-        data = req.POST
-        if data.get("logout") == "logout":
-            req.session['username'] = None
-            return redirect("login")
 
     print(req.session.keys())
     user_id = req.session.get('id')
