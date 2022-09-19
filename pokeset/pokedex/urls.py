@@ -4,14 +4,11 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
-    #path("login/", views.login_page, name="login"),
-    #path("logout/", views.logout_view, name ="logout"),
     path('register/', views.get_register, name="register"),
     path('main/', views.get_main, name='main'),
     path('profiles/', views.get_profiles, name = "profiles"),
-    path('dashboard/<str:profile_id>', views.get_dashboard, name='dashboard'),
+    path('dashboard/<int:profile_id>', views.get_dashboard, name='dashboard'),
     path('detailed_view/<str:id>/', views.get_detailed_view, name="detailed"),
-    path('new_profile', views.new_profile, name="profile"),
     path('edit_pokemon/<str:id>/', views.get_edit_pokemon, name="edit"),
     path('create_pokemon/<str:profile_id>', views.get_create_pokemon, name="create" ),
     path('new_location/<str:profile_id>', views.new_location, name="new_location"),

@@ -18,8 +18,7 @@ from django.http import JsonResponse
 def index(req):
     return render(req, "index.html")
 
-
-
+# Register a new user.
 def get_register(req):
 
     form = NewUserForm()
@@ -37,29 +36,26 @@ def get_register(req):
             messages.success(req, f'hi {username}, your account was created sucessfully')
 
             return redirect('login')
+    else:
+        return render(req, 'register.html', context)   
 
-    return render(req, 'register.html', context)   
 
-
+# @login_required is a nifty little decorator for login_required().
+# If the user is logged in, the view executes normally. If they aren't,
+# it'll redirect to (in settings.py) LOGIN_URL, and after they succesfully
+# login, redirect back to here.
 @login_required
 def get_profiles(req):
-
-    print(req.session.keys())
-    user_id = req.session.get('id')
-    print(user_id)
-    profiles = models.Profile.objects.filter(user=user_id).iterator
-    context = {"username":req.session.get('username'), "profiles":profiles}
-    return render(req,'profiles.html', context)
-      
-
-def new_profile(req):
-    if req.method == "POST" and req.session.get('username') is not None:
-        data = req.POST
-        user_id = req.session.get('id')
-        new_profile_entry = models.Profile.objects.create(name=data["save_name"],user_id=user_id)
+    if req.method == "POST":
+        # TO-DO: Change this to use a form (uniqueness error not accounted for)
+        new_profile_entry = models.Profile.objects.create(name=req.POST["save_name"], user=req.user)
         new_profile_entry.save()
-    return redirect('profiles')
-
+        return redirect("profiles")
+    else:
+        profiles = models.Profile.objects.filter(user=req.user.id).iterator
+        context = {"username":req.session.get('username'), "profiles":profiles}
+        return render(req,'profiles.html', context)
+      
 
 def get_main(req):
     return render(req, 'main.html')
