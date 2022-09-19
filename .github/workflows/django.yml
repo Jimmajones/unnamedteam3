@@ -54,5 +54,6 @@ jobs:
 
     - name: Create Coverage Report
       run: |
+        cd pokeset
         coverage run --source='.' manage.py test
         coverage report
