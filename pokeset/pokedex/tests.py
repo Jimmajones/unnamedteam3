@@ -36,7 +36,7 @@ class AccessViewTestCaseWithSelenium(StaticLiveServerTestCase):
         super().setUpClass()
         chrome_options = Options()
         chrome_options.add_argument('--headless')
-        cls.selenium = webdriver.Chrome(service=ChromeService(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()))
+        cls.selenium = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()),options=chrome_options)
         cls.selenium.implicitly_wait(10)
     
     @classmethod
