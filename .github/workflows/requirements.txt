@@ -4,3 +4,5 @@ PyMySQL
 django-crispy-forms
 requests
 coverage
+selenium
+webdriver-manager
