@@ -3,6 +3,8 @@ from selenium import webdriver
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.chrome.service import Service as ChromeService
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.core.utils import ChromeType
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
 class AccessViewTestCase(TestCase):
@@ -32,7 +34,9 @@ class AccessViewTestCaseWithSelenium(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.selenium = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+        chrome_options = Options()
+        chrome_options.add_argument('--headless')
+        cls.selenium = webdriver.Chrome(service=ChromeService(ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()))
         cls.selenium.implicitly_wait(10)
     
     @classmethod
