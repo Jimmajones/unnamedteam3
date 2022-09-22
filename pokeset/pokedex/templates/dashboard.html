@@ -2,17 +2,49 @@
 
 <button onclick='location.href="/pokedex/profiles"' class="back_button">Back</button>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $("#nameInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#table_id tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function(){
+        $("#typeInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#table_id tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function(){
+        $("#locationInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#table_id tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+
 <div class="filters">
-    <input placeholder="Name" type="search"></input>
-    <input placeholder="Type(s)" type="search"></input>
-    <input placeholder="Location" type="search"></input>
+    <input id ="nameInput" placeholder="Name" type="search"></input>
+    <input id ="typeInput" placeholder="Type(s)" type="search"></input>
+    <input id ="locationInput" placeholder="Location" type="search"></input>
 
 </div>
 <section class="poke_table_section">
     <div id="poke_table_container">
-
-
-
 
         <table id="table_id" class="display">
             {% comment %}
