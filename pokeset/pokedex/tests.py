@@ -93,6 +93,56 @@ class AccessViewTestCaseWithSelenium(StaticLiveServerTestCase):
         username_input.send_keys('username')
         self.assertEqual(username_input.get_attribute('value'), 'username') 
 
+    def test_text_can_be_enter_in_password_input_login_page(self):
+        # go to login webpage
+        url = self.live_server_url
+        self.driver.get(url + '/pokedex/login')
+
+        # get password input and check if text can be entered in the input box
+        username_input = self.driver.find_element(By.NAME, 'password')
+        username_input.send_keys('secret#1')
+        self.assertEqual(username_input.get_attribute('value'), 'secret#1')
+    
+    def test_text_can_be_enter_in_username_input_register_page(self):
+        # go to register webpage
+        url = self.live_server_url
+        self.driver.get(url + '/pokedex/register')
+
+        # get username input and check if text can be entered in the input box
+        username_input = self.driver.find_element(By.NAME, 'username')
+        username_input.send_keys('username')
+        self.assertEqual(username_input.get_attribute('value'), 'username')
+    
+    def test_text_can_be_enter_in_email_input_register_page(self):
+        # go to register webpage
+        url = self.live_server_url
+        self.driver.get(url + '/pokedex/register')
+
+        # get email input and check if text can be entered in the input box
+        username_input = self.driver.find_element(By.NAME, 'email')
+        username_input.send_keys('test@example.com')
+        self.assertEqual(username_input.get_attribute('value'), 'test@example.com')
+    
+    def test_text_can_be_enter_in_password1_input_register_page(self):
+        # go to register webpage
+        url = self.live_server_url
+        self.driver.get(url + '/pokedex/register')
+
+        # get password1 input and check if text can be entered in the input box
+        username_input = self.driver.find_element(By.NAME, 'password1')
+        username_input.send_keys('secret')
+        self.assertEqual(username_input.get_attribute('value'), 'secret')
+    
+    def test_text_can_be_enter_in_password2_input_register_page(self):
+        # go to register webpage
+        url = self.live_server_url
+        self.driver.get(url + '/pokedex/register')
+
+        # get password2 input and check if text can be entered in the input box
+        username_input = self.driver.find_element(By.NAME, 'password2')
+        username_input.send_keys('secret')
+        self.assertEqual(username_input.get_attribute('value'), 'secret')
+
 class RegisterAndLoginTestCase(StaticLiveServerTestCase):
     """
     Set of test cases that test access to test successfully registering
@@ -143,6 +193,7 @@ class RegisterAndLoginTestCase(StaticLiveServerTestCase):
         url = self.live_server_url
         self.driver.get(url + '/pokedex/login')
         self.driver.find_element(By.CLASS_NAME, 'link_button').click()
+        
         # register new account, login and check if user can logout of account 
         register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
         login_to_account(self.driver, 'test_user', 'secret#1')
