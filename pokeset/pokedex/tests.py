@@ -51,6 +51,7 @@ class AccessViewTestCaseWithSelenium(StaticLiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        # set up webdriver for test cases
         super().setUpClass()
         chrome_options = Options()
         chrome_options.add_argument('--headless')
@@ -60,21 +61,37 @@ class AccessViewTestCaseWithSelenium(StaticLiveServerTestCase):
     
     @classmethod
     def tearDownClass(cls):
+        # quit webdriver after all test cases have run
         cls.driver.quit()
         return super().tearDownClass()
 
     def test_register_access_from_login_page(self):
+        # go to login webpage
         url = self.live_server_url
         self.driver.get(url + '/pokedex/login')
+
+        # click 'create new account' button and check if user is in the register webpage
         self.driver.find_element(By.CLASS_NAME, 'link_button').click()
         self.assertEqual(self.driver.current_url, url + '/pokedex/register/')
 
     def test_register_access_from_login_page(self):
+        # go to register webpage
         url = self.live_server_url
         self.driver.get(url + '/pokedex/register')
+
+        # click back button and check if user is in the login webpage
         self.driver.find_element(By.CLASS_NAME, 'link_back_button').click()
-        self.assertEqual(self.driver.current_url, url + '/pokedex/login/')
-    
+        self.assertEqual(self.driver.current_url, url + '/pokedex/login/') 
+
+    def test_text_can_be_enter_in_username_input_login_page(self):
+        # go to login webpage
+        url = self.live_server_url
+        self.driver.get(url + '/pokedex/login')
+
+        # get username input and check if text can be entered in the input box
+        username_input = self.driver.find_element(By.NAME, 'username')
+        username_input.send_keys('username')
+        self.assertEqual(username_input.get_attribute('value'), 'username') 
 
 class RegisterAndLoginTestCase(StaticLiveServerTestCase):
     """
@@ -84,6 +101,7 @@ class RegisterAndLoginTestCase(StaticLiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        # set up webdriver for test cases
         super().setUpClass()
         chrome_options = Options()
         chrome_options.add_argument('--headless')
@@ -93,46 +111,41 @@ class RegisterAndLoginTestCase(StaticLiveServerTestCase):
     
     @classmethod
     def tearDownClass(cls):
+        # quit webdriver after all test cases have run
         cls.driver.quit()
         return super().tearDownClass()
 
     def test_registering_new_account(self):
+        # go to register webpage
         url = self.live_server_url
         self.driver.get(url + '/pokedex/login')
         self.driver.find_element(By.CLASS_NAME, 'link_button').click()
-        self.driver.find_element(By.NAME, 'username').send_keys('test_user')
-        self.driver.find_element(By.NAME, 'email').send_keys('test@example.com')
-        self.driver.find_element(By.NAME, 'password1').send_keys('secret#1')
-        self.driver.find_element(By.NAME, 'password2').send_keys('secret#1')
-        self.driver.find_element(By.CLASS_NAME, 'confirm_button').click()
+
+        # register a valid new account and check if user has returned to 
+        # login page if account is successfully register
+        register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
         self.assertEqual(self.driver.current_url, url + '/pokedex/login/')
 
     def test_login_new_account(self):
+        # go to register webpage
         url = self.live_server_url
         self.driver.get(url + '/pokedex/login')
         self.driver.find_element(By.CLASS_NAME, 'link_button').click()
-        self.driver.find_element(By.NAME, 'username').send_keys('test_user')
-        self.driver.find_element(By.NAME, 'email').send_keys('test@example.com')
-        self.driver.find_element(By.NAME, 'password1').send_keys('secret#1')
-        self.driver.find_element(By.NAME, 'password2').send_keys('secret#1')
-        self.driver.find_element(By.CLASS_NAME, 'confirm_button').click()
-        self.driver.find_element(By.NAME, 'username').send_keys('test_user')
-        self.driver.find_element(By.NAME, 'password').send_keys('secret#1')
-        self.driver.find_element(By.CLASS_NAME, 'confirm_button').click()
+
+        # register new account and login and check if user 
+        # has successfully signed into account
+        register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
+        login_to_account(self.driver, 'test_user', 'secret#1')
         self.assertEqual(self.driver.current_url, url + '/pokedex/profiles/')
     
     def test_user_can_successfully_logout(self):
+        # go to register webpage
         url = self.live_server_url
         self.driver.get(url + '/pokedex/login')
         self.driver.find_element(By.CLASS_NAME, 'link_button').click()
-        self.driver.find_element(By.NAME, 'username').send_keys('test_user')
-        self.driver.find_element(By.NAME, 'email').send_keys('test@example.com')
-        self.driver.find_element(By.NAME, 'password1').send_keys('secret#1')
-        self.driver.find_element(By.NAME, 'password2').send_keys('secret#1')
-        self.driver.find_element(By.CLASS_NAME, 'confirm_button').click()
-        self.driver.find_element(By.NAME, 'username').send_keys('test_user')
-        self.driver.find_element(By.NAME, 'password').send_keys('secret#1')
-        self.driver.find_element(By.CLASS_NAME, 'confirm_button').click()
+        # register new account, login and check if user can logout of account 
+        register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
+        login_to_account(self.driver, 'test_user', 'secret#1')
         self.driver.find_element(By.CLASS_NAME, 'back_button').click()
         self.assertEqual(self.driver.current_url, url + '/pokedex/login/') 
 
@@ -149,5 +162,23 @@ class RegisterAndLoginTestCase(StaticLiveServerTestCase):
         self.assertEqual(self.driver.current_url, url + '/pokedex/register/')    
 
 
+# Helper functions for the testing
 
+def register_account(driver: webdriver, username, email_account, password1, password2):
+    # enter new account details
+    driver.find_element(By.NAME, 'username').send_keys(username)
+    driver.find_element(By.NAME, 'email').send_keys(email_account)
+    driver.find_element(By.NAME, 'password1').send_keys(password1)
+    driver.find_element(By.NAME, 'password2').send_keys(password2)
+
+    # submit new account form
+    driver.find_element(By.CLASS_NAME, 'confirm_button').click()
+
+def login_to_account(driver: webdriver, username, password):
+    # enter account details into sign in page
+    driver.find_element(By.NAME, 'username').send_keys(username)
+    driver.find_element(By.NAME, 'password').send_keys(password)
+
+    # submit sign in information
+    driver.find_element(By.CLASS_NAME, 'confirm_button').click()
 
