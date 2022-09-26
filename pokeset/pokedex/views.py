@@ -1,17 +1,20 @@
+from django.shortcuts import get_object_or_404, render, redirect
+import requests
+from .forms import NewProfileForm, NewPokemonForm, NewUserForm, EditPokemonForm
+from django.contrib.auth.decorators import login_required
+from . import models
+from django.http import JsonResponse
+"""
+Unused imports:
 from email import message_from_bytes
 from importlib.resources import contents
 from multiprocessing import context
 from urllib import request, response
-from django.shortcuts import render, redirect
-import requests
-from .forms import NewProfileForm, NewPokemonForm, NewUserForm, EditPokemonForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from . import models
 from django.core import serializers
-from django.http import JsonResponse
+"""
 
 # Landing page with basic info about website and links to other parts
 # of website - if not sure where to redirect, should generally go here.
@@ -40,10 +43,13 @@ def get_register(req):
 # If the user is logged in, the view executes normally. If they aren't,
 # it'll redirect to (in settings.py) LOGIN_URL, and after they succesfully
 # login, redirect back to here.
+
+# Handle the profiles/saves of a user.
 @login_required
 def get_profiles(req):
     if req.method == "POST":
-        # Associate the user with the input.
+        # Associate the user with the input by passing req.user
+        # (see NewProfileForm in forms.py for more info)
         form = NewProfileForm(req.POST, user=req.user)
         if form.is_valid():
             form.save()
@@ -51,21 +57,21 @@ def get_profiles(req):
     else:
         form = NewProfileForm(user=req.user)
     
-    profiles = models.Profile.objects.filter(user=req.user.id)
+    profiles = models.Profile.objects.filter(user=req.user)
     context = {"form": form, "profiles": profiles}
     return render(req, "profiles.html", context)
 
+# Get all the Pokemon of a profile/save.
+@login_required
 def get_dashboard(req, profile_id):
-    # get profile based on session username
-    user_id = req.session.get('id')
-    profile_obj = models.Profile.objects.get(id=profile_id, user_id = user_id)
+    profile_obj = get_object_or_404(models.Profile,id=profile_id, user=req.user)
     # get pokemon list from database
     pokemon = models.Pokemon.objects.filter(profile=profile_obj).values()
     print(pokemon)
     context = {"pokemon_data": pokemon, "profile_id": profile_id}
     print(context)
     set_images(context)
-    return render(req, 'dashboard.html', context=context)
+    return render(req, "dashboard.html", context=context)
 
 def get_detailed_view(req, id):
     print(req.path)
