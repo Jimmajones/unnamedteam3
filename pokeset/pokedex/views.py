@@ -20,24 +20,20 @@ def index(req):
 
 # Register a new user.
 def get_register(req):
-
-    form = NewUserForm()
-    context= {}
-    context["register_form"] = form
-   
+    # If it's a POST request, handle the form data.
     if req.method == "POST":
-
         form = NewUserForm(req.POST)
-
         if form.is_valid():
-
+            # Create the user.
             form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(req, f'hi {username}, your account was created sucessfully')
-
-            return redirect('login')
+            return redirect("login")
     else:
-        return render(req, 'register.html', context)   
+        form = NewUserForm()
+
+    context = {}
+    context["form"] = form
+
+    return render(req, "register.html", context)   
 
 
 # @login_required is a nifty little decorator for login_required().

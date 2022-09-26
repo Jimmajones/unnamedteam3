@@ -11,22 +11,20 @@
 
 {% extends '../main.html' %} {% block content %}
 
-{% if form.errors %}
-<p>Error! Username and/or password incorrect.</p>
-{% endif %}
-
 {% if next %}
-<p>Must be logged in.</p>
+<p>Must be logged in to access that page.</p>
 {% endif %}
 
 
 <div class = "login_box">
     <form method="POST" action="{% url 'login' %}">
         {% csrf_token %}
-
         <p class="login_title">Sign In</p>
-        
-        {{ form }}
+
+        {% for field in form %}
+            {{ field }}
+            {{ field.errors }}
+        {% endfor %}
 
         <button type="submit" class="confirm_button" value="login">Login</button> 
         <input type="hidden" name="next" value="{{ next }}">
