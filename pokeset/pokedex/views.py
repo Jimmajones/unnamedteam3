@@ -4,7 +4,7 @@ from multiprocessing import context
 from urllib import request, response
 from django.shortcuts import render, redirect
 import requests
-from .forms import NewPokemonForm, NewUserForm, EditPokemonForm
+from .forms import NewProfileForm, NewPokemonForm, NewUserForm, EditPokemonForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -43,18 +43,17 @@ def get_register(req):
 @login_required
 def get_profiles(req):
     if req.method == "POST":
-        # TO-DO: Change this to use a form (uniqueness error not accounted for)
-        new_profile_entry = models.Profile.objects.create(name=req.POST["save_name"], user=req.user)
-        new_profile_entry.save()
-        return redirect("profiles")
+        # Associate the user with the input.
+        form = NewProfileForm(req.POST, user=req.user)
+        if form.is_valid():
+            form.save()
+            return redirect("profiles")
     else:
-        profiles = models.Profile.objects.filter(user=req.user.id).iterator
-        context = {"username":req.session.get('username'), "profiles":profiles}
-        return render(req,'profiles.html', context)
-      
-
-def get_main(req):
-    return render(req, 'main.html')
+        form = NewProfileForm(user=req.user)
+    
+    profiles = models.Profile.objects.filter(user=req.user.id)
+    context = {"form": form, "profiles": profiles}
+    return render(req, "profiles.html", context)
 
 def get_dashboard(req, profile_id):
     # get profile based on session username

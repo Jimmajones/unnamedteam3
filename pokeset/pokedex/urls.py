@@ -4,9 +4,8 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path('register/', views.get_register, name="register"),
-    path('main/', views.get_main, name='main'),
-    path('profiles/', views.get_profiles, name = "profiles"),
+    path("register/", views.get_register, name="register"),
+    path("profiles/", views.get_profiles, name="profiles"),
     path('dashboard/<int:profile_id>', views.get_dashboard, name='dashboard'),
     path('detailed_view/<str:id>/', views.get_detailed_view, name="detailed"),
     path('edit_pokemon/<str:id>/', views.get_edit_pokemon, name="edit"),

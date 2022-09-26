@@ -1,7 +1,10 @@
+from site import USER_BASE
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 from . import models
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 
 # Create a new user. Overrides default UserCreationForm.
@@ -36,7 +39,7 @@ class NewUserForm(UserCreationForm):
 	
 	class Meta:
 		model = User
-		fields = ("username", "email", "password1", "password2")
+		fields = ["username", "email", "password1", "password2"]
 		
 	def save(self, commit=True):
 		# First, save the fields that are in UserCreationForm.
@@ -46,6 +49,23 @@ class NewUserForm(UserCreationForm):
 		if commit:
 			user.save()
 		return user
+
+# Create a profile.
+class NewProfileForm(ModelForm):
+	
+	def __init__(self, *args, **kwargs):
+		# Form is passed a user on init, which it initializes the field
+		# to and then disables. Django will ignore the input (even if the
+		# user tampers with it) and use the "initial" value of a disabled field.
+		self._user = kwargs.pop("user")
+		super().__init__(*args, **kwargs)
+		self.fields["user"].initial = self._user
+		self.fields["user"].disabled = True
+
+	class Meta:
+		model = models.Profile
+		fields = ["user", "name"] 
+
 
 class NewPokemonForm(ModelForm):
 	class Meta:

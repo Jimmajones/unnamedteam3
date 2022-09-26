@@ -8,17 +8,16 @@
 
 
 <div class = "profiles_box">
-        {% if profiles %}
-            {% for profile in profiles %}
-            <div class="profile">
-                <button class="profile_circles"
-                       style="background-color:red" onclick="location.href='{% url 'dashboard' profile.id %}'">
-                
-                </button>
-                <h3>{{profile.name}}</h3>
-            </div>
-            {% endfor %}
-        {% endif %}
+    {{ form.errors }}
+        {% for profile in profiles %}
+        <div class="profile">
+            <button class="profile_circles"
+                    style="background-color:red" onclick="location.href='{% url 'dashboard' profile.id %}'">
+            
+            </button>
+            <h3>{{profile.name}}</h3>
+        </div>
+        {% endfor %}
         <div class="profile">
             <button class = "profile_circles" onclick="open_add_profile()">
                 +
@@ -31,8 +30,8 @@
             <form action="{% url 'profiles' %}" method="POST" class="profile_container">
             <h1>Add Save</h1> 
             {% csrf_token %}
-
-            <input type="text" class = "profile_name_field" placeholder="Save Name" name="save_name" id="save_name" required>
+            
+           {{form.name.label}} {{ form.name }}
             <br><br>        
             <button type="submit" class="confirm_button"  onclick="location.href='#'">Save</button>
             <br><br>
