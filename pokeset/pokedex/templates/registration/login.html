@@ -1,0 +1,40 @@
+<!-- Login template that the default Django authentication view
+    LoginView will use. 
+    
+    Template context:
+    
+    form: Form object representing the AuthenticationForm.
+    next: URL to redirect to after successful login.
+    site: Current Site object (not really needed for our case).
+    site_name: Alias for site.name (also not really needed).
+-->
+
+{% extends '../main.html' %} {% block content %}
+
+{% if next %}
+<p>Must be logged in to access that page.</p>
+{% endif %}
+
+
+<div class = "login_box">
+    <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        <p class="login_title">Sign In</p>
+
+        {% for field in form %}
+            {{ field }}
+            {{ field.errors }}
+        {% endfor %}
+
+        <button type="submit" class="confirm_button" value="login">Login</button> 
+        <input type="hidden" name="next" value="{{ next }}">
+    </form>
+
+</div>
+
+<a href="{% url 'password_reset' %}">Forgot Password</a>
+
+
+<link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}">
+
+{% endblock %}

@@ -1,17 +1,18 @@
+<!-- Display a list of the user's current profiles, and allow them to
+    create new ones. -->
+
 {% extends './main.html' %}
 {% block content %}
 {% comment %} the now "U" thing is to make css refresh, remove later {% endcomment %}
 <link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}?{% now "U" %}">
 
-<form method = "POST">
-    {% csrf_token %}
-    <button name = "logout" value = "logout" class = "back_button" >Logout</button>
-</form>
 
 <div class = "profiles_box">
+    {{ form.errors }}
         {% for profile in profiles %}
         <div class="profile">
-            <button class = "profile_circles" style="background-color:red" onclick="location.href='/pokedex/dashboard/{{profile.id}}'">
+            <button class="profile_circles"
+                    style="background-color:red" onclick="location.href='{% url 'dashboard' profile.id %}'">
             
             </button>
             <h3>{{profile.name}}</h3>
@@ -26,11 +27,11 @@
     <div class="profile_popup" id="add_profile">
         <div class="profiler_add">
             
-            <form action="/pokedex/new_profile" method="POST" class="profile_container">
+            <form action="{% url 'profiles' %}" method="POST" class="profile_container">
             <h1>Add Save</h1> 
             {% csrf_token %}
-
-            <input type="text" class = "profile_name_field" placeholder="Save Name" name="save_name" id="save_name" required>
+            
+           {{form.name.label}} {{ form.name }}
             <br><br>        
             <button type="submit" class="confirm_button"  onclick="location.href='#'">Save</button>
             <br><br>

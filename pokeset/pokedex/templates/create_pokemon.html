@@ -1,12 +1,12 @@
 {% extends './main.html' %} {% block content %}
 
-<button onclick='location.href="/pokedex/dashboard/{{profile_id}}"' class="back_button">Back</button>
+<button onclick='location.href="{% url 'dashboard' profile_id %}"' class="back_button">Back</button>
 
 <section class="poke_input_section">
 
         <h1>Create New Pokemon</h1>
 
-        <form id="new_pokemon_form" action="/pokedex/create_pokemon/{{profile_id}}" method="POST">
+        <form id="new_pokemon_form" action="{% url 'create_pokemon' profile_id %}" method="POST">
             {% csrf_token %}
             {{ form }}
             <input class="big_bottom_button" type="submit" value="Next">

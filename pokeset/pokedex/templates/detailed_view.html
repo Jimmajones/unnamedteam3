@@ -1,6 +1,6 @@
 {% extends './main.html' %} {% block content %}
 
-<button onclick='location.href="/pokedex/dashboard/{{profile_id}}"' class="back_button">Back</button>
+<button onclick='location.href="{% url 'dashboard' profile_id %}"' class="back_button">Back</button>
 
 <section class="poke_view_section">
     <div id="stats">
@@ -55,6 +55,6 @@
             </div>
         </div>
     </div>
-    <button class="big_bottom_button" onclick='location.href="/pokedex/edit_pokemon/{{pokemon_data.id}}"'>Edit Pokemon</button>
+    <button class="big_bottom_button" onclick='location.href="{% url 'edit_pokemon' pokemon_data.id %}"'>Edit Pokemon</button>
 </section>
 {% endblock %}

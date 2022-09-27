@@ -1,174 +1,169 @@
+from django.shortcuts import get_object_or_404, render, redirect
+import requests
+from . import forms
+from django.contrib.auth.decorators import login_required
+from . import models
+from django.http import JsonResponse
+
+"""
+Unused imports:
+from mailbox import _ProxyFile
 from email import message_from_bytes
 from importlib.resources import contents
 from multiprocessing import context
 from urllib import request, response
-from django.shortcuts import render, redirect
-import requests
-from .forms import NewPokemonForm, NewUserForm, EditPokemonForm
 from django.contrib import messages
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from . import models
 from django.core import serializers
-from django.http import JsonResponse
+"""
 
-# Create your views here.
-def get_login(req):
+# Landing page with basic info about website and links to other parts
+# of website - if not sure where to redirect, should generally go here.
+def index(req):
+    return render(req, "index.html")
 
-    if req.method == "GET":
-        
-        if req.session.get("username") is not None:
-            return redirect("profiles")
-        
-
-    if req.method == "POST":
-        data = req.POST
-        username = data.get("username")
-        password = data.get("password")
-        user = authenticate(username = username, password = password)
-        if user is not None:
-            id = user.id
-            context = {}
-            context["user"] = username
-            context["id"] = user.id
-            if user is not None:
-                req.session['username'] = username
-                req.session['id'] = id
-                return redirect('profiles')
-
-    return render(req, 'login.html')
-
-
+# Register a new user.
 def get_register(req):
-
-    form = NewUserForm()
-    context= {}
-    context["register_form"] = form
-   
+    # If it's a POST request, handle the form data.
     if req.method == "POST":
-
-        form = NewUserForm(req.POST)
-
+        form = forms.NewUserForm(req.POST)
+        # Validate the form and create the new object.
         if form.is_valid():
-
             form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(req, f'hi {username}, your account was created sucessfully')
+            return redirect("login")
+    else:
+        form = forms.NewUserForm()
 
-            return redirect('login')
+    context = {}
+    context["form"] = form
 
-    return render(req, 'register.html', context)   
+    return render(req, "register.html", context)   
 
+# @login_required is a nifty little decorator for login_required().
+# If the user is logged in, the view executes normally. If they aren't,
+# it'll redirect to (in settings.py) LOGIN_URL, and after they succesfully
+# login, redirect back to here.
 
+# Handle the profiles/saves of a user.
+@login_required
 def get_profiles(req):
-    if req.method == "GET":
-        if req.session.get('username') is None:
-            return redirect("login")
     if req.method == "POST":
-        data = req.POST
-        if data.get("logout") == "logout":
-            req.session['username'] = None
-            return redirect("login")
+        # Associate the user with the input by passing req.user
+        # (see NewProfileForm in forms.py for more info)
+        form = forms.NewProfileForm(req.POST, user=req.user)
+        if form.is_valid():
+            form.save()
+            return redirect("profiles")
+    else:
+        form = forms.NewProfileForm(user=req.user)
+    
+    profiles = models.Profile.objects.filter(user=req.user)
 
-    print(req.session.keys())
-    user_id = req.session.get('id')
-    print(user_id)
-    profiles = models.Profile.objects.filter(user=user_id).iterator
-    context = {"username":req.session.get('username'), "profiles":profiles}
-    return render(req,'profiles.html', context)
-      
+    context = {}
+    context["form"] = form
+    context["profiles"] = profiles
 
-def new_profile(req):
-    if req.method == "POST" and req.session.get('username') is not None:
-        data = req.POST
-        user_id = req.session.get('id')
-        new_profile_entry = models.Profile.objects.create(name=data["save_name"],user_id=user_id)
-        new_profile_entry.save()
-    return redirect('profiles')
+    return render(req, "profiles.html", context)
 
-
-def get_main(req):
-    return render(req, 'main.html')
-
+# Get all the Pokemon of a profile/save.
+@login_required
 def get_dashboard(req, profile_id):
-    # get profile based on session username
-    user_id = req.session.get('id')
-    profile_obj = models.Profile.objects.get(id=profile_id, user_id = user_id)
-    # get pokemon list from database
+
+    # Get the profile of this ID, and must belong to this user.
+    profile_obj = get_object_or_404(models.Profile, id=profile_id, user=req.user)
     pokemon = models.Pokemon.objects.filter(profile=profile_obj).values()
-    print(pokemon)
-    context = {"pokemon_data": pokemon, "profile_id": profile_id}
-    print(context)
+
+    context = {}
+    context["pokemon_data"] = pokemon
+    context["profile_id"] = profile_id
+
     set_images(context)
-    return render(req, 'dashboard.html', context=context)
 
-def get_detailed_view(req, id):
-    print(req.path)
+    return render(req, "dashboard.html", context)
 
-    pokemon = models.Pokemon.objects.get(id=id)
+# Show a Pokemon in detail.
+@login_required
+def get_detailed_view(req, pokemon_id):
+
+    pokemon = get_object_or_404(models.Pokemon, id=pokemon_id)
+    if pokemon.profile.user != req.user:
+        # TO-DO: Create a "permission denied" page
+        return redirect("index")
+    
     pokemon_dict = {"pokemon_data": [pokemon.__dict__]}
     set_images(pokemon_dict)
-    single_pokemon_data = pokemon_dict["pokemon_data"][0]
+
+    # TO-DO: Fix up the context (sending a dictionary of the Pokemon
+    # and its abilities/locations, rather than just the raw Pokemon,
+    # is a bit confusing).
+    context = {}
+    context["pokemon_data"] = pokemon_dict["pokemon_data"][0]
+    context["profile_id"] = pokemon.profile.id
+    context["abilities"] = pokemon.can_learn.all()
+    context["locations"] = pokemon.can_find_in.all()
+
+    return render(req, "detailed_view.html", context)
+
+# Edit an existing Pokemon.
+@login_required
+def get_edit_pokemon(req, pokemon_id):  
+
+    pokemon = get_object_or_404(models.Pokemon, id=pokemon_id)
+    if pokemon.profile.user != req.user:
+        # TO-DO: Create a "permission denied" page
+        return redirect("index")
     
-    profile_id = pokemon.profile.id
-    moves = pokemon.can_learn.all()
-    abilities = pokemon.abilities.all()
-    locations = pokemon.can_find_in.all()
-
-    context = {"pokemon_data": single_pokemon_data, "abilities": abilities,"moves": moves, "locations": locations, "profile_id": profile_id}
-    return render(req, 'detailed_view.html', context)
-
-
-def get_edit_pokemon(req, id):  
-    if req.session.get('id') is None:
-        return redirect('login')
+    # TO-DO: Fix up context (it's a little unintuitive).
+    pre_context = {"pokemon_data": [pokemon.__dict__]}
     types = models.Type.choices
+
     if req.method == 'POST':
-        pokemon = models.Pokemon.objects.get(id=id)
-        form = EditPokemonForm(req.POST, instance=pokemon)
-        # check whether it's valid:
+        form = forms.EditPokemonForm(req.POST, instance=pokemon)
         if form.is_valid():
-            # process the data in form.cleaned_data as required
             form.save()
-            # redirect to a new URL:
-            return redirect('/pokedex/detailed_view/' + id)
-        else:
-            print("this hasn't worked")
-            error_msg =  "Incorrect Input"
-            return render(req, 'edit_pokemon.html', {'form': form, 'pokemon_id': id, 'profile': pokemon.profile.id, 'types': types})
+            return redirect("detailed", pokemon_id=pokemon.id)
     else:
-        print(req.path)
-        pokemon = models.Pokemon.objects.get(id=id)
-        context = {"pokemon_data": [pokemon.__dict__]}
-        set_images(context)
-        form = EditPokemonForm(instance=pokemon)
-        return render(req, 'edit_pokemon.html', 
-        {"pokemon_data": context["pokemon_data"][0], 'form': form, 'pokemon_id': id, 'profile': pokemon.profile.id, 'types':types})
+        set_images(pre_context)
+        form = forms.EditPokemonForm(instance=pokemon)
 
+    # TO-DO: Form should filter "evolves_from" so that only
+    # Pokemon belonging to the user are options.
+    context = {}
+    context["pokemon_data"] = pre_context["pokemon_data"][0]
+    context["form"] = form
+    context["pokemon_id"] = pokemon_id
+    context["profile"] = pokemon.profile
+    context["types"] = types
+    return render(req, "edit_pokemon.html", context)
 
+# Form to create a new Pokemon.
+@login_required
 def get_create_pokemon(req, profile_id):
-    if req.session.get('id') is None:
-        return redirect('login')
-    if req.method == 'POST':
-        form = NewPokemonForm(req.POST)
-        # check whether it's valid:
+
+    profile_obj = get_object_or_404(models.Profile, id=profile_id, user=req.user)
+    
+    if req.method == "POST":
+        form = forms.NewPokemonForm(req.POST, profile=profile_obj)
         if form.is_valid():
-            this_profile_id = profile_id
-            # process the data in form.cleaned_data as required
-            new_pokemon = form.save(this_profile_id)
-            # redirect to a new URL:
-            return redirect('/pokedex/edit_pokemon/' + str(new_pokemon.id))
-        else:
-            print("not working")
-            error_msg =  "Incorrect Input"
-            return render(req, 'create_pokemon.html', {'form': form, 'error': error_msg, 'profile_id': profile_id })
+            new_pokemon = form.save()
+            # Redirect to the newly created Pokemon.
+            return redirect("edit_pokemon", pokemon_id=new_pokemon.id)
+
     else:
-        form = NewPokemonForm()
-        return render(req, 'create_pokemon.html', {'form': form, 'profile_id': profile_id})
+        form = forms.NewPokemonForm(profile=profile_obj)
+    
+    context = {}
+    context["form"] = form
+    context["profile_id"] = profile_id
+    return render(req, "create_pokemon.html", context)
 
 
+# TO-DO: Change these all (below) to use forms.
+
+@login_required
 def new_location(req, profile_id):
-    if req.method == "POST" and req.session.get('username') is not None:
+    if req.method == "POST":
         data = req.POST
         # to-do: validate this data
         profile = models.Profile.objects.get(id=profile_id)
@@ -179,8 +174,9 @@ def new_location(req, profile_id):
         # response = serializers.serialize('json', [new_location])
         return JsonResponse(location_dict, status=200)
 
+@login_required
 def new_move(req, profile_id):
-    if req.method == "POST" and req.session.get('username') is not None:
+    if req.method == "POST":
         data = req.POST
         # to-do: validate this data
         profile = models.Profile.objects.get(id=profile_id)
@@ -196,8 +192,9 @@ def new_move(req, profile_id):
         dict = {"name": new_move.name, "type": label, "pk": new_move.id}
         return JsonResponse(dict, status=200)
 
+@login_required
 def new_ability(req, profile_id):
-    if req.method == "POST" and req.session.get('username') is not None:
+    if req.method == "POST":
         data = req.POST
         # to-do: validate this data
         profile = models.Profile.objects.get(id=profile_id)

@@ -1,0 +1,20 @@
+<!-- Logout template that the default Django authentication view
+    LogoutView will use. Not really necessary since we redirect to the
+    index page, but we may change our minds in the future.
+
+    Template context:
+
+    title: "Logged out" string, localized.
+    site: Current Site object (not really needed for our case).
+    site_name: Alias for site.name (also not really needed).    
+-->
+
+{% extends '../main.html' %} {% block content %}
+
+<h1>{{ title }} </h1>
+<p>Logged out successfully. Goodbye!</p>
+
+
+<link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}">
+
+{% endblock %}

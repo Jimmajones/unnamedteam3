@@ -1,0 +1,18 @@
+<!-- The landing page. -->
+
+{% extends './main.html' %} 
+
+{% block content %}
+
+<h1>Welcome!</h1>
+
+<p>This is Pokeset - a website for recording Pokemon.</p>
+
+{% if user.is_authenticated %}
+    <a href="{% url 'profiles' %}">Profiles</a>
+{% else %}
+    <a href="{% url 'login' %}">Login</a>
+    <a href="{% url 'register' %}">Register</a>
+{% endif %}
+
+{% endblock %}

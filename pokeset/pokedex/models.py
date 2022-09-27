@@ -53,7 +53,7 @@ class Profile(models.Model):
     # should both be able to make a profile named "AwesomeProfile", but not
     # two profiles named that). We repeat this in most models.
     class Meta:
-        unique_together = [['name', 'user']]
+        constraints = [models.UniqueConstraint(name="unique_profiles", fields=["name", "user"])]
 
     def __str__(self):
         return self.name
@@ -64,7 +64,8 @@ class Location(models.Model):
     profile         = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = [['name', 'profile']]
+        constraints = [models.UniqueConstraint(name="unique_locations", fields=["name", "profile"])]
+
 
     def __str__(self):
         return self.name
@@ -77,7 +78,7 @@ class Move(models.Model):
     profile         = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = [['name', 'profile']]
+        constraints = [models.UniqueConstraint(name="unique_moves", fields=["name", "profile"])]
 
     def __str__(self):
         return self.name + ' (' + self.get_type_display() + ')'
@@ -89,7 +90,7 @@ class Ability(models.Model):
     profile         = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = [['name', 'profile']]
+        constraints = [models.UniqueConstraint(name="unique_abilities", fields=["name", "profile"])]
 
     def __str__(self):
         return self.name
@@ -115,7 +116,7 @@ class Pokemon(SelfValidate):
     profile         = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = [['name', 'profile']]
+        constraints = [models.UniqueConstraint(name="unique_pokemons", fields=["name", "profile"])]
 
     def clean(self):
         # Want to raise multiple errors at a time, rather than just one.
