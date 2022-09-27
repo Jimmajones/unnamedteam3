@@ -3,7 +3,7 @@
 <link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}?{% now "U" %}">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 
-<button onclick='location.href="/pokedex/detailed_view/{{pokemon_data.id}}"' class="back_button">Back</button>
+<button onclick='location.href="{% url 'detailed' pokemon_data.id %}"' class="back_button">Back</button>
 
 {% if form.errors %}
     {% for field in form %}

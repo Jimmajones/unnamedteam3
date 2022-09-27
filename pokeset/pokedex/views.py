@@ -4,6 +4,7 @@ from .forms import NewProfileForm, NewPokemonForm, NewUserForm, EditPokemonForm
 from django.contrib.auth.decorators import login_required
 from . import models
 from django.http import JsonResponse
+
 """
 Unused imports:
 from email import message_from_bytes
@@ -89,13 +90,13 @@ def get_detailed_view(req, id):
     context = {"pokemon_data": single_pokemon_data, "abilities": abilities, "locations": locations, "profile_id": profile_id}
     return render(req, 'detailed_view.html', context)
 
+@login_required
+def get_edit_pokemon(req, pokemon_id):  
 
-def get_edit_pokemon(req, id):  
-    if req.session.get('id') is None:
-        return redirect('login')
+    pokemon = get_object_or_404(models.Pokemon, id=pokemon_id)
     types = models.Type.choices
+
     if req.method == 'POST':
-        pokemon = models.Pokemon.objects.get(id=id)
         form = EditPokemonForm(req.POST, instance=pokemon)
         # check whether it's valid:
         if form.is_valid():
@@ -108,8 +109,6 @@ def get_edit_pokemon(req, id):
             error_msg =  "Incorrect Input"
             return render(req, 'edit_pokemon.html', {'form': form, 'pokemon_id': id, 'profile': pokemon.profile.id, 'types': types})
     else:
-        print(req.path)
-        pokemon = models.Pokemon.objects.get(id=id)
         context = {"pokemon_data": [pokemon.__dict__]}
         set_images(context)
         form = EditPokemonForm(instance=pokemon)
@@ -117,25 +116,21 @@ def get_edit_pokemon(req, id):
         {"pokemon_data": context["pokemon_data"][0], 'form': form, 'pokemon_id': id, 'profile': pokemon.profile.id, 'types':types})
 
 
+# Form to create a new Pokemon.
+@login_required
 def get_create_pokemon(req, profile_id):
-    if req.session.get('id') is None:
-        return redirect('login')
-    if req.method == 'POST':
-        form = NewPokemonForm(req.POST)
+    if req.method == "POST":
+        form = NewPokemonForm(req.POST, profile=profile_id)
         # check whether it's valid:
         if form.is_valid():
-            this_profile_id = profile_id
-            # process the data in form.cleaned_data as required
-            new_pokemon = form.save(this_profile_id)
+            form.save()
             # redirect to a new URL:
-            return redirect('/pokedex/edit_pokemon/' + str(new_pokemon.id))
-        else:
-            print("not working")
-            error_msg =  "Incorrect Input"
-            return render(req, 'create_pokemon.html', {'form': form, 'error': error_msg, 'profile_id': profile_id })
+            return redirect("edit_pokemon", pokemon_id=profile_id)
+
     else:
-        form = NewPokemonForm()
-        return render(req, 'create_pokemon.html', {'form': form, 'profile_id': profile_id})
+        form = NewPokemonForm(profile=profile_id)
+    
+    return render(req, "create_pokemon.html", {"form": form, "profile_id": profile_id})
 
 
 def new_location(req, profile_id):

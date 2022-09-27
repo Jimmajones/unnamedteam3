@@ -68,9 +68,16 @@ class NewProfileForm(ModelForm):
 
 
 class NewPokemonForm(ModelForm):
+
+	def __init__(self, *args, **kwargs):
+		self._profile = kwargs.pop("profile")
+		super().__init__(*args, **kwargs)
+		self.fields["profile"].initial = self._profile
+		self.fields["profile"].disabled = True
+
 	class Meta:
 		model = models.Pokemon
-		fields = ['name', 'description', 'type_one', 'type_two']
+		fields = ["profile", "name", "description", "type_one", "type_two"]
 		widgets = {
 			'name': forms.TextInput(attrs = {
 				'id': 'pokemon_name_input',
@@ -91,13 +98,6 @@ class NewPokemonForm(ModelForm):
 				'class': 'new_pokemon_input'
 			})
 		}
-
-	def save(self, profile_id, commit=True):
-		pokemon = super(NewPokemonForm, self).save(commit=False)
-		pokemon.profile_id = profile_id
-		if commit:
-			pokemon.save()
-		return pokemon
 
 
 class EditPokemonForm(ModelForm):

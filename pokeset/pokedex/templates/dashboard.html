@@ -1,6 +1,6 @@
 {% extends './main.html' %} {% block content %}
 
-<button onclick='location.href="/pokedex/profiles"' class="back_button">Back</button>
+<button onclick='location.href="{% url 'profiles' %}"' class="back_button">Back</button>
 
 <div class="filters">
     <input placeholder="Name" type="search"></input>
@@ -49,7 +49,7 @@
                 <thead>
                     <tbody>
                         {% for pokemon in pokemon_data %}
-                        <tr onclick="location.href='/pokedex/detailed_view/{{pokemon.id}}'">
+                        <tr onclick="location.href='{% url 'detailed' pokemon.id %}'">
                             <td>
                                 <div id="name_col">
                                     {%if pokemon.img is not None %}
@@ -86,6 +86,6 @@
         </script>
 
     </div>
-    <button onclick="location.href='/pokedex/create_pokemon/{{profile_id}}'" id="add_pokemon_button">Add Pokemon</button>
+    <button onclick="location.href='{% url 'create_pokemon' profile_id %}'" id="add_pokemon_button">Add Pokemon</button>
 </section>
 {% endblock %}
