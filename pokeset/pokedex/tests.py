@@ -8,7 +8,7 @@ from selenium.webdriver.common.by import By
 
 LOGIN_URL = '/accounts/login/'
 REGISTER_URL = '/register/'
-INDEX_URL = ''
+INDEX_URL = '/'
 PROFILES_URL = '/profiles/'
 
 CONFIRM_CLASS = 'confirm_button'
