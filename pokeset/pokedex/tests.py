@@ -12,11 +12,11 @@ class AccessViewTestCase(TestCase):
     """
 
     def test_login_access(self):
-        response = self.client.get('/pokedex/login/')
+        response = self.client.get('login')
         self.assertEqual(response.status_code, 200)
 
     def test_register_access(self):
-        response = self.client.get('/pokedex/register/')
+        response = self.client.get('register')
         self.assertEqual(response.status_code, 200)
 
     def test_login_without_login_path_access(self):
@@ -30,7 +30,7 @@ class CorrectTemplateTestCase(TestCase):
     """
 
     def test_login_template(self):
-        response = self.client.get('/login/')
+        response = self.client.get('login')
         self.assertTemplateUsed(response, 'login.html')
 
     def test_register_template(self):
@@ -39,7 +39,7 @@ class CorrectTemplateTestCase(TestCase):
 
     def test_login_without_login_path_template(self):
         response = self.client.get('')
-        self.assertTemplateUsed(response, 'login.html')
+        self.assertTemplateUsed(response, 'index.html')
 
 
 
