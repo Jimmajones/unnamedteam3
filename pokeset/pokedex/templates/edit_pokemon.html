@@ -25,7 +25,7 @@
 
     <h2>Editing {{pokemon_data.name}}</h2>
     <div = "info">Hold ctrl to select multiple</div>
-    <form  action="/pokedex/edit_pokemon/{{pokemon_id}}/" method="POST">
+    <form  action="{% url 'edit_pokemon' pokemon_data.id %}" method="POST">
         <div id="edit_pokemon_form">
             {% csrf_token %}
         {{ form.non_field_errors }}

@@ -57,6 +57,9 @@ class NewProfileForm(ModelForm):
 		# Form is passed a user on init, which it initializes the field
 		# to and then disables. Django will ignore the input (even if the
 		# user tampers with it) and use the "initial" value of a disabled field.
+		# Doing it this way lets Django do validation on things like the 
+		# "user and profile name uniqueness" constraint at the form level,
+		# rather than the database level.
 		self._user = kwargs.pop("user")
 		super().__init__(*args, **kwargs)
 		self.fields["user"].initial = self._user
