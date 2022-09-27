@@ -6,21 +6,29 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
+LOGIN_URL = '/accounts/login/'
+REGISTER_URL = '/register/'
+INDEX_URL = ''
+PROFILES_URL = '/profiles/'
+
+CONFIRM_CLASS = 'confirm_button'
+BACK_CLASS = 'link_back_button'
+
 class AccessViewTestCase(TestCase):
     """
     Set of test cases that test access to the webpages of the website
     """
 
     def test_login_access(self):
-        response = self.client.get('login')
+        response = self.client.get(LOGIN_URL)
         self.assertEqual(response.status_code, 200)
 
     def test_register_access(self):
-        response = self.client.get('register')
+        response = self.client.get(REGISTER_URL)
         self.assertEqual(response.status_code, 200)
 
     def test_login_without_login_path_access(self):
-        response = self.client.get('')
+        response = self.client.get(INDEX_URL)
         self.assertEqual(response.status_code, 200)
 
 
@@ -30,15 +38,15 @@ class CorrectTemplateTestCase(TestCase):
     """
 
     def test_login_template(self):
-        response = self.client.get('login')
+        response = self.client.get(LOGIN_URL)
         self.assertTemplateUsed(response, 'login.html')
 
     def test_register_template(self):
-        response = self.client.get('/register/')
+        response = self.client.get(REGISTER_URL)
         self.assertTemplateUsed(response, 'register.html')
 
     def test_login_without_login_path_template(self):
-        response = self.client.get('')
+        response = self.client.get(INDEX_URL)
         self.assertTemplateUsed(response, 'index.html')
 
 
@@ -68,25 +76,25 @@ class AccessViewTestCaseWithSelenium(StaticLiveServerTestCase):
     def test_register_access_from_login_page(self):
         # go to login webpage
         url = self.live_server_url
-        self.driver.get(url + '/pokedex/login')
+        self.driver.get(url + LOGIN_URL)
 
         # click 'create new account' button and check if user is in the register webpage
-        self.driver.find_element(By.CLASS_NAME, 'link_button').click()
-        self.assertEqual(self.driver.current_url, url + '/pokedex/register/')
+        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
+        self.assertEqual(self.driver.current_url, url + REGISTER_URL)
 
     def test_register_access_from_login_page(self):
         # go to register webpage
         url = self.live_server_url
-        self.driver.get(url + '/pokedex/register')
+        self.driver.get(url + REGISTER_URL)
 
         # click back button and check if user is in the login webpage
-        self.driver.find_element(By.CLASS_NAME, 'link_back_button').click()
-        self.assertEqual(self.driver.current_url, url + '/pokedex/login/') 
+        self.driver.find_element(By.CLASS_NAME, BACK_CLASS).click()
+        self.assertEqual(self.driver.current_url, url + LOGIN_URL) 
 
     def test_text_can_be_enter_in_username_input_login_page(self):
         # go to login webpage
         url = self.live_server_url
-        self.driver.get(url + '/pokedex/login')
+        self.driver.get(url + LOGIN_URL)
 
         # get username input and check if text can be entered in the input box
         username_input = self.driver.find_element(By.NAME, 'username')
@@ -96,7 +104,7 @@ class AccessViewTestCaseWithSelenium(StaticLiveServerTestCase):
     def test_text_can_be_enter_in_password_input_login_page(self):
         # go to login webpage
         url = self.live_server_url
-        self.driver.get(url + '/pokedex/login')
+        self.driver.get(url + LOGIN_URL)
 
         # get password input and check if text can be entered in the input box
         username_input = self.driver.find_element(By.NAME, 'password')
@@ -106,7 +114,7 @@ class AccessViewTestCaseWithSelenium(StaticLiveServerTestCase):
     def test_text_can_be_enter_in_username_input_register_page(self):
         # go to register webpage
         url = self.live_server_url
-        self.driver.get(url + '/pokedex/register')
+        self.driver.get(url + REGISTER_URL)
 
         # get username input and check if text can be entered in the input box
         username_input = self.driver.find_element(By.NAME, 'username')
@@ -116,7 +124,7 @@ class AccessViewTestCaseWithSelenium(StaticLiveServerTestCase):
     def test_text_can_be_enter_in_email_input_register_page(self):
         # go to register webpage
         url = self.live_server_url
-        self.driver.get(url + '/pokedex/register')
+        self.driver.get(url + REGISTER_URL)
 
         # get email input and check if text can be entered in the input box
         username_input = self.driver.find_element(By.NAME, 'email')
@@ -126,7 +134,7 @@ class AccessViewTestCaseWithSelenium(StaticLiveServerTestCase):
     def test_text_can_be_enter_in_password1_input_register_page(self):
         # go to register webpage
         url = self.live_server_url
-        self.driver.get(url + '/pokedex/register')
+        self.driver.get(url + REGISTER_URL)
 
         # get password1 input and check if text can be entered in the input box
         username_input = self.driver.find_element(By.NAME, 'password1')
@@ -136,7 +144,7 @@ class AccessViewTestCaseWithSelenium(StaticLiveServerTestCase):
     def test_text_can_be_enter_in_password2_input_register_page(self):
         # go to register webpage
         url = self.live_server_url
-        self.driver.get(url + '/pokedex/register')
+        self.driver.get(url + REGISTER_URL)
 
         # get password2 input and check if text can be entered in the input box
         username_input = self.driver.find_element(By.NAME, 'password2')
@@ -168,49 +176,49 @@ class RegisterAndLoginTestCase(StaticLiveServerTestCase):
     def test_registering_new_account(self):
         # go to register webpage
         url = self.live_server_url
-        self.driver.get(url + '/pokedex/login')
-        self.driver.find_element(By.CLASS_NAME, 'link_button').click()
+        self.driver.get(url + LOGIN_URL)
+        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
 
         # register a valid new account and check if user has returned to 
         # login page if account is successfully register
         register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
-        self.assertEqual(self.driver.current_url, url + '/pokedex/login/')
+        self.assertEqual(self.driver.current_url, url + LOGIN_URL)
 
     def test_login_new_account(self):
         # go to register webpage
         url = self.live_server_url
-        self.driver.get(url + '/pokedex/login')
-        self.driver.find_element(By.CLASS_NAME, 'link_button').click()
+        self.driver.get(url + LOGIN_URL)
+        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
 
         # register new account and login and check if user 
         # has successfully signed into account
         register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
         login_to_account(self.driver, 'test_user', 'secret#1')
-        self.assertEqual(self.driver.current_url, url + '/pokedex/profiles/')
+        self.assertEqual(self.driver.current_url, url + PROFILES_URL)
     
     def test_user_can_successfully_logout(self):
         # go to register webpage
         url = self.live_server_url
-        self.driver.get(url + '/pokedex/login')
-        self.driver.find_element(By.CLASS_NAME, 'link_button').click()
+        self.driver.get(url + LOGIN_URL)
+        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
         
         # register new account, login and check if user can logout of account 
         register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
         login_to_account(self.driver, 'test_user', 'secret#1')
-        self.driver.find_element(By.CLASS_NAME, 'back_button').click()
-        self.assertEqual(self.driver.current_url, url + '/pokedex/login/') 
+        self.driver.find_element(By.CLASS_NAME, BACK_CLASS).click()
+        self.assertEqual(self.driver.current_url, url + LOGIN_URL) 
 
     def test_click_login_button_with_no_login_details(self):
         url = self.live_server_url
-        self.driver.get(url + '/pokedex/login')
-        self.driver.find_element(By.CLASS_NAME, "confirm_button").click()
-        self.assertEqual(self.driver.current_url, url + '/pokedex/login/') 
+        self.driver.get(url + LOGIN_URL)
+        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
+        self.assertEqual(self.driver.current_url, url + LOGIN_URL) 
 
     def test_click_register_button_with_no_register_details(self):
         url = self.live_server_url
-        self.driver.get(url + '/pokedex/register')
-        self.driver.find_element(By.CLASS_NAME, "confirm_button").click()
-        self.assertEqual(self.driver.current_url, url + '/pokedex/register/')    
+        self.driver.get(url + REGISTER_URL)
+        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
+        self.assertEqual(self.driver.current_url, url + REGISTER_URL)    
 
 
 # Helper functions for the testing
@@ -223,7 +231,7 @@ def register_account(driver: webdriver, username, email_account, password1, pass
     driver.find_element(By.NAME, 'password2').send_keys(password2)
 
     # submit new account form
-    driver.find_element(By.CLASS_NAME, 'confirm_button').click()
+    driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
 
 def login_to_account(driver: webdriver, username, password):
     # enter account details into sign in page
@@ -231,5 +239,5 @@ def login_to_account(driver: webdriver, username, password):
     driver.find_element(By.NAME, 'password').send_keys(password)
 
     # submit sign in information
-    driver.find_element(By.CLASS_NAME, 'confirm_button').click()
+    driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
 
