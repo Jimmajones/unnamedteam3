@@ -13,6 +13,7 @@ PROFILES_URL = '/profiles/'
 
 CONFIRM_CLASS = 'confirm_button'
 BACK_CLASS = 'link_back_button'
+LOGOUT_CLASS = 'logout'
 
 class AccessViewTestCase(TestCase):
     """
@@ -39,7 +40,7 @@ class CorrectTemplateTestCase(TestCase):
 
     def test_login_template(self):
         response = self.client.get(LOGIN_URL)
-        self.assertTemplateUsed(response, 'login.html')
+        self.assertTemplateUsed(response, 'registration/login.html')
 
     def test_register_template(self):
         response = self.client.get(REGISTER_URL)
@@ -176,8 +177,7 @@ class RegisterAndLoginTestCase(StaticLiveServerTestCase):
     def test_registering_new_account(self):
         # go to register webpage
         url = self.live_server_url
-        self.driver.get(url + LOGIN_URL)
-        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
+        self.driver.get(url + REGISTER_URL)
 
         # register a valid new account and check if user has returned to 
         # login page if account is successfully register
@@ -187,8 +187,7 @@ class RegisterAndLoginTestCase(StaticLiveServerTestCase):
     def test_login_new_account(self):
         # go to register webpage
         url = self.live_server_url
-        self.driver.get(url + LOGIN_URL)
-        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
+        self.driver.get(url + REGISTER_URL)
 
         # register new account and login and check if user 
         # has successfully signed into account
@@ -199,14 +198,13 @@ class RegisterAndLoginTestCase(StaticLiveServerTestCase):
     def test_user_can_successfully_logout(self):
         # go to register webpage
         url = self.live_server_url
-        self.driver.get(url + LOGIN_URL)
-        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
+        self.driver.get(url + REGISTER_URL)
         
         # register new account, login and check if user can logout of account 
         register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
         login_to_account(self.driver, 'test_user', 'secret#1')
-        self.driver.find_element(By.CLASS_NAME, BACK_CLASS).click()
-        self.assertEqual(self.driver.current_url, url + LOGIN_URL) 
+        self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
+        self.assertEqual(self.driver.current_url, url + INDEX_URL) 
 
     def test_click_login_button_with_no_login_details(self):
         url = self.live_server_url
