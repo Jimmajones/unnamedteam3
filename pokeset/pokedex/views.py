@@ -1,4 +1,3 @@
-from mailbox import _ProxyFile
 from django.shortcuts import get_object_or_404, render, redirect
 import requests
 from . import forms
@@ -8,6 +7,7 @@ from django.http import JsonResponse
 
 """
 Unused imports:
+from mailbox import _ProxyFile
 from email import message_from_bytes
 from importlib.resources import contents
 from multiprocessing import context
@@ -127,6 +127,8 @@ def get_edit_pokemon(req, pokemon_id):
         set_images(pre_context)
         form = forms.EditPokemonForm(instance=pokemon)
 
+    # TO-DO: Form should filter "evolves_from" so that only
+    # Pokemon belonging to the user are options.
     context = {}
     context["pokemon_data"] = pre_context["pokemon_data"][0]
     context["form"] = form
@@ -156,9 +158,8 @@ def get_create_pokemon(req, profile_id):
     context["profile_id"] = profile_id
     return render(req, "create_pokemon.html", context)
 
-"""
-TO-DO: Change these all to use forms.
-"""
+
+# TO-DO: Change these all (below) to use forms.
 
 @login_required
 def new_location(req, profile_id):
