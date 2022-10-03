@@ -197,12 +197,12 @@ class RegisterAndLoginTestCase(StaticLiveServerTestCase):
     def test_login_new_account(self):
         # go to register webpage
         url = self.live_server_url
-        self.driver.get(url + LOGIN_URL)
+        self.driver.get(url + REGISTER_URL)
 
         # register new account and login and check if user 
         # has successfully signed into account
-        #register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
-        login_to_account(self.driver, 'another_user', 'secretpassword1')
+        register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
+        login_to_account(self.driver, 'test_user', 'secret#1')
         self.assertEqual(self.driver.current_url, url + PROFILES_URL)
     
     def test_user_can_successfully_logout(self):
