@@ -6,11 +6,13 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
+# URLs for testing
 LOGIN_URL = '/accounts/login/'
 REGISTER_URL = '/register/'
 INDEX_URL = '/'
 PROFILES_URL = '/profiles/'
 
+# class names for testing
 CONFIRM_CLASS = 'confirm_button'
 BACK_CLASS = 'link_back_button'
 LOGOUT_CLASS = 'logout'
@@ -74,16 +76,7 @@ class AccessViewTestCaseWithSelenium(StaticLiveServerTestCase):
         cls.driver.quit()
         return super().tearDownClass()
 
-    def test_register_access_from_login_page(self):
-        # go to login webpage
-        url = self.live_server_url
-        self.driver.get(url + LOGIN_URL)
-
-        # click 'create new account' button and check if user is in the register webpage
-        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
-        self.assertEqual(self.driver.current_url, url + REGISTER_URL)
-
-    def test_register_access_from_login_page(self):
+    def test_login_access_from_register_page(self):
         # go to register webpage
         url = self.live_server_url
         self.driver.get(url + REGISTER_URL)
@@ -216,7 +209,32 @@ class RegisterAndLoginTestCase(StaticLiveServerTestCase):
         url = self.live_server_url
         self.driver.get(url + REGISTER_URL)
         self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
-        self.assertEqual(self.driver.current_url, url + REGISTER_URL)    
+        self.assertEqual(self.driver.current_url, url + REGISTER_URL)
+
+    def test_click_login_button_with_no_password_login_details(self):
+        url = self.live_server_url
+        self.driver.get(url + REGISTER_URL)
+        register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
+        self.driver.find_element(By.NAME, 'username').send_keys('test_user')
+        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
+        self.assertEqual(self.driver.current_url, url + LOGIN_URL) 
+
+    def test_click_login_button_with_no_username_login_details(self):
+        url = self.live_server_url
+        self.driver.get(url + REGISTER_URL)
+        register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
+        self.driver.find_element(By.NAME, 'password').send_keys('secret#1')
+        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
+        self.assertEqual(self.driver.current_url, url + LOGIN_URL)   
+    
+    def test_click_login_button_with_incorrect_password_login_details(self):
+        url = self.live_server_url
+        self.driver.get(url + REGISTER_URL)
+        register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
+        self.driver.find_element(By.NAME, 'username').send_keys('test_user1')
+        self.driver.find_element(By.NAME, 'password').send_keys('secret#2')
+        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
+        self.assertEqual(self.driver.current_url, url + LOGIN_URL)      
 
 
 # Helper functions for the testing
