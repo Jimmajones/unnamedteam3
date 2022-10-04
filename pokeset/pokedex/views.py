@@ -74,6 +74,9 @@ def get_dashboard(req, profile_id):
     profile_obj = get_object_or_404(models.Profile, id=profile_id, user=req.user)
     pokemon = models.Pokemon.objects.filter(profile=profile_obj).values()
     for poke in pokemon:
+        print(poke)
+        poke['location'] = get_object_or_404(models.Pokemon, id=poke['id']).can_find_in.all()
+        print(poke['location'])
         get_type_info(poke)
 
     context = {}
@@ -84,9 +87,13 @@ def get_dashboard(req, profile_id):
     return render(req, "dashboard.html", context)
 
 
+
+
 def get_type_info(pokemon):
-    pokemon["effective_against"] = (type_chart[pokemon['type_one']])["effective"] + (type_chart[pokemon['type_two']])["effective"]
-    pokemon["ineffective_against"] = (type_chart[pokemon['type_one']])["not_effective"] + (type_chart[pokemon['type_two']])["not_effective"]
+    pokemon["effective_against"] = [*set(((type_chart[pokemon['type_one']])["effective"] 
+        + (type_chart[pokemon['type_two']])["effective"]))]
+    pokemon["ineffective_against"] = [*set(((type_chart[pokemon['type_one']])["not_effective"] 
+        + (type_chart[pokemon['type_two']])["not_effective"]))]
 
 
 # Show a Pokemon in detail.
