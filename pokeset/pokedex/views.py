@@ -73,14 +73,21 @@ def get_dashboard(req, profile_id):
     # Get the profile of this ID, and must belong to this user.
     profile_obj = get_object_or_404(models.Profile, id=profile_id, user=req.user)
     pokemon = models.Pokemon.objects.filter(profile=profile_obj).values()
+    for poke in pokemon:
+        get_type_info(poke)
 
     context = {}
     context["pokemon_data"] = pokemon
     context["profile_id"] = profile_id
-
     set_images(context)
 
     return render(req, "dashboard.html", context)
+
+
+def get_type_info(pokemon):
+    pokemon["effective_against"] = (type_chart[pokemon['type_one']])["effective"] + (type_chart[pokemon['type_two']])["effective"]
+    pokemon["ineffective_against"] = (type_chart[pokemon['type_one']])["not_effective"] + (type_chart[pokemon['type_two']])["not_effective"]
+
 
 # Show a Pokemon in detail.
 @login_required
@@ -92,6 +99,9 @@ def get_detailed_view(req, pokemon_id):
         return redirect("index")
     
     pokemon_dict = {"pokemon_data": [pokemon.__dict__]}
+
+    get_type_info(pokemon_dict["pokemon_data"][0])
+
     set_images(pokemon_dict)
 
     # TO-DO: Fix up the context (sending a dictionary of the Pokemon
@@ -222,6 +232,34 @@ def set_images(context):
 
 
 
+# For type weakness and strength
+# Adapted from https://github.com/filipekiss/pokemon-type-chart/blob/master/types.json
+# Using data fromm https://img.pokemondb.net/images/typechart-gen2345.png
+# Weakness = "Will recieve double damage from this type"
+# Strength = "Will do double damage 
+# Offensive table
+type_chart = {
+"NOR":{"effective":[], "not_effective":["ROC","GHO","STE"]},
+"FIR":{"not_effective":["FIR","WAT","ROC","DRA"],"effective":["GRA","ICE","BUG","STE"]},
+"WAT":{"not_effective":["WAT","GRA","DRA"],"effective":["FIR","GRO","ROC"]},
+"ELE":{"not_effective":["ELE","GRA","DRA", "GRO"],"effective":["WAT","FLY"]},
+"GRA":{"not_effective":["FIR","GRA","POI","FLY","BUG","DRA","STE"],"effective":["Water","GRO","ROC"]},
+"ICE":{"not_effective":["FIR","WAT","ICE","STE"],"effective":["GRA","GRO","FLY","DRA"]},
+"FIG":{"not_effective":["POI","FLY","PSY","BUG","FAI","GHO"],"effective":["NOR","ICE","ROC","DAR","STE"]},
+"POI":{"not_effective":["POI","GRO","ROC","GHO", "STE"],"effective":["GRA","FAI"]},
+"GRO":{"not_effective":["GRA","BUG","FLY"],"effective":["FIR","ELE","POI","ROC","STE"]},
+"FLY":{"not_effective":["ELE","ROC","STE"],"effective":["GRA","FIG","BUG"]},
+"PSY":{"not_effective":["PSY","STE","DAR"],"effective":["FIG","POI"]},
+"BUG":{"not_effective":["FIR","FIG","POI","FLY","GHO","STE","FAI"],"effective":["GRA","PSY","DAR"]},
+"ROC":{"not_effective":["FIG","GRO","STE"],"effective":["FIR","ICE","FLY","BUG"]},
+"GHO":{"not_effective":["DAR","NOR"],"effective":["PSY","GHO"]},
+"DRA":{"not_effective":["STE","FAI"],"effective":["DRA"]},
+"DAR":{"not_effective":["FIG","DAR","FAI"],"effective":["PSY","GHO"]},
+"STE":{"not_effective":["FIR","WAT","ELE","STE"],"effective":["ICE","ROC","FAI"]},
+"FAI":{"not_effective":["FIR","POI","STE"],"effective":["FIG","DRA","DAR"]},
+"": {"not_effective":[],"effective":[]}
+}
+
 
 
 # To be deleted, using to test front-end
@@ -229,53 +267,53 @@ static_pokemon = [
     {   
         "id":"123",
         "name": "Charmander",
-        "type1": "Fire",
+        "type1": "FIR",
         "type2": None,
         "location": "Pallet Town",
         "abilities": [
         {
             "name": "Growl",
-            "type": "Normal"
+            "type": "NOR"
         }, 
         {
             "name": "Ember",
             "type": "Fire"
         }],
-        "effective": ["Grass"],
-        "weakness": ["Rock", "Water"],
+        "effective": ["GRA"],
+        "weakness": ["ROC", "Water"],
         "img": None
     },
     {   
         "id":"111",
         "name": "Pikachu",
-        "type1": "Electric",
+        "type1": "ELE",
         "type2": None,
         "location": "Pallet Town",
         "abilities": [{
             "name": "Static",
-            "type": "Normal"
+            "type": "NOR"
         }],
-        "effective": ["Flying"],
-        "weakness": ["Ground", "Water"],
+        "effective": ["FLY"],
+        "weakness": ["GRO", "Water"],
         "img": None
     },
     {   
         "id":"114",
         "name": "Charizard",
-        "type1": "Fire",
+        "type1": "FIR",
         "type2": None,
         "location": "Pallet Town, Route 404",
         "abilities": [
         {
             "name": "Growl",
-            "type": "Normal"
+            "type": "NOR"
         }, 
         {
             "name": "Ember",
             "type": "Fire"
         }],
-        "effective": ["Grass"],
-        "weakness": ["Rock", "Water"],
+        "effective": ["GRA"],
+        "weakness": ["ROC", "Water"],
         "img": None
     }          
 ]
