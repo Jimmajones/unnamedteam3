@@ -9,7 +9,7 @@
         $("#nameInput").on("keyup", function() {
             var value = $(this).val().toLowerCase();
             $("#table_id tr").filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                $(this).toggle($(this).find("td:eq(0)").text().toLowerCase().indexOf(value) > -1)
             });
         });
     });
@@ -20,7 +20,7 @@
         $("#typeInput").on("keyup", function() {
             var value = $(this).val().toLowerCase();
             $("#table_id tr").filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                $(this).toggle($(this).find("td:eq(1)").text().toLowerCase().indexOf(value) > -1)
             });
         });
     });
@@ -31,7 +31,7 @@
         $("#locationInput").on("keyup", function() {
             var value = $(this).val().toLowerCase();
             $("#table_id tr").filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                $(this).toggle($(this).find("td:eq(2)").text().toLowerCase().indexOf(value) > -1)
             });
         });
     });
@@ -82,7 +82,7 @@
                     <tbody>
                         {% for pokemon in pokemon_data %}
                         <tr onclick="location.href='{% url 'detailed' pokemon.id %}'">
-                            <td>
+                            <td>   
                                 <div id="name_col">
                                     {%if pokemon.img is not None %}
                                     <img src="{{pokemon.img}}">
