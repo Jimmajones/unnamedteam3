@@ -35,7 +35,7 @@ class AccessViewTestCase(TestCase):
         response = self.client.get(REGISTER_URL)
         self.assertEqual(response.status_code, 200)
 
-    def test_login_without_login_path_access(self):
+    def test_index_access(self):
         response = self.client.get(INDEX_URL)
         self.assertEqual(response.status_code, 200)
 
@@ -53,7 +53,7 @@ class CorrectTemplateTestCase(TestCase):
         response = self.client.get(REGISTER_URL)
         self.assertTemplateUsed(response, 'register.html')
 
-    def test_login_without_login_path_template(self):
+    def test_index_template(self):
         response = self.client.get(INDEX_URL)
         self.assertTemplateUsed(response, 'index.html')
 
@@ -86,6 +86,24 @@ class AccessViewTestCaseWithSelenium(StaticLiveServerTestCase):
         cls.chrome_driver.quit()
         cls.firefox_driver.quit()
         return super().tearDownClass()
+    
+    def test_login_access_from_index_page(self):
+        # go to index page
+        url = self.live_server_url
+        self.chrome_driver.get(url + INDEX_URL)
+
+        # click login link and check that user is in the login page
+        self.chrome_driver.find_element(By.NAME, "login_link").click()
+        self.assertEqual(self.chrome_driver.current_url, url + LOGIN_URL)
+
+    def test_register_access_from_index_page(self):
+        # go to index page
+        url = self.live_server_url
+        self.chrome_driver.get(url + INDEX_URL)
+
+        # click login link and check that user is in the login page
+        self.chrome_driver.find_element(By.NAME, "register_link").click()
+        self.assertEqual(self.chrome_driver.current_url, url + REGISTER_URL)
 
     def test_login_access_from_register_page(self):
         # go to register webpage
