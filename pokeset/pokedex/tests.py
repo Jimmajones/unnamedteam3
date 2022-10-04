@@ -22,6 +22,11 @@ CONFIRM_CLASS = 'confirm_button'
 BACK_CLASS = 'link_back_button'
 LOGOUT_CLASS = 'logout'
 
+# test account details
+USERNAME = 'test_user'
+EMAIL = 'test@example.com'
+PASSWORD = 'secret#1'
+
 class AccessViewTestCase(TestCase):
     """
     Set of test cases that test access to the webpages of the website
@@ -137,8 +142,8 @@ class AccessViewTestCaseWithSelenium(StaticLiveServerTestCase):
 
         # get password input and check if text can be entered in the input box
         username_input = self.chrome_driver.find_element(By.NAME, 'password')
-        username_input.send_keys('secret#1')
-        self.assertEqual(username_input.get_attribute('value'), 'secret#1')
+        username_input.send_keys(PASSWORD)
+        self.assertEqual(username_input.get_attribute('value'), PASSWORD)
     
     def test_text_can_be_enter_in_username_input_register_page(self):
         # go to register webpage
@@ -157,8 +162,8 @@ class AccessViewTestCaseWithSelenium(StaticLiveServerTestCase):
 
         # get email input and check if text can be entered in the input box
         username_input = self.chrome_driver.find_element(By.NAME, 'email')
-        username_input.send_keys('test@example.com')
-        self.assertEqual(username_input.get_attribute('value'), 'test@example.com')
+        username_input.send_keys(EMAIL)
+        self.assertEqual(username_input.get_attribute('value'), EMAIL)
     
     def test_text_can_be_enter_in_password1_input_register_page(self):
         # go to register webpage
@@ -209,7 +214,7 @@ class RegisterAndLoginTestCase(StaticLiveServerTestCase):
 
         # register a valid new account and check if user has returned to 
         # login page if account is successfully register
-        register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
+        register_account(self.driver, USERNAME, EMAIL, PASSWORD, PASSWORD)
         self.assertEqual(self.driver.current_url, url + LOGIN_URL)
 
     def test_login_new_account(self):
@@ -219,8 +224,8 @@ class RegisterAndLoginTestCase(StaticLiveServerTestCase):
 
         # register new account and login and check if user 
         # has successfully signed into account
-        register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
-        login_to_account(self.driver, 'test_user', 'secret#1')
+        register_account(self.driver, USERNAME, EMAIL, PASSWORD, PASSWORD)
+        login_to_account(self.driver, USERNAME, PASSWORD)
         self.assertEqual(self.driver.current_url, url + PROFILES_URL)
     
     def test_user_can_successfully_logout(self):
@@ -229,8 +234,8 @@ class RegisterAndLoginTestCase(StaticLiveServerTestCase):
         self.driver.get(url + REGISTER_URL)
         
         # register new account, login and check if user can logout of account 
-        register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
-        login_to_account(self.driver, 'test_user', 'secret#1')
+        register_account(self.driver, USERNAME, EMAIL, PASSWORD, PASSWORD)
+        login_to_account(self.driver, USERNAME, PASSWORD)
         self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
         self.assertEqual(self.driver.current_url, url + INDEX_URL) 
 
@@ -249,28 +254,108 @@ class RegisterAndLoginTestCase(StaticLiveServerTestCase):
     def test_click_login_button_with_no_password_login_details(self):
         url = self.live_server_url
         self.driver.get(url + REGISTER_URL)
-        register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
-        self.driver.find_element(By.NAME, 'username').send_keys('test_user')
+        register_account(self.driver, USERNAME, EMAIL, PASSWORD, PASSWORD)
+        self.driver.find_element(By.NAME, 'username').send_keys(USERNAME)
         self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
         self.assertEqual(self.driver.current_url, url + LOGIN_URL) 
 
     def test_click_login_button_with_no_username_login_details(self):
         url = self.live_server_url
         self.driver.get(url + REGISTER_URL)
-        register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
-        self.driver.find_element(By.NAME, 'password').send_keys('secret#1')
+        register_account(self.driver, USERNAME, EMAIL, PASSWORD, PASSWORD)
+        self.driver.find_element(By.NAME, 'password').send_keys(PASSWORD)
         self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
-        self.assertEqual(self.driver.current_url, url + LOGIN_URL)   
+        self.assertEqual(self.driver.current_url, url + LOGIN_URL) 
+    
+    def test_registering_new_account_with_no_username(self):
+        url = self.live_server_url
+        self.driver.get(url + REGISTER_URL) 
+        self.driver.find_element(By.NAME, 'email').send_keys(EMAIL)
+        self.driver.find_element(By.NAME, 'password1').send_keys(PASSWORD)
+        self.driver.find_element(By.NAME, 'password2').send_keys(PASSWORD) 
+        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
+        self.assertEqual(self.driver.current_url, url + REGISTER_URL)
+    
+
+    def test_registering_new_account_with_no_email(self):
+        url = self.live_server_url
+        self.driver.get(url + REGISTER_URL) 
+        self.driver.find_element(By.NAME, 'username').send_keys(USERNAME)
+        self.driver.find_element(By.NAME, 'password1').send_keys(PASSWORD)
+        self.driver.find_element(By.NAME, 'password2').send_keys(PASSWORD) 
+        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
+        self.assertEqual(self.driver.current_url, url + REGISTER_URL)
+    
+    def test_registering_new_account_with_no_password1(self):
+        url = self.live_server_url
+        self.driver.get(url + REGISTER_URL) 
+        self.driver.find_element(By.NAME, 'username').send_keys(USERNAME)
+        self.driver.find_element(By.NAME, 'email').send_keys(EMAIL)
+        self.driver.find_element(By.NAME, 'password2').send_keys(PASSWORD) 
+        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
+        self.assertEqual(self.driver.current_url, url + REGISTER_URL)
+    
+    def test_registering_new_account_with_no_password1(self):
+        url = self.live_server_url
+        self.driver.get(url + REGISTER_URL) 
+        self.driver.find_element(By.NAME, 'username').send_keys(USERNAME)
+        self.driver.find_element(By.NAME, 'email').send_keys(EMAIL)
+        self.driver.find_element(By.NAME, 'password1').send_keys(PASSWORD) 
+        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
+        self.assertEqual(self.driver.current_url, url + REGISTER_URL)
     
     def test_click_login_button_with_incorrect_password_login_details(self):
         url = self.live_server_url
         self.driver.get(url + REGISTER_URL)
-        register_account(self.driver, 'test_user', 'test@example.com', 'secret#1', 'secret#1')
+        register_account(self.driver, USERNAME, EMAIL, PASSWORD, PASSWORD)
         self.driver.find_element(By.NAME, 'username').send_keys('test_user1')
         self.driver.find_element(By.NAME, 'password').send_keys('secret#2')
         self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
-        self.assertEqual(self.driver.current_url, url + LOGIN_URL)      
+        self.assertEqual(self.driver.current_url, url + LOGIN_URL)  
 
+    def test_registering_new_account_with_password1_and_password2_different(self):
+        url = self.live_server_url
+        self.driver.get(url + REGISTER_URL)
+        register_account(self.driver, USERNAME, EMAIL, PASSWORD, 'secret#2')
+        self.assertEqual(self.driver.current_url, url + REGISTER_URL)
+    
+    def test_user_access_account_after_before_session_expires(self):
+        url = self.live_server_url
+        self.driver.get(url + REGISTER_URL)
+        register_account(self.driver, USERNAME, EMAIL, PASSWORD, PASSWORD)
+        login_to_account(self.driver, USERNAME, PASSWORD)
+        original_window = self.driver.current_window_handle
+        self.driver.switch_to.new_window('window')
+        self.driver.get(url + INDEX_URL)
+        self.driver.find_element(By.NAME, 'profiles_link').click()
+        self.assertEqual(self.driver.current_url, url + PROFILES_URL)
+        self.driver.close()
+        self.driver.switch_to.window(original_window)
+    
+    def test_user_access_account_after_before_session_expires(self):
+        url = self.live_server_url
+        self.driver.get(url + REGISTER_URL)
+        register_account(self.driver, USERNAME, EMAIL, PASSWORD, PASSWORD)
+        login_to_account(self.driver, USERNAME, PASSWORD)
+        original_window = self.driver.current_window_handle
+        self.driver.switch_to.new_window('window')
+        self.driver.get(url + INDEX_URL)
+        self.driver.find_element(By.NAME, 'profiles_link').click()
+        self.assertEqual(self.driver.current_url, url + PROFILES_URL)
+        self.driver.close()
+        self.driver.switch_to.window(original_window)
+    
+    def test_register_account_with_password_less_than_eight_characters(self):
+        url = self.live_server_url
+        self.driver.get(url + REGISTER_URL)
+        register_account(self.driver, USERNAME, EMAIL, 'secret1', 'secret1')
+        self.assertEqual(self.driver.current_url, url + REGISTER_URL)
+    
+    def test_register_account_with_numeric_password(self):
+        url = self.live_server_url
+        self.driver.get(url + REGISTER_URL)
+        register_account(self.driver, USERNAME, EMAIL, '123456789', '123456789')
+        self.assertEqual(self.driver.current_url, url + REGISTER_URL)
 
 # Helper functions for the testing
 
