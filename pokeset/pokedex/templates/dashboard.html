@@ -94,7 +94,7 @@
                             </td>
                             <td>{{pokemon.type_one}} {%if pokemon.type_two is not None %}{{pokemon.type_two}}{% endif %}
                             </td>
-                            <td>{{pokemon.location}}</td>
+                            <td>{{pokemon.location|join:" "}}</td>
                             <td>{{pokemon.effective_against|join:" "}}</td>
                             <td>{{pokemon.ineffective_against|join:" "}}</td>
                         </tr>
