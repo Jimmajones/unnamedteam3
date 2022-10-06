@@ -6,6 +6,9 @@
 {% comment %} the now "U" thing is to make css refresh, remove later {% endcomment %}
 <link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}?{% now "U" %}">
 
+<head>
+    <title>Pokeset - Profiles</title>
+</head>
 
 <div class = "profiles_box">
     {{ form.errors }}
