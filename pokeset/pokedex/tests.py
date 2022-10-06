@@ -10,6 +10,7 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
 from django.contrib.auth.models import User
 from django.contrib.auth.models import UserManager
+from .models import Profile
 
 # URLs for testing
 LOGIN_URL = '/accounts/login/'
@@ -356,6 +357,85 @@ class RegisterAndLoginTestCase(StaticLiveServerTestCase):
         self.driver.get(url + REGISTER_URL)
         register_account(self.driver, USERNAME, EMAIL, '123456789', '123456789')
         self.assertEqual(self.driver.current_url, url + REGISTER_URL)
+
+
+class ProfileTestCases(StaticLiveServerTestCase):
+    """
+    Set of test cases that test the profiles page of the website
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        # set up webdriver for test cases
+        super().setUpClass()
+        chrome_options = ChromeOptions()
+        chrome_options.add_argument('--headless')
+        cls.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()),options=chrome_options)
+        cls.driver.set_window_size(1024, 768)
+        cls.driver.implicitly_wait(5)
+    
+    @classmethod
+    def tearDownClass(cls):
+        # quit webdriver after all test cases have run
+        cls.driver.quit()
+        return super().tearDownClass()
+    
+    def test_profiles_page_access(self):
+        user = User.objects.create_user(USERNAME, EMAIL, PASSWORD)
+        user.save()
+        url = self.live_server_url
+        self.driver.get(url + LOGIN_URL)
+        login_to_account(self.driver, USERNAME, PASSWORD)
+
+        self.assertEqual(self.driver.current_url, url + PROFILES_URL)
+        self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
+        user.delete()
+    
+    def test_creating_new_profile(self):
+        user = User.objects.create_user(USERNAME, EMAIL, PASSWORD)
+        user.save()
+        url = self.live_server_url
+        self.driver.get(url + LOGIN_URL)
+        login_to_account(self.driver, USERNAME, PASSWORD)
+
+        self.driver.find_element(By.NAME, "new_profile_circle").click()
+        self.driver.find_element(By.NAME, "name").send_keys("test_profile")
+        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
+        self.assertEqual(self.driver.find_element(By.NAME, "test_profile").text, "test_profile")
+        self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
+        user.delete()
+    
+    def test_cancel_creating_new_profile(self):
+        user = User.objects.create_user(USERNAME, EMAIL, PASSWORD)
+        user.save()
+        url = self.live_server_url
+        self.driver.get(url + LOGIN_URL)
+        login_to_account(self.driver, USERNAME, PASSWORD)
+
+        self.driver.find_element(By.NAME, "new_profile_circle").click()
+        self.driver.find_element(By.NAME, "name").send_keys("test_profile")
+        self.driver.find_element(By.CLASS_NAME, "link_button").click()
+        self.assertEqual(self.driver.find_element(By.CLASS_NAME, "profile_popup").get_attribute("style"),
+        "display: none;")
+        self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
+        user.delete()
+    
+    def test_creating_profile_without_name(self):
+        user = User.objects.create_user(USERNAME, EMAIL, PASSWORD)
+        user.save()
+        url = self.live_server_url
+        self.driver.get(url + LOGIN_URL)
+        login_to_account(self.driver, USERNAME, PASSWORD)
+
+        self.driver.find_element(By.NAME, "new_profile_circle").click()
+        self.driver.find_element(By.CLASS_NAME, CONFIRM_CLASS).click()
+        self.assertEqual(self.driver.find_element(By.CLASS_NAME, "profile_popup").get_attribute("style"), 
+        "display: block;")
+        self.driver.find_element(By.CLASS_NAME, "link_button").click()
+        self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
+        user.delete()
+
+
 
 # Helper functions for the testing
 
