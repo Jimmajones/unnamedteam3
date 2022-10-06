@@ -11,15 +11,15 @@
     {{ form.errors }}
         {% for profile in profiles %}
         <div class="profile">
-            <button class="profile_circles"
+            <button name = "profile_circle_{{profile.name}}" class="profile_circles"
                     style="background-color:red" onclick="location.href='{% url 'dashboard' profile.id %}'">
             
             </button>
-            <h3>{{profile.name}}</h3>
+            <h3 name = "{{profile.name}}">{{profile.name}}</h3>
         </div>
         {% endfor %}
         <div class="profile">
-            <button class = "profile_circles" onclick="open_add_profile()">
+            <button name = "new_profile_circle" class = "profile_circles" onclick="open_add_profile()">
                 +
             </button>
             <h3> </h3>
