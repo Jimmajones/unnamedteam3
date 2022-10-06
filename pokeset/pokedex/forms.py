@@ -108,4 +108,35 @@ class EditPokemonForm(ModelForm):
 		model = models.Pokemon
 		fields = ['name', 'description', 'type_one', 'type_two', 'evolves_from', 'can_learn', 'can_find_in', 'abilities']
 
+class NewMoveForm(ModelForm):
+	def __init__(self, *args, **kwargs):
+		self._profile = kwargs.pop("profile")
+		super().__init__(*args, **kwargs)
+		self.fields["profile"].initial = self._profile
+		self.fields["profile"].disabled = True
 	
+	class Meta:
+		model = models.Move
+		fields = ["profile", "name", "type"]
+
+class NewLocationForm(ModelForm):
+	def __init__(self, *args, **kwargs):
+		self._profile = kwargs.pop("profile")
+		super().__init__(*args, **kwargs)
+		self.fields["profile"].initial = self._profile
+		self.fields["profile"].disabled = True
+
+	class Meta:
+		model = models.Location
+		fields = ["profile", "name"]
+
+class NewAbilityForm(ModelForm):
+	def __init__(self, *args, **kwargs):
+		self._profile = kwargs.pop("profile")
+		super().__init__(*args, **kwargs)
+		self.fields["profile"].initial = self._profile
+		self.fields["profile"].disabled = True
+
+	class Meta:
+		model = models.Ability
+		fields = ["profile", "name"]

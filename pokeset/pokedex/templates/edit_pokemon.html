@@ -92,11 +92,12 @@
         <div class="profiler_add">
             
             <h1>Add Location</h1> 
-            {% csrf_token %}
-
-            <input type="text" class = "profile_name_field" placeholder="Location Name" name="location_name" id="location_name">
-            <br><br>        
-            <button type="submit" class="confirm_button"  onclick="submitLocation()">Save</button>
+            <form action="{% url 'new_location' profile.id %}" method="POST">
+                {% csrf_token %}
+                {{ form_location }}
+                <br><br>   
+                <button type="submit" class="confirm_button"  onclick="submitLocation()">Save</button>
+            </form>   
             <br><br> 
             <button type="button" class="link_button" onclick="close_modal('add_location')">Close</button> 
         </div>
@@ -106,17 +107,12 @@
         <div class="profiler_add">
             
             <h1>Add Move</h1> 
-            {% csrf_token %}
-
-            <input type="text" class = "profile_name_field" placeholder="Move Name" name="move_name" id="move_name">
-            <br><br>
-            <select class = "type_field" placeholder="move_type" name="move_type" id="move_type">
-                {% for id, value in types %}
-                <option value={{id}}>{{value}}</option> 
-                {% endfor %}
-            </select>
-            <br><br>        
-            <button type="submit" class="confirm_button"  onclick="submitMove()">Save</button>
+            <form action="{% url 'new_move' profile.id %}" method="POST">
+                {% csrf_token %}
+                {{ form_move }}
+                <br><br>   
+                <button type="submit" class="confirm_button"  onclick="submitMove()">Save</button>
+            </form>     
             <br><br> 
             <button type="button" class="link_button" onclick="close_modal('add_move')">Close</button> 
         </div>
@@ -126,11 +122,12 @@
         <div class="profiler_add">
             
             <h1>Add Ability</h1> 
-            {% csrf_token %}
-
-            <input type="text" class = "profile_name_field" placeholder="Ability Name" name="ability_name" id="ability_name">
-            <br><br>   
-            <button type="submit" class="confirm_button"  onclick="submitAbility()">Save</button>
+            <form action="{% url 'new_ability' profile.id %}" method="POST">
+                {% csrf_token %}
+                {{ form_ability }}
+                <br><br>   
+                <button type="submit" class="confirm_button"  onclick="submitAbility()">Save</button>
+            </form>
             <br><br> 
             <button type="button" class="link_button" onclick="close_modal('add_ability')">Close</button> 
         </div>

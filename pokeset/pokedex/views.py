@@ -144,6 +144,10 @@ def get_edit_pokemon(req, pokemon_id):
         set_images(pre_context)
         form = forms.EditPokemonForm(instance=pokemon)
 
+    form_move = forms.NewMoveForm(profile=pokemon.profile)
+    form_location = forms.NewLocationForm(profile=pokemon.profile)
+    form_ability = forms.NewAbilityForm(profile=pokemon.profile)
+
     # TO-DO: Form should filter "evolves_from" so that only
     # Pokemon belonging to the user are options.
     context = {}
@@ -152,6 +156,9 @@ def get_edit_pokemon(req, pokemon_id):
     context["pokemon_id"] = pokemon_id
     context["profile"] = pokemon.profile
     context["types"] = types
+    context["form_move"] = form_move
+    context["form_location"] = form_location
+    context["form_ability"] = form_ability
     return render(req, "edit_pokemon.html", context)
 
 # Form to create a new Pokemon.
@@ -176,51 +183,36 @@ def get_create_pokemon(req, profile_id):
     return render(req, "create_pokemon.html", context)
 
 
-# TO-DO: Change these all (below) to use forms.
+# TO-DO: Change these to redirect to the Pokemon we were editting
+# (or maybe we change it so adding new moves and stuff is done on a
+# separate page?)
 
 @login_required
 def new_location(req, profile_id):
     if req.method == "POST":
-        data = req.POST
-        # to-do: validate this data
-        profile = models.Profile.objects.get(id=profile_id)
-        new_location= models.Location.objects.create(name=data["location_name"],profile=profile)
-        new_location.save()
-        
-        location_dict = {"name": new_location.name, "pk": new_location.id}
-        # response = serializers.serialize('json', [new_location])
-        return JsonResponse(location_dict, status=200)
+        form = forms.NewLocationForm(req.POST, profile=profile_id)
+        if form.is_valid():
+            form.save()
+
+    return redirect("dashboard", profile_id=profile_id)
 
 @login_required
 def new_move(req, profile_id):
     if req.method == "POST":
-        data = req.POST
-        # to-do: validate this data
-        profile = models.Profile.objects.get(id=profile_id)
-        new_move= models.Move.objects.create(name=data["move_name"], type=data["move_type"], profile=profile)
-        new_move.save()
+        form = forms.NewMoveForm(req.POST, profile=profile_id)
+        if form.is_valid():
+            form.save()
 
-        # getting the label rather than shorthand of the move's type
-        type = new_move.type
-        for option in models.Type.choices:
-            if type == option[0]:
-                label = option[1]
-
-        dict = {"name": new_move.name, "type": label, "pk": new_move.id}
-        return JsonResponse(dict, status=200)
+    return redirect("dashboard", profile_id=profile_id)
 
 @login_required
 def new_ability(req, profile_id):
     if req.method == "POST":
-        data = req.POST
-        # to-do: validate this data
-        profile = models.Profile.objects.get(id=profile_id)
-        new_ability= models.Ability.objects.create(name=data["ability_name"], profile=profile)
-        new_ability.save()
-        
-        dict = {"name": new_ability.name, "pk": new_ability.id}
-        # response = serializers.serialize('json', [new_location])
-        return JsonResponse(dict, status=200)
+        form = forms.NewAbilityForm(req.POST, profile=profile_id)
+        if form.is_valid():
+            form.save()
+
+    return redirect("dashboard", profile_id=profile_id)
 
 
 # Retrieves images of pokemon from pokeapi based on its name
