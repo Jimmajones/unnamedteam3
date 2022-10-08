@@ -435,6 +435,62 @@ class ProfileTestCases(StaticLiveServerTestCase):
         self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
         user.delete()
 
+class RecordingPokemonTestCases(StaticLiveServerTestCase):
+    """
+    Set of test cases that test the functionality of recording
+    pokemon on the website
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        # set up webdriver for test cases
+        super().setUpClass()
+        chrome_options = ChromeOptions()
+        chrome_options.add_argument('--headless')
+        cls.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()),options=chrome_options)
+        cls.driver.set_window_size(1024, 768)
+        cls.test_user = User.objects.create_user(USERNAME, EMAIL, PASSWORD)
+        cls.user_profile = Profile.objects.create(name="test_profile", user=cls.test_user)
+        cls.driver.implicitly_wait(10)
+
+    @classmethod
+    def tearDownClass(cls):
+        # quit webdriver after all test cases have run
+        cls.user_profile.delete()
+        cls.test_user.delete()
+        cls.driver.quit()
+        return super().tearDownClass()
+    
+    def test_dashboard_page_access(self):
+        self.test_user.save()
+        self.user_profile.save()
+        
+        url = self.live_server_url
+        self.driver.get(url + LOGIN_URL)
+        login_to_account(self.driver, USERNAME, PASSWORD)
+        self.driver.find_element(By.NAME, "test_profile_button").click()
+        self.assertEqual(self.driver.current_url, url + "/dashboard/1")
+
+        self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
+        self.user_profile.delete()
+        self.test_user.delete()
+        
+
+    def test_create_pokemon_page_access(self):
+        self.test_user.save()
+        self.user_profile.save()
+        url = self.live_server_url
+        self.driver.get(url + LOGIN_URL)
+        login_to_account(self.driver, USERNAME, PASSWORD)
+        self.driver.find_element(By.NAME, "test_profile_button").click()
+        self.driver.find_element(By.ID, "add_pokemon_button").click()
+        self.assertEqual(self.driver.current_url, url + "/create_pokemon/1")
+
+        self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
+        self.user_profile.delete()
+        self.test_user.delete()
+
+   
 
 
 # Helper functions for the testing
