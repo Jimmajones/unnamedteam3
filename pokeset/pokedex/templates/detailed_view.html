@@ -10,7 +10,12 @@
     <div id="stats">
         <div id="profile">
             <h2>{{pokemon_data.name}}</h2>
-            <img src="{{pokemon_data.img}}">
+            {%if pokemon_data.img is not None %}
+            <img src="{{pokemon_data.img}}" loading="lazy">
+            {% else %}
+            {% load static %}
+            <img src="{% static 'canvas.png' %}">
+            {% endif %}
         </div>
         <div id="evolution"></div>
         <div class="stat_section" id="type">
@@ -30,13 +35,13 @@
             </div>
         </div>
         <div class="stat_section" n id="effective">
-            <h3>Effective</h3>
+            <h4>Effective Against</h4>
             <div class="stat_bubble">
                 <p>{{pokemon_data.effective_against|join:" "}}</p>
             </div>
         </div>
         <div class="stat_section" id="weakness">
-            <h3>Weakness</h3>
+            <h4>Ineffective Against</h4>
             <div class="stat_bubble">
                 <p>{{pokemon_data.ineffective_against|join:" "}}</p>
 

@@ -1,4 +1,5 @@
 from site import USER_BASE
+from tkinter.ttk import Style
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
@@ -99,6 +100,9 @@ class NewPokemonForm(ModelForm):
 			'type_two': forms.Select(attrs = {
 				'id': 'pokemon_type_two_input',
 				'class': 'new_pokemon_input'
+			}),
+			'profile':  forms.Select(attrs = {
+				'style': 'display: none;'
 			})
 		}
 

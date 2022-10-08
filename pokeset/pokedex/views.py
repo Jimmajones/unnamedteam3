@@ -58,11 +58,20 @@ def get_profiles(req):
     else:
         form = forms.NewProfileForm(user=req.user)
     
-    profiles = models.Profile.objects.filter(user=req.user)
+    profiles = models.Profile.objects.filter(user=req.user).values()
+
+    colour_options = ["#94bc4a", "#6a7baf", "#e5c531", "#736c75", "#e397d1", "#cb5f48", "#ea7a3c", "#7da6de", "#846ab6", "#71c558"," 	#cc9f4f", "#70cbd4", "#539ae2"]
+    for profile in profiles:
+        id = profile['id']
+        profile['colour'] = colour_options[id % len(colour_options)]
+
+    print(profiles)
 
     context = {}
     context["form"] = form
     context["profiles"] = profiles
+    
+
 
     return render(req, "profiles.html", context)
 

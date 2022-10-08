@@ -7,15 +7,25 @@
     <title>Pokeset - Welcome!</title>
 </head>
 
-<h1>Welcome!</h1>
+<div class="poke_view_section"  >
+    <div id="index_page_div">
+        <h1>Welcome!</h1>
 
-<p>This is Pokeset - a website for recording Pokemon.</p>
+    <p>This is Pokeset - a website for recording Pokemon.</p>
 
-{% if user.is_authenticated %}
-    <a href="{% url 'profiles' %}" name="profiles_link">Profiles</a>
-{% else %}
-    <a href="{% url 'login' %}" name="login_link">Login</a>
-    <a href="{% url 'register' %}" name="register_link">Register</a>
-{% endif %}
+    {% if user.is_authenticated %}
+        <button class="confirm_button" onclick='location.href="{% url 'register' %}"' href="{% url 'profiles' %}" name="profiles_link">Profiles</button>
+    {% else %}
+        <button class="confirm_button" onclick='location.href="{% url 'login' %}"' name="login_link">Login</button>
+        <br>
+        <button class="forgot_password_button" onclick='location.href="{% url 'register' %}"' name="register_link">Register</button>
+    {% endif %}
+    </div>
+
+    
+</div>
+
+
+<link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}?{% now "U" %}">
 
 {% endblock %}

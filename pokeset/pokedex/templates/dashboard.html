@@ -80,7 +80,7 @@
                     <th>Type</th>
                     <th>Location(s)</th>
                     <th>Effective Against</th>
-                    <th>Weaknesses</th>
+                    <th>Ineffective Against</th>
                 </tr>
                 <thead>
                     <tbody>
@@ -89,7 +89,7 @@
                             <td>   
                                 <div id="name_col">
                                     {%if pokemon.img is not None %}
-                                    <img src="{{pokemon.img}}">
+                                    <img src="{{pokemon.img}}" loading="lazy">
                                     {% else %}
                                     {% load static %}
                                     <img src="{% static 'canvas.png' %}">
@@ -114,9 +114,9 @@
         <script>
             $(document).ready(function() {
                 $('#table_id').DataTable({
-                    scrollY: 400,
+                    scrollY: '35vh',
                     searching: false,
-                    "lengthMenu": [5, 10, 20, 50]
+                    "lengthMenu": [10, 20, 40]
                 })
             });
         </script>

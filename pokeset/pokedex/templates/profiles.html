@@ -15,7 +15,7 @@
         {% for profile in profiles %}
         <div class="profile">
             <button name = "{{profile.name}}_button" class="profile_circles"
-                    style="background-color:red" onclick="location.href='{% url 'dashboard' profile.id %}'">
+                    style="background-color:{{profile.colour}}" onclick="location.href='{% url 'dashboard' profile.id %}'">
             
             </button>
             <h3 name = "{{profile.name}}">{{profile.name}}</h3>

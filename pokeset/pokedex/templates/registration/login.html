@@ -31,14 +31,16 @@
         {% endfor %}
 
         <button type="submit" class="confirm_button" value="login">Login</button> 
+        <br>
+        <button type="button" class="forgot_password_button" onclick='location.href="{% url 'password_reset' %}"'>Forgot Password</button>
+
         <input type="hidden" name="next" value="{{ next }}">
     </form>
 
 </div>
 
-<a href="{% url 'password_reset' %}">Forgot Password</a>
 
 
-<link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}">
+<link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}?{% now "U" %}">
 
 {% endblock %}
