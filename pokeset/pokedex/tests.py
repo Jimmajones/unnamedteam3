@@ -469,7 +469,7 @@ class RecordingPokemonTestCases(StaticLiveServerTestCase):
         self.driver.get(url + LOGIN_URL)
         login_to_account(self.driver, USERNAME, PASSWORD)
         self.driver.find_element(By.NAME, "test_profile_button").click()
-        self.assertEqual(self.driver.current_url, url + "/dashboard/1")
+        self.assertEqual(self.driver.current_url, url + "/dashboard/2")
 
         self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
         self.user_profile.delete()
@@ -484,7 +484,7 @@ class RecordingPokemonTestCases(StaticLiveServerTestCase):
         login_to_account(self.driver, USERNAME, PASSWORD)
         self.driver.find_element(By.NAME, "test_profile_button").click()
         self.driver.find_element(By.ID, "add_pokemon_button").click()
-        self.assertEqual(self.driver.current_url, url + "/create_pokemon/1")
+        self.assertEqual(self.driver.current_url, url + "/create_pokemon/2")
 
         self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
         self.user_profile.delete()
