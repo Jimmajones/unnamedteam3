@@ -8,6 +8,7 @@ from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.firefox.options import Options as FireFoxOptions
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from django.contrib.auth.models import User
 from django.contrib.auth.models import UserManager
 from .models import Profile
@@ -467,31 +468,100 @@ class RecordingPokemonTestCases(StaticLiveServerTestCase):
         self.driver.get(url + LOGIN_URL)
         login_to_account(self.driver, USERNAME + "1", PASSWORD + "1")
         self.driver.find_element(By.NAME, "test_profile_button").click()
-        self.assertEqual(self.driver.current_url, url + "/dashboard/3")
+        self.assertEqual(self.driver.current_url, url + "/dashboard/5")
 
         self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
         user_profile.delete()
         test_user.delete()
 
-    def test_create_pokemon_page_access(self):
+    def test_create_pokemon_page_access_and_input(self):
         test_user = User.objects.create_user(USERNAME + "2", EMAIL, PASSWORD + "2")
         user_profile = Profile.objects.create(name="test_profile", user=test_user)
         test_user.save()
         user_profile.save()
         url = self.live_server_url
         self.driver.get(url + LOGIN_URL)
+
         login_to_account(self.driver, USERNAME + "2", PASSWORD + "2")
         self.driver.find_element(By.NAME, "test_profile_button").click()
         self.driver.find_element(By.ID, "add_pokemon_button").click()
         self.assertEqual(self.driver.current_url, url + "/create_pokemon/2")
 
+        username_input_name = self.driver.find_element(By.NAME, "name")
+        username_input_name.send_keys("Pikachu")
+        self.assertEqual(username_input_name.get_attribute('value'), "Pikachu")
+
+        username_input_description = self.driver.find_element(By.NAME, "description")
+        username_input_description.send_keys("This is a pokemon")
+        self.assertEqual(username_input_description.get_attribute('value'), "This is a pokemon")
+
+        self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
+        user_profile.delete()
+        test_user.delete()
+    
+    def test_create_pokemon_successfully(self):
+        test_user = User.objects.create_user(USERNAME + "3", EMAIL, PASSWORD + "3")
+        user_profile = Profile.objects.create(name="test_profile", user=test_user)
+        test_user.save()
+        user_profile.save()
+        url = self.live_server_url
+        self.driver.get(url + LOGIN_URL)
+
+        login_to_account(self.driver, USERNAME + "3", PASSWORD + "3")
+        self.driver.find_element(By.NAME, "test_profile_button").click()
+        self.driver.find_element(By.ID, "add_pokemon_button").click()
+
+        self.driver.find_element(By.NAME, "name").send_keys("Pikachu")
+        self.driver.find_element(By.NAME, "description").send_keys("This is a pokemon")
+        self.driver.find_element(By.NAME, "type_one").send_keys("e" + Keys.ENTER)
+        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
+
+        self.assertEqual(self.driver.current_url, url + "/edit_pokemon/1/")
+
         self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
         user_profile.delete()
         test_user.delete()
 
+    def test_creating_pokemon_with_incomplete_details(self):
+        test_user = User.objects.create_user(USERNAME + "4", EMAIL, PASSWORD + "4")
+        user_profile = Profile.objects.create(name="test_profile", user=test_user)
+        test_user.save()
+        user_profile.save()
+        url = self.live_server_url
+        self.driver.get(url + LOGIN_URL) 
+
+        login_to_account(self.driver, USERNAME + "4", PASSWORD + "4")
+        self.driver.find_element(By.NAME, "test_profile_button").click()
+        self.driver.find_element(By.ID, "add_pokemon_button").click()
+
+        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
+
+        self.driver.find_element(By.NAME, "name").clear()
+        self.driver.find_element(By.NAME, "description").send_keys("This is a pokemon")
+        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
+        self.assertEqual(self.driver.current_url, url + "/create_pokemon/4")
+
+        self.driver.find_element(By.NAME, "name").send_keys("Pikachu")
+        self.driver.find_element(By.NAME, "type_one").send_keys("-" + Keys.ENTER)
+        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
+        self.assertEqual(self.driver.current_url, url + "/create_pokemon/4")
+
+        self.driver.find_element(By.NAME, "name").send_keys("Pikachu")
+        self.driver.find_element(By.NAME, "type_two").send_keys("e" + Keys.ENTER)
+        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
+        self.assertEqual(self.driver.current_url, url + "/create_pokemon/4")
+
+        self.driver.find_element(By.CLASS_NAME, "back_button").click()
+        self.assertEqual(self.driver.current_url, url + "/dashboard/4")
+
+        self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
+        user_profile.delete()
+        test_user.delete()
+
+
+
+
    
-
-
 # Helper functions for the testing
 
 def register_account(driver: webdriver, username, email_account, password1, password2):

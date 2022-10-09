@@ -14,7 +14,7 @@
     <p>This is Pokeset - a website for recording Pokemon.</p>
 
     {% if user.is_authenticated %}
-        <button class="confirm_button" onclick='location.href="{% url 'register' %}"' href="{% url 'profiles' %}" name="profiles_link">Profiles</button>
+        <button class="confirm_button" onclick='location.href="{% url 'profiles' %}"' name="profiles_link">Profiles</button>
     {% else %}
         <button class="confirm_button" onclick='location.href="{% url 'login' %}"' name="login_link">Login</button>
         <br>
