@@ -156,10 +156,10 @@
     display: flex;
     flex-direction: row;
     align-items:center;
-    justify-content: space-around;
+    justify-content: space-evenly;
 
-    width: 1288px;
-    height: 549px;
+    width: 80%;
+    height: 80%;
 
     background: #FFF9F9;
     border: 1px solid #000000;
@@ -215,7 +215,9 @@
 
 .profile {
     height: 200px;
+    max-width: 200px;
     text-align: center;
+    overflow-wrap: break-word;
 }
 
 #index_page_div {
