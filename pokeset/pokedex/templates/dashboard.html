@@ -1,4 +1,5 @@
 {% extends './main.html' %} {% block content %}
+{% load poll_extras %}
 
 <head>
     <title>Pokeset - Dashboard</title>
@@ -96,7 +97,7 @@
                                     {% endif %}
                                     {{pokemon.name}}</div>
                             </td>
-                            <td>{{pokemon.type_one}} {%if pokemon.type_two is not None %}{{pokemon.type_two}}{% endif %}
+                            <td>{{pokemon.type_one|typecolor}} {%if pokemon.type_two is not None %}{{pokemon.type_two|typecolor}}{% endif %}
                             </td>
                             <td>{{pokemon.location|join:" "}}</td>
                             <td>{{pokemon.effective_against|join:" "}}</td>
