@@ -99,10 +99,24 @@ def get_dashboard(req, profile_id):
 
 
 def get_type_info(pokemon):
-    pokemon["effective_against"] = [*set(((type_chart[pokemon['type_one']])["effective"] 
-        + (type_chart[pokemon['type_two']])["effective"]))]
-    pokemon["ineffective_against"] = [*set(((type_chart[pokemon['type_one']])["not_effective"] 
-        + (type_chart[pokemon['type_two']])["not_effective"]))]
+    no_effect_t1 = set((type_chart[pokemon['type_one']])["no_effect"])
+    no_effect_t2 = set((type_chart[pokemon['type_two']])["no_effect"])
+    effective_t1 = set((type_chart[pokemon['type_one']])["effective"])
+    effective_t2 = set((type_chart[pokemon['type_two']])["effective"])
+    ineffective_t1 = set((type_chart[pokemon['type_two']])["not_effective"])
+    ineffective_t2 = set((type_chart[pokemon['type_two']])["not_effective"])
+
+    # using set notation to get all effective against and ineffective against
+    pokemon['effective_against'] = list(
+        ((effective_t1 - ineffective_t2) - no_effect_t2).union(
+        ((effective_t2 - ineffective_t1) - no_effect_t2)))
+
+    pokemon['ineffective_against'] = list (
+        (ineffective_t1 - effective_t2).union(no_effect_t1).union(
+        (ineffective_t2 - effective_t1).union(no_effect_t2))
+
+    )
+
 
 
 # Show a Pokemon in detail.
@@ -247,25 +261,25 @@ def set_images(context):
 # Strength = "Will do double damage 
 # Offensive table
 type_chart = {
-"NOR":{"effective":[], "not_effective":["ROC","GHO","STE"]},
-"FIR":{"not_effective":["FIR","WAT","ROC","DRA"],"effective":["GRA","ICE","BUG","STE"]},
-"WAT":{"not_effective":["WAT","GRA","DRA"],"effective":["FIR","GRO","ROC"]},
-"ELE":{"not_effective":["ELE","GRA","DRA", "GRO"],"effective":["WAT","FLY"]},
-"GRA":{"not_effective":["FIR","GRA","POI","FLY","BUG","DRA","STE"],"effective":["Water","GRO","ROC"]},
-"ICE":{"not_effective":["FIR","WAT","ICE","STE"],"effective":["GRA","GRO","FLY","DRA"]},
-"FIG":{"not_effective":["POI","FLY","PSY","BUG","FAI","GHO"],"effective":["NOR","ICE","ROC","DAR","STE"]},
-"POI":{"not_effective":["POI","GRO","ROC","GHO", "STE"],"effective":["GRA","FAI"]},
-"GRO":{"not_effective":["GRA","BUG","FLY"],"effective":["FIR","ELE","POI","ROC","STE"]},
-"FLY":{"not_effective":["ELE","ROC","STE"],"effective":["GRA","FIG","BUG"]},
-"PSY":{"not_effective":["PSY","STE","DAR"],"effective":["FIG","POI"]},
-"BUG":{"not_effective":["FIR","FIG","POI","FLY","GHO","STE","FAI"],"effective":["GRA","PSY","DAR"]},
-"ROC":{"not_effective":["FIG","GRO","STE"],"effective":["FIR","ICE","FLY","BUG"]},
-"GHO":{"not_effective":["DAR","NOR"],"effective":["PSY","GHO"]},
-"DRA":{"not_effective":["STE","FAI"],"effective":["DRA"]},
-"DAR":{"not_effective":["FIG","DAR","FAI"],"effective":["PSY","GHO"]},
-"STE":{"not_effective":["FIR","WAT","ELE","STE"],"effective":["ICE","ROC","FAI"]},
-"FAI":{"not_effective":["FIR","POI","STE"],"effective":["FIG","DRA","DAR"]},
-"": {"not_effective":[],"effective":[]}
+"NOR":{"no_effect": ["GHO"], "effective":[], "not_effective":["ROC","STE"]},
+"FIR":{"no_effect": [], "not_effective":["FIR","WAT","ROC","DRA"],"effective":["GRA","ICE","BUG","STE"]},
+"WAT":{"no_effect": [], "not_effective":["WAT","GRA","DRA"],"effective":["FIR","GRO","ROC"]},
+"ELE":{"no_effect": ["GRO"], "not_effective":["ELE","GRA","DRA"],"effective":["WAT","FLY"]},
+"GRA":{"no_effect": [], "not_effective":["FIR","GRA","POI","FLY","BUG","DRA","STE"],"effective":["Water","GRO","ROC"]},
+"ICE":{"no_effect": [], "not_effective":["FIR","WAT","ICE","STE"],"effective":["GRA","GRO","FLY","DRA"]},
+"FIG":{"no_effect": ["GHO"], "not_effective":["POI","FLY","PSY","BUG","FAI"],"effective":["NOR","ICE","ROC","DAR","STE"]},
+"POI":{"no_effect": ["STE"], "not_effective":["POI","GRO","ROC","GHO"],"effective":["GRA","FAI"]},
+"GRO":{"no_effect":["FLY"], "not_effective":["GRA","BUG"],"effective":["FIR","ELE","POI","ROC","STE"]},
+"FLY":{"no_effect": [], "not_effective":["ELE","ROC","STE"],"effective":["GRA","FIG","BUG"]},
+"PSY":{"no_effect": ["DAR"], "not_effective":["PSY","STE"],"effective":["FIG","POI"]},
+"BUG":{"no_effect": [], "not_effective":["FIR","FIG","POI","FLY","GHO","STE","FAI"],"effective":["GRA","PSY","DAR"]},
+"ROC":{"no_effect": [], "not_effective":["FIG","GRO","STE"],"effective":["FIR","ICE","FLY","BUG"]},
+"GHO":{"no_effect": ["NOR"], "not_effective":["DAR","NOR"],"effective":["PSY","GHO"]},
+"DRA":{"no_effect": [], "not_effective":["STE","FAI"],"effective":["DRA"]},
+"DAR":{"no_effect": [], "not_effective":["FIG","DAR","FAI"],"effective":["PSY","GHO"]},
+"STE":{"no_effect": [], "not_effective":["FIR","WAT","ELE","STE"],"effective":["ICE","ROC","FAI"]},
+"FAI":{"no_effect": [],"not_effective":["FIR","POI","STE"],"effective":["FIG","DRA","DAR"]},
+"": {"no_effect": [], "not_effective":[],"effective":[]}
 }
 
 

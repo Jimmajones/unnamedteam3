@@ -97,11 +97,27 @@
                                     {% endif %}
                                     {{pokemon.name}}</div>
                             </td>
-                            <td>{{pokemon.type_one|typecolor}} {%if pokemon.type_two is not None %}{{pokemon.type_two|typecolor}}{% endif %}
+                            <td>
+                                <div class="pokemon_types_dashboard">
+                                    {{pokemon.type_one|typecolor}} {%if pokemon.type_two is not None %}{{pokemon.type_two|typecolor}}{% endif %}
+                                </div>    
+                               
                             </td>
                             <td>{{pokemon.location|join:" "}}</td>
-                            <td>{{pokemon.effective_against|join:" "}}</td>
-                            <td>{{pokemon.ineffective_against|join:" "}}</td>
+                            <td >
+                                <div class="pokemon_types_dashboard">
+                                    {% for type in pokemon.effective_against%}
+                                    {{type|typecolor}}
+                                     {% endfor %}
+                                </div>
+                            </td>
+                            <td >
+                                <div class="pokemon_types_dashboard">
+                                    {% for type in pokemon.ineffective_against%}
+                                    {{type|typecolor}}
+                                    {% endfor %}
+                                </div>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
