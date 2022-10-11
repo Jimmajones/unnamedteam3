@@ -93,6 +93,9 @@ main {
     border-radius: 10px;
     margin-top: 4px;
     margin-left: 4px;
+
+    color: white;
+    text-shadow: -0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000, 0.5px 0.5px 0 #000;
 }
 
 .pokemon_types_dashboard {
@@ -178,6 +181,10 @@ footer {
     color: white;
 }
 
+#logout:hover {
+    font-weight: bolder;
+}
+
 /* ----------------------------- Grid for detailed view ------------- */
 
 .poke_view_section {
@@ -192,7 +199,9 @@ footer {
     text-align: center;
 }
 
-
+.stat_bubble .pokemon_types_dashboard {
+    justify-content: center;
+}
 
 #stats h3, #stats h4 {
     margin: 0;
@@ -202,7 +211,7 @@ footer {
 #stats {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: 200px 80px 160px;
+    grid-template-rows: 200px 100px 160px;
     grid-template-areas: "profile evolution evolution evolution" "type locations abilities moves" "effective weakness abilities moves";
     column-gap: 30px;
     text-align: center;
@@ -210,13 +219,6 @@ footer {
 
 .stat_section {
     margin-bottom: 50px;
-}
-
-.stat_bubble {
-    display: flex;
-    flex-direction: column;
-    justify-items: center;
-    overflow-y: scroll;
 }
 
 
@@ -270,7 +272,6 @@ footer {
 }
 
 .stat_bubble {
-    justify-content: space-around;
     width: 100%;
     background: #FFFFFF;
     border: 1px solid #000000;
@@ -278,6 +279,10 @@ footer {
     border-radius: 30px;
     height: 100%;
     margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    justify-content: center;
 }
 
 .big_bottom_button {
