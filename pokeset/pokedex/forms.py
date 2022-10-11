@@ -1,5 +1,4 @@
 from site import USER_BASE
-from tkinter.ttk import Style
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
@@ -68,7 +67,13 @@ class NewProfileForm(ModelForm):
 
 	class Meta:
 		model = models.Profile
-		fields = ["user", "name"] 
+		fields = ["user", "name", "description"] 
+		widgets = {
+
+			'description': forms.TextInput(attrs = {
+				'size': '50'
+			}),
+		}
 
 
 class NewPokemonForm(ModelForm):

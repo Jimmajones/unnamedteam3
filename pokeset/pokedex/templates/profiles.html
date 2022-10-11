@@ -19,6 +19,7 @@
             
             </button>
             <h3 name = "{{profile.name}}">{{profile.name}}</h3>
+            <h4>{{profile.description}}</h4>
         </div>
         {% endfor %}
         <div class="profile">
@@ -34,7 +35,9 @@
             <h1>Add Save</h1> 
             {% csrf_token %}
             
-           {{form.name.label}} {{ form.name }}
+            {{ form.name.label }} {{ form.name }}
+            <br><br>
+            {{ form.description.label }} {{ form.description }}
             <br><br>        
             <button type="submit" class="confirm_button"  onclick="location.href='#'">Save</button>
             <br><br>

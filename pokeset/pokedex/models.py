@@ -47,6 +47,7 @@ class SelfValidate(models.Model):
 class Profile(models.Model):
     name            = models.CharField(max_length=20)
     user            = models.ForeignKey(User, on_delete=models.CASCADE)
+    description     = models.CharField(max_length=200, blank=True)
 
     # We want a user's profiles to be unique, but not
     # EVERY profile across the table to be unique (i.e users Bob and Jane 
