@@ -10,8 +10,7 @@ from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from django.contrib.auth.models import User
-from django.contrib.auth.models import UserManager
-from .models import Profile
+from .models import Pokemon, Profile
 
 # URLs for testing
 LOGIN_URL = '/accounts/login/'
@@ -558,9 +557,100 @@ class RecordingPokemonTestCases(StaticLiveServerTestCase):
         user_profile.delete()
         test_user.delete()
 
+    def test_edit_and_detailed_view_access_from_dashboard(self):
+        test_user = User.objects.create_user(USERNAME + "5", EMAIL, PASSWORD + "5")
+        user_profile = Profile.objects.create(name="test_profile", user=test_user)
+        test_pokemon = Pokemon.objects.create(name="Pikachu", type_one="ELE", profile=user_profile)
+        test_user.save()
+        user_profile.save()
+        test_pokemon.save()
+        url = self.live_server_url
+        self.driver.get(url + LOGIN_URL) 
 
+        login_to_account(self.driver, USERNAME + "5", PASSWORD + "5")
+        self.driver.find_element(By.NAME, "test_profile_button").click()
+        self.driver.find_element(By.CLASS_NAME, "sorting_1").click()
+        self.assertEqual(self.driver.current_url, url + "/detailed_view/2/")
 
+        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
+        self.assertEqual(self.driver.current_url, url + "/edit_pokemon/2/")
 
+        self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
+        user_profile.delete()
+        test_user.delete()
+        test_pokemon.delete()
+    
+    def test_editing_pokemon(self):
+        test_user = User.objects.create_user(USERNAME + "6", EMAIL, PASSWORD + "6")
+        user_profile = Profile.objects.create(name="test_profile", user=test_user)
+        test_pokemon = Pokemon.objects.create(name="Pikachu", type_one="ELE", profile=user_profile)
+        test_user.save()
+        user_profile.save()
+        test_pokemon.save()
+        url = self.live_server_url
+        self.driver.get(url + LOGIN_URL) 
+
+        login_to_account(self.driver, USERNAME + "6", PASSWORD + "6")
+        self.driver.find_element(By.NAME, "test_profile_button").click()
+        self.driver.find_element(By.CLASS_NAME, "sorting_1").click()
+        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
+
+        # Test editing moves
+        self.driver.find_element(By.ID, "moves").find_element(By.TAG_NAME, "button").click()
+        self.driver.find_element(By.ID, "add_move").find_element(By.ID, "id_name").send_keys("electric attack")
+        self.driver.find_element(By.ID, "add_move").find_element(By.NAME, "type").send_keys("e" + Keys.ENTER)
+        self.driver.find_element(By.ID, "add_move").find_element(By.CLASS_NAME, "confirm_button").click()
+        self.assertEqual(self.driver.current_url, url + "/dashboard/7")
+
+        self.driver.find_element(By.CLASS_NAME, "sorting_1").click()
+        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
+        self.assertEqual(self.driver.find_element(By.ID, "moves").find_element(By.NAME, "can_learn").find_element(
+            By.TAG_NAME, "option").text, "electric attack (Electric)")
+
+        # Test editing abilities
+        self.driver.find_element(By.ID, "abilities").find_element(By.TAG_NAME, "button").click()
+        self.driver.find_element(By.ID, "add_ability").find_element(By.ID, "id_name").send_keys("dance")
+        self.driver.find_element(By.ID, "add_ability").find_element(By.CLASS_NAME, "confirm_button").click()
+        self.assertEqual(self.driver.current_url, url + "/dashboard/7")
+
+        self.driver.find_element(By.CLASS_NAME, "sorting_1").click()
+        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
+        self.assertEqual(self.driver.find_element(By.ID, "abilities").find_element(By.NAME, "abilities").find_element(
+            By.TAG_NAME, "option").text, "dance")
+        
+        # Test editing locations
+        self.driver.find_element(By.ID, "location").find_element(By.TAG_NAME, "button").click()
+        self.driver.find_element(By.ID, "add_location").find_element(By.ID, "id_name").send_keys("the park")
+        self.driver.find_element(By.ID, "add_location").find_element(By.CLASS_NAME, "confirm_button").click()
+        self.assertEqual(self.driver.current_url, url + "/dashboard/7")
+
+        self.driver.find_element(By.CLASS_NAME, "sorting_1").click()
+        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
+        self.assertEqual(self.driver.find_element(By.ID, "location").find_element(By.NAME, "can_find_in").find_element(
+            By.TAG_NAME, "option").text, "the park")
+        
+        # Test adding another move
+        self.driver.find_element(By.ID, "moves").find_element(By.TAG_NAME, "button").click()
+        self.driver.find_element(By.ID, "add_move").find_element(By.ID, "id_name").send_keys("electric shock")
+        self.driver.find_element(By.ID, "add_move").find_element(By.NAME, "type").send_keys("n" + Keys.ENTER)
+        self.driver.find_element(By.ID, "add_move").find_element(By.CLASS_NAME, "confirm_button").click()
+        self.assertEqual(self.driver.current_url, url + "/dashboard/7")
+
+        self.driver.find_element(By.CLASS_NAME, "sorting_1").click()
+        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
+        self.assertEqual(self.driver.find_element(By.ID, "moves").find_element(By.NAME, "can_learn").find_elements(
+            By.TAG_NAME, "option")[1].text, "electric shock (Normal)")
+
+        # Test that the correct sprite has loaded for the pokemon
+        self.assertEqual(self.driver.find_element(By.ID, "poke_img").find_element(By.TAG_NAME, "img").get_attribute("src"),
+            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png")
+
+        self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
+        test_user.delete()
+        user_profile.delete()
+        test_pokemon.delete()
+    
+    
    
 # Helper functions for the testing
 
