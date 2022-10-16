@@ -168,17 +168,19 @@ footer {
     background-color: var(--secondary_grey);
     position: fixed;
     bottom: 0px;
-    height: 5vh;
+    height: 4vh;
     width: 100%;
     vertical-align:middle;
     text-align: center;
+    padding-top: 10px;
 }
 
 #logout {
-    position: fixed;
     font-size: 1rem;
     bottom: 10px;
     color: white;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #logout:hover {
