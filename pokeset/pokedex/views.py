@@ -1,3 +1,5 @@
+from xml.dom import ValidationErr
+from django.forms import ValidationError
 from django.shortcuts import get_object_or_404, render, redirect
 import requests
 from . import forms
@@ -173,10 +175,6 @@ def get_edit_pokemon(req, pokemon_id):
         set_images(pre_context)
         form = forms.EditPokemonForm(instance=pokemon)
 
-    form_move = forms.NewMoveForm(profile=pokemon.profile)
-    form_location = forms.NewLocationForm(profile=pokemon.profile)
-    form_ability = forms.NewAbilityForm(profile=pokemon.profile)
-
     # TO-DO: Form should filter "evolves_from" so that only
     # Pokemon belonging to the user are options.
     context = {}
@@ -185,9 +183,6 @@ def get_edit_pokemon(req, pokemon_id):
     context["pokemon_id"] = pokemon_id
     context["profile"] = pokemon.profile
     context["types"] = types
-    context["form_move"] = form_move
-    context["form_location"] = form_location
-    context["form_ability"] = form_ability
     return render(req, "edit_pokemon.html", context)
 
 # Form to create a new Pokemon.
@@ -219,34 +214,38 @@ def get_create_pokemon(req, profile_id):
 @login_required
 def new_location(req, profile_id):
 
-    if profile_id.user != req.user:
-        # TO-DO: Create a "permission denied" page
-        return redirect("index")
-    
     if req.method == "POST":
-        form = forms.NewLocationForm(req.POST, profile=profile_id)
-        if form.is_valid():
-            form.save()
-
-    return redirect("dashboard", profile_id=profile_id)
+        data = req.POST
+        profile = get_object_or_404(models.Profile, id=profile_id, user=req.user)
+        new_location = models.Location.objects.create(name=data["location_name"], profile=profile)
+        new_location.full_clean()
+        new_location.save()
+        location_dict = {"name": new_location.name, "pk": new_location.id}
+        return JsonResponse(location_dict, status=200)
 
 @login_required
 def new_move(req, profile_id):
-    if req.method == "POST":
-        form = forms.NewMoveForm(req.POST, profile=profile_id)
-        if form.is_valid():
-            form.save()
 
-    return redirect("dashboard", profile_id=profile_id)
+    if req.method == "POST":
+        data = req.POST
+        profile = get_object_or_404(models.Profile, id=profile_id, user=req.user)
+        new_move = models.Move.objects.create(name=data["move_name"], type=data["move_type"], profile=profile)
+        new_move.full_clean()
+        new_move.save()
+        move_dict = {"name": new_move.name, "type": new_move.get_type_display(), "pk": new_move.id}
+        return JsonResponse(move_dict, status=200)
 
 @login_required
 def new_ability(req, profile_id):
-    if req.method == "POST":
-        form = forms.NewAbilityForm(req.POST, profile=profile_id)
-        if form.is_valid():
-            form.save()
 
-    return redirect("dashboard", profile_id=profile_id)
+    if req.method == "POST":
+        data = req.POST
+        profile = get_object_or_404(models.Profile, id=profile_id, user=req.user)
+        new_ability = models.Ability.objects.create(name=data["ability_name"], profile=profile)
+        new_ability.full_clean()
+        new_ability.save()
+        ability_dict = {"name": new_ability.name, "pk": new_ability.id}
+        return JsonResponse(ability_dict, status=200)
 
 
 # Retrieves images of pokemon from pokeapi based on its name
@@ -292,7 +291,7 @@ type_chart = {
 "FAI":{"no_effect": [],"not_effective":["FIR","POI","STE"],"effective":["FIG","DRA","DAR"]},
 "": {"no_effect": [], "not_effective":[],"effective":[]}
 }
-
+"""
 type_chart = pd.DataFrame(NORMAL_EFFECTIVE, index=models.Type.choices, columns=models.Type.choices)
 
 type_chart.loc["NOR", ["GHO"]]                                           = NO_EFFECT
@@ -335,3 +334,4 @@ type_chart.loc["PSY", ["FIG", "POI"]]                                    = SUPER
 
 type_chart.loc["BUG", ["FIR", "FIG", "POI", "FLY", "GHO", "STE"]]        = NOT_VERY_EFFECTIVE
 type_chart.loc["BUG", ["GRA", "PSY", "DAR"]]                             = SUPER_EFFECTIVE
+"""
