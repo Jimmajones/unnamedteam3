@@ -294,10 +294,44 @@ type_chart = {
 }
 
 type_chart = pd.DataFrame(NORMAL_EFFECTIVE, index=models.Type.choices, columns=models.Type.choices)
-type_chart.loc["NOR", "ROC"] = NOT_VERY_EFFECTIVE
-type_chart.loc["NOR", "GHO"] = NO_EFFECT
-type_chart.loc["NOR", "STE"] = NOT_VERY_EFFECTIVE
-type_chart.loc["FIR", "FIR"] = NOT_VERY_EFFECTIVE
-type_chart.loc["FIR", "WAT"] = NOT_VERY_EFFECTIVE
-type_chart.loc["FIR", "GRA"] = NOT_VERY_EFFECTIVE
-type_chart.loc["FIR", "ICE"] = NOT_VERY_EFFECTIVE
+
+type_chart.loc["NOR", ["GHO"]]                                           = NO_EFFECT
+type_chart.loc["NOR", ["ROC", "STE"]]                                    = NOT_VERY_EFFECTIVE
+
+type_chart.loc["FIR", ["FIR", "WAT", "ROC", "DRA"]]                      = NOT_VERY_EFFECTIVE
+type_chart.loc["FIR", ["GRA", "ICE", "BUG", "STE"]]                      = SUPER_EFFECTIVE
+
+type_chart.loc["WAT", ["WAT", "GRA", "DRA"]]                             = NOT_VERY_EFFECTIVE
+type_chart.loc["WAT", ["FIR", "GRO", "ROC"]]                             = SUPER_EFFECTIVE
+
+type_chart.loc["ELE", ["GRO"]]                                           = NO_EFFECT
+type_chart.loc["ELE", ["ELE", "GRA", "DRA"]]                             = NOT_VERY_EFFECTIVE
+type_chart.loc["ELE", ["WAT", "FLY"]]                                    = SUPER_EFFECTIVE
+
+type_chart.loc["GRA", ["FIR", "GRA", "POI", "FLY", "BUG", "DRA", "STE"]] = NOT_VERY_EFFECTIVE
+type_chart.loc["GRA", ["WAT", "GRO", "ROC"]]                             = SUPER_EFFECTIVE
+
+type_chart.loc["ICE", ["FIR", "WAT", "ICE", "STE"]]                      = NOT_VERY_EFFECTIVE
+type_chart.loc["ICE", ["GRA", "GRO", "FLY", "DRA"]]                      = SUPER_EFFECTIVE
+
+type_chart.loc["FIG", ["GHO"]]                                           = NO_EFFECT
+type_chart.loc["FIG", ["POI", "FLY", "PSY", "BUG"]]                      = NOT_VERY_EFFECTIVE
+type_chart.loc["FIG", ["NOR", "ICE", "ROC", "DAR", "STE"]]               = SUPER_EFFECTIVE
+
+type_chart.loc["POI", ["STE"]]                                           = NO_EFFECT
+type_chart.loc["POI", ["POI", "GRO", "ROC", "GHO"]]                      = NOT_VERY_EFFECTIVE
+type_chart.loc["POI", ["GRA"]]                                           = SUPER_EFFECTIVE
+
+type_chart.loc["GRO", ["FLY"]]                                           = NO_EFFECT
+type_chart.loc["GRO", ["GRA", "BUG"]]                                    = NOT_VERY_EFFECTIVE
+type_chart.loc["GRO", ["FIR", "ELE", "POI", "ROC", "STE"]]               = SUPER_EFFECTIVE
+
+type_chart.loc["FLY", ["ELE", "ROC", "STE"]]                             = NOT_VERY_EFFECTIVE
+type_chart.loc["FLY", ["GRA", "FIG", "BUG"]]                             = SUPER_EFFECTIVE
+
+type_chart.loc["PSY", ["DAR"]]                                           = NO_EFFECT
+type_chart.loc["PSY", ["PSY", "STE"]]                                    = NOT_VERY_EFFECTIVE
+type_chart.loc["PSY", ["FIG", "POI"]]                                    = SUPER_EFFECTIVE
+
+type_chart.loc["BUG", ["FIR", "FIG", "POI", "FLY", "GHO", "STE"]]        = NOT_VERY_EFFECTIVE
+type_chart.loc["BUG", ["GRA", "PSY", "DAR"]]                             = SUPER_EFFECTIVE
