@@ -4,6 +4,7 @@ from . import forms
 from django.contrib.auth.decorators import login_required
 from . import models
 from django.http import JsonResponse
+import pandas as pd
 
 """
 Unused imports:
@@ -17,6 +18,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core import serializers
 """
+
+SUPER_EFFECTIVE    = 2.0
+NORMAL_EFFECTIVE   = 1.0
+NOT_VERY_EFFECTIVE = 0.5
+NO_EFFECT          = 0
 
 # Landing page with basic info about website and links to other parts
 # of website - if not sure where to redirect, should generally go here.
@@ -212,6 +218,11 @@ def get_create_pokemon(req, profile_id):
 
 @login_required
 def new_location(req, profile_id):
+
+    if profile_id.user != req.user:
+        # TO-DO: Create a "permission denied" page
+        return redirect("index")
+    
     if req.method == "POST":
         form = forms.NewLocationForm(req.POST, profile=profile_id)
         if form.is_valid():
@@ -282,60 +293,11 @@ type_chart = {
 "": {"no_effect": [], "not_effective":[],"effective":[]}
 }
 
-
-
-# To be deleted, using to test front-end
-static_pokemon = [
-    {   
-        "id":"123",
-        "name": "Charmander",
-        "type1": "FIR",
-        "type2": None,
-        "location": "Pallet Town",
-        "abilities": [
-        {
-            "name": "Growl",
-            "type": "NOR"
-        }, 
-        {
-            "name": "Ember",
-            "type": "Fire"
-        }],
-        "effective": ["GRA"],
-        "weakness": ["ROC", "Water"],
-        "img": None
-    },
-    {   
-        "id":"111",
-        "name": "Pikachu",
-        "type1": "ELE",
-        "type2": None,
-        "location": "Pallet Town",
-        "abilities": [{
-            "name": "Static",
-            "type": "NOR"
-        }],
-        "effective": ["FLY"],
-        "weakness": ["GRO", "Water"],
-        "img": None
-    },
-    {   
-        "id":"114",
-        "name": "Charizard",
-        "type1": "FIR",
-        "type2": None,
-        "location": "Pallet Town, Route 404",
-        "abilities": [
-        {
-            "name": "Growl",
-            "type": "NOR"
-        }, 
-        {
-            "name": "Ember",
-            "type": "Fire"
-        }],
-        "effective": ["GRA"],
-        "weakness": ["ROC", "Water"],
-        "img": None
-    }          
-]
+type_chart = pd.DataFrame(NORMAL_EFFECTIVE, index=models.Type.choices, columns=models.Type.choices)
+type_chart.loc["NOR", "ROC"] = NOT_VERY_EFFECTIVE
+type_chart.loc["NOR", "GHO"] = NO_EFFECT
+type_chart.loc["NOR", "STE"] = NOT_VERY_EFFECTIVE
+type_chart.loc["FIR", "FIR"] = NOT_VERY_EFFECTIVE
+type_chart.loc["FIR", "WAT"] = NOT_VERY_EFFECTIVE
+type_chart.loc["FIR", "GRA"] = NOT_VERY_EFFECTIVE
+type_chart.loc["FIR", "ICE"] = NOT_VERY_EFFECTIVE
