@@ -18,7 +18,10 @@
             <img src="{% static 'canvas.png' %}">
             {% endif %}
         </div>
-        <div id="evolution"></div>
+        <div id="evolution">
+            <h3>Description</h3>
+            <p>{{pokemon_data.description}}</p>
+        </div>
         <div class="stat_section" id="type">
             <h3>Type(s)</h3>
             <div class="stat_bubble">
