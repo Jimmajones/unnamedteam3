@@ -148,7 +148,8 @@ def get_detailed_view(req, pokemon_id):
     context = {}
     context["pokemon_data"] = pokemon_dict["pokemon_data"][0]
     context["profile_id"] = pokemon.profile.id
-    context["abilities"] = pokemon.can_learn.all()
+    context["moves"] = pokemon.can_learn.all()
+    context["abilities"] = pokemon.abilities.all()
     context["locations"] = pokemon.can_find_in.all()
 
     return render(req, "detailed_view.html", context)
