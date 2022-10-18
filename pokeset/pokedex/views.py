@@ -107,23 +107,19 @@ def get_dashboard(req, profile_id):
 
 
 def get_type_info(pokemon):
-    no_effect_t1 = set((type_chart[pokemon['type_one']])["no_effect"])
-    no_effect_t2 = set((type_chart[pokemon['type_two']])["no_effect"])
-    effective_t1 = set((type_chart[pokemon['type_one']])["effective"])
-    effective_t2 = set((type_chart[pokemon['type_two']])["effective"])
-    ineffective_t1 = set((type_chart[pokemon['type_two']])["not_effective"])
-    ineffective_t2 = set((type_chart[pokemon['type_two']])["not_effective"])
-
-    # using set notation to get all effective against and ineffective against
-    pokemon['effective_against'] = list(
-        ((effective_t1 - ineffective_t2) - no_effect_t2).union(
-        ((effective_t2 - ineffective_t1) - no_effect_t2)))
-
-    pokemon['ineffective_against'] = list (
-        (ineffective_t1 - effective_t2).union(no_effect_t1).union(
-        (ineffective_t2 - effective_t1).union(no_effect_t2))
-
-    )
+    pokemon['effective_against'] = []
+    pokemon['ineffective_against'] = []
+    for (type, label) in models.Type.choices:
+        if pokemon["type_two"]:
+            if type_chart.loc[type, [pokemon["type_one"], pokemon["type_two"]]].product() > 1:
+                pokemon["effective_against"].append(type)
+            elif type_chart.loc[type, [pokemon["type_one"], pokemon["type_two"]]].product() < 1:
+                pokemon["ineffective_against"].append(type)
+        else:
+            if type_chart.loc[type, [pokemon["type_one"]]].product() > 1:
+                pokemon["effective_against"].append(type)
+            elif type_chart.loc[type, [pokemon["type_one"]]].product() < 1:
+                pokemon["ineffective_against"].append(type)     
 
 
 
@@ -271,29 +267,10 @@ def set_images(context):
 # Weakness = "Will recieve double damage from this type"
 # Strength = "Will do double damage 
 # Offensive table
-type_chart = {
-"NOR":{"no_effect": ["GHO"], "effective":[], "not_effective":["ROC","STE"]},
-"FIR":{"no_effect": [], "not_effective":["FIR","WAT","ROC","DRA"],"effective":["GRA","ICE","BUG","STE"]},
-"WAT":{"no_effect": [], "not_effective":["WAT","GRA","DRA"],"effective":["FIR","GRO","ROC"]},
-"ELE":{"no_effect": ["GRO"], "not_effective":["ELE","GRA","DRA"],"effective":["WAT","FLY"]},
-"GRA":{"no_effect": [], "not_effective":["FIR","GRA","POI","FLY","BUG","DRA","STE"],"effective":["Water","GRO","ROC"]},
-"ICE":{"no_effect": [], "not_effective":["FIR","WAT","ICE","STE"],"effective":["GRA","GRO","FLY","DRA"]},
-"FIG":{"no_effect": ["GHO"], "not_effective":["POI","FLY","PSY","BUG","FAI"],"effective":["NOR","ICE","ROC","DAR","STE"]},
-"POI":{"no_effect": ["STE"], "not_effective":["POI","GRO","ROC","GHO"],"effective":["GRA","FAI"]},
-"GRO":{"no_effect":["FLY"], "not_effective":["GRA","BUG"],"effective":["FIR","ELE","POI","ROC","STE"]},
-"FLY":{"no_effect": [], "not_effective":["ELE","ROC","STE"],"effective":["GRA","FIG","BUG"]},
-"PSY":{"no_effect": ["DAR"], "not_effective":["PSY","STE"],"effective":["FIG","POI"]},
-"BUG":{"no_effect": [], "not_effective":["FIR","FIG","POI","FLY","GHO","STE","FAI"],"effective":["GRA","PSY","DAR"]},
-"ROC":{"no_effect": [], "not_effective":["FIG","GRO","STE"],"effective":["FIR","ICE","FLY","BUG"]},
-"GHO":{"no_effect": ["NOR"], "not_effective":["DAR","NOR"],"effective":["PSY","GHO"]},
-"DRA":{"no_effect": [], "not_effective":["STE","FAI"],"effective":["DRA"]},
-"DAR":{"no_effect": [], "not_effective":["FIG","DAR","FAI"],"effective":["PSY","GHO"]},
-"STE":{"no_effect": [], "not_effective":["FIR","WAT","ELE","STE"],"effective":["ICE","ROC","FAI"]},
-"FAI":{"no_effect": [],"not_effective":["FIR","POI","STE"],"effective":["FIG","DRA","DAR"]},
-"": {"no_effect": [], "not_effective":[],"effective":[]}
-}
-"""
-type_chart = pd.DataFrame(NORMAL_EFFECTIVE, index=models.Type.choices, columns=models.Type.choices)
+
+type_chart = pd.DataFrame(NORMAL_EFFECTIVE, 
+              index=map(lambda x: x[0], models.Type.choices), 
+              columns=map(lambda x: x[0], models.Type.choices))
 
 type_chart.loc["NOR", ["GHO"]]                                           = NO_EFFECT
 type_chart.loc["NOR", ["ROC", "STE"]]                                    = NOT_VERY_EFFECTIVE
@@ -335,4 +312,19 @@ type_chart.loc["PSY", ["FIG", "POI"]]                                    = SUPER
 
 type_chart.loc["BUG", ["FIR", "FIG", "POI", "FLY", "GHO", "STE"]]        = NOT_VERY_EFFECTIVE
 type_chart.loc["BUG", ["GRA", "PSY", "DAR"]]                             = SUPER_EFFECTIVE
-"""
+
+type_chart.loc["ROC", ["FIG", "GRO", "STE"]]                             = NOT_VERY_EFFECTIVE
+type_chart.loc["ROC", ["FIR", "ICE", "FLY", "BUG"]]                      = SUPER_EFFECTIVE
+
+type_chart.loc["GHO", ["NOR"]]                                           = NO_EFFECT
+type_chart.loc["GHO", ["DAR", "STE"]]                                    = NOT_VERY_EFFECTIVE
+type_chart.loc["GHO", ["PSY", "GHO"]]                                    = SUPER_EFFECTIVE
+
+type_chart.loc["DRA", ["STE"]]                                           = NOT_VERY_EFFECTIVE
+type_chart.loc["DRA", ["DRA"]]                                           = SUPER_EFFECTIVE
+
+type_chart.loc["DAR", ["FIG", "DAR", "STE"]]                             = NOT_VERY_EFFECTIVE
+type_chart.loc["DAR", ["PSY", "GHO"]]                                    = SUPER_EFFECTIVE
+
+type_chart.loc["STE", ["FIR", "WAT", "ELE", "STE"]]                      = NOT_VERY_EFFECTIVE
+type_chart.loc["STE", ["ICE", "ROC"]]                                    = SUPER_EFFECTIVE
