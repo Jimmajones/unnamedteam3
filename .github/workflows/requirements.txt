@@ -5,5 +5,5 @@ django-crispy-forms
 requests
 coverage
 selenium
-webdriver-manage
+webdriver-manager
 pandas
