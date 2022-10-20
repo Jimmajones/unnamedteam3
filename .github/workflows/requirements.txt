@@ -1,9 +1,9 @@
 # packages that are required for automated testing
 Django
 PyMySQL
+pandas
 django-crispy-forms
 requests
 coverage
 selenium
 webdriver-manager
-pandas
