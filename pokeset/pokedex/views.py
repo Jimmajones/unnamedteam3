@@ -89,17 +89,15 @@ def get_dashboard(req, profile_id):
 
     # Get the profile of this ID, and must belong to this user.
     profile_obj = get_object_or_404(models.Profile, id=profile_id, user=req.user)
-    pokemon = models.Pokemon.objects.filter(profile=profile_obj).values()
-    for poke in pokemon:
-        print(poke)
-        poke['location'] = get_object_or_404(models.Pokemon, id=poke['id']).can_find_in.all()
-        print(poke['location'])
-        get_type_info(poke)
+    all_pokemon = models.Pokemon.objects.filter(profile=profile_obj)
+
+    for pokemon in all_pokemon:
+        get_type_info(pokemon)
+        update_pokemon_image(pokemon)
 
     context = {}
-    context["pokemon_data"] = pokemon
+    context["pokemon_data"] = all_pokemon
     context["profile_id"] = profile_id
-    set_images(context)
 
     return render(req, "dashboard.html", context)
 
@@ -107,19 +105,19 @@ def get_dashboard(req, profile_id):
 
 
 def get_type_info(pokemon):
-    pokemon['effective_against'] = []
-    pokemon['ineffective_against'] = []
+    pokemon.effective_against = []
+    pokemon.ineffective_against = []
     for (type, label) in models.Type.choices:
-        if pokemon["type_two"]:
-            if type_chart.loc[type, [pokemon["type_one"], pokemon["type_two"]]].product() > 1:
-                pokemon["effective_against"].append(type)
-            elif type_chart.loc[type, [pokemon["type_one"], pokemon["type_two"]]].product() < 1:
-                pokemon["ineffective_against"].append(type)
+        if pokemon.type_two:
+            if type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() > 1:
+                pokemon.effective_against.append(type)
+            elif type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() < 1:
+                pokemon.ineffective_against.append(type)
         else:
-            if type_chart.loc[type, [pokemon["type_one"]]].product() > 1:
-                pokemon["effective_against"].append(type)
-            elif type_chart.loc[type, [pokemon["type_one"]]].product() < 1:
-                pokemon["ineffective_against"].append(type)     
+            if type_chart.loc[type, [pokemon.type_one]].product() > 1:
+                pokemon.effective_against.append(type)
+            elif type_chart.loc[type, [pokemon.type_one]].product() < 1:
+                pokemon.ineffective_against.append(type)     
 
 
 
@@ -131,22 +129,13 @@ def get_detailed_view(req, pokemon_id):
     if pokemon.profile.user != req.user:
         # TO-DO: Create a "permission denied" page
         return redirect("index")
-    
-    pokemon_dict = {"pokemon_data": [pokemon.__dict__]}
 
-    get_type_info(pokemon_dict["pokemon_data"][0])
+    get_type_info(pokemon)
+    update_pokemon_image(pokemon)
 
-    set_images(pokemon_dict)
-
-    # TO-DO: Fix up the context (sending a dictionary of the Pokemon
-    # and its abilities/locations, rather than just the raw Pokemon,
-    # is a bit confusing).
     context = {}
-    context["pokemon_data"] = pokemon_dict["pokemon_data"][0]
+    context["pokemon_data"] = pokemon
     context["profile_id"] = pokemon.profile.id
-    context["moves"] = pokemon.can_learn.all()
-    context["abilities"] = pokemon.abilities.all()
-    context["locations"] = pokemon.can_find_in.all()
 
     return render(req, "detailed_view.html", context)
 
@@ -159,8 +148,6 @@ def get_edit_pokemon(req, pokemon_id):
         # TO-DO: Create a "permission denied" page
         return redirect("index")
     
-    # TO-DO: Fix up context (it's a little unintuitive).
-    pre_context = {"pokemon_data": [pokemon.__dict__]}
     types = models.Type.choices
 
     if req.method == 'POST':
@@ -169,17 +156,16 @@ def get_edit_pokemon(req, pokemon_id):
             form.save()
             return redirect("detailed", pokemon_id=pokemon.id)
     else:
-        set_images(pre_context)
+        update_pokemon_image(pokemon)
         form = forms.EditPokemonForm(instance=pokemon)
 
-    # TO-DO: Form should filter "evolves_from" so that only
-    # Pokemon belonging to the user are options.
     context = {}
-    context["pokemon_data"] = pre_context["pokemon_data"][0]
+    context["pokemon_data"] = pokemon
     context["form"] = form
-    context["pokemon_id"] = pokemon_id
+    context["pokemon_id"] = pokemon.id
     context["profile"] = pokemon.profile
     context["types"] = types
+    
     return render(req, "edit_pokemon.html", context)
 
 # Form to create a new Pokemon.
@@ -244,20 +230,19 @@ def new_ability(req, profile_id):
         ability_dict = {"name": new_ability.name, "pk": new_ability.id}
         return JsonResponse(ability_dict, status=200)
 
-
-# Retrieves images of pokemon from pokeapi based on its name
-def set_images(context):
-    params = {"format": "json"}
-    # For each pokemon in array
-    for pokemon in context["pokemon_data"]:
-        # print("Looking for " + pokemon["name"].lower())
-        # Query API for given pokemon and parse JSON
+# Fetches "image_url" field of a Pokemon instance from PokeAPI based on its name.
+def update_pokemon_image(pokemon):
+    if not pokemon.image_url:
         try: 
-            response = requests.get("https://pokeapi.co/api/v2/pokemon/" +pokemon["name"].lower(), params=params)
-            # print("Found it: " + response.json()["sprites"]["front_default"])
-            pokemon["img"] = response.json()["sprites"]["front_default"]
-        except:
-            continue
+            response = requests.get("https://pokeapi.co/api/v2/pokemon/" + pokemon.name.lower(), params={"format": "json"})
+            pokemon.image_url = response.json()["sprites"]["front_default"]
+            try:
+                pokemon.full_clean()
+                pokemon.save()
+            except ValidationError as e:
+                pass
+        except requests.exceptions.RequestException as e:
+            pass
 
 
 

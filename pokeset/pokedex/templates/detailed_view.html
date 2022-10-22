@@ -11,8 +11,8 @@
     <div id="stats">
         <div id="profile">
             <h2>{{pokemon_data.name}}</h2>
-            {%if pokemon_data.img is not None %}
-            <img src="{{pokemon_data.img}}" loading="lazy">
+            {%if pokemon_data.image_url is not None %}
+            <img src="{{pokemon_data.image_url}}" loading="lazy">
             {% else %}
             {% load static %}
             <img src="{% static 'canvas.png' %}">
@@ -34,7 +34,7 @@
             <h3>Locations</h3>
             <div class="stat_bubble">
        
-                    {% for location in locations %}
+                    {% for location in pokemon_data.can_find_in.all %}
                     <span>{{location.name}}</span>
                     {% endfor %}
             </div>
@@ -62,7 +62,7 @@
         <div class="stat_section" id="abilities">
             <h3>Abilities</h3>
             <div class="stat_bubble">
-                {% for ability in abilities%}
+                {% for ability in pokemon_data.abilities.all%}
                 <p>{{ability}}</p>
                 {% endfor %}
             </div>
@@ -70,7 +70,7 @@
         <div class="stat_section" id="moves_section">
             <h3>Moves</h3>
             <div class="stat_bubble">
-                {% for move in moves%}
+                {% for move in pokemon_data.can_learn.all%}
                 <p>{{move}}</p>
                 {% endfor %}
             </div>
