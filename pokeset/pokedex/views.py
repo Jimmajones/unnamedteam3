@@ -8,19 +8,9 @@ from . import models
 from django.http import JsonResponse
 import pandas as pd
 
-"""
-Unused imports:
-from mailbox import _ProxyFile
-from email import message_from_bytes
-from importlib.resources import contents
-from multiprocessing import context
-from urllib import request, response
-from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
-from django.core import serializers
-"""
-
+# Constants for type effectiveness. Moves, based on the type of that move
+# and the type(s) of the Pokemon that the move is being used against, will
+# have one of these 4 multipliers to damage applied.
 SUPER_EFFECTIVE    = 2.0
 NORMAL_EFFECTIVE   = 1.0
 NOT_VERY_EFFECTIVE = 0.5
@@ -66,8 +56,8 @@ def get_profiles(req):
     else:
         form = forms.NewProfileForm(user=req.user)
     
+    # Colour in profile bubbles randomly.
     profiles = models.Profile.objects.filter(user=req.user).values()
-
     colour_options = ["#94bc4a", "#6a7baf", "#e5c531", "#736c75", "#e397d1", "#cb5f48", "#ea7a3c", "#7da6de", "#846ab6", "#71c558"," 	#cc9f4f", "#70cbd4", "#539ae2"]
     for profile in profiles:
         id = profile['id']
@@ -79,8 +69,6 @@ def get_profiles(req):
     context["form"] = form
     context["profiles"] = profiles
     
-
-
     return render(req, "profiles.html", context)
 
 # Get all the Pokemon of a profile/save.
@@ -100,26 +88,6 @@ def get_dashboard(req, profile_id):
     context["profile_id"] = profile_id
 
     return render(req, "dashboard.html", context)
-
-
-
-
-def get_type_info(pokemon):
-    pokemon.effective_against = []
-    pokemon.ineffective_against = []
-    for (type, label) in models.Type.choices:
-        if pokemon.type_two:
-            if type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() > 1:
-                pokemon.effective_against.append(type)
-            elif type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() < 1:
-                pokemon.ineffective_against.append(type)
-        else:
-            if type_chart.loc[type, [pokemon.type_one]].product() > 1:
-                pokemon.effective_against.append(type)
-            elif type_chart.loc[type, [pokemon.type_one]].product() < 1:
-                pokemon.ineffective_against.append(type)     
-
-
 
 # Show a Pokemon in detail.
 @login_required
@@ -190,9 +158,7 @@ def get_create_pokemon(req, profile_id):
     return render(req, "create_pokemon.html", context)
 
 
-# TO-DO: Change these to redirect to the Pokemon we were editting
-# (or maybe we change it so adding new moves and stuff is done on a
-# separate page?)
+# Handle creating new locations, moves, and abilities.
 
 @login_required
 def new_location(req, profile_id):
@@ -244,14 +210,29 @@ def update_pokemon_image(pokemon):
         except requests.exceptions.RequestException as e:
             pass
 
+# Adds effective and ineffective attributes to a Pokemon instance for all
+# possible types.
+def get_type_info(pokemon):
+    # TO-DO: Add "super effective against" and "no effect against" attributes.
+    pokemon.effective_against = []
+    pokemon.ineffective_against = []
+    for (type, label) in models.Type.choices:
+        # Really inelegant way of dropping the second type if there is none.
+        if pokemon.type_two:
+            if type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() > 1:
+                pokemon.effective_against.append(type)
+            elif type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() < 1:
+                pokemon.ineffective_against.append(type)
+        else:
+            if type_chart.loc[type, [pokemon.type_one]].product() > 1:
+                pokemon.effective_against.append(type)
+            elif type_chart.loc[type, [pokemon.type_one]].product() < 1:
+                pokemon.ineffective_against.append(type)     
 
 
 # For type weakness and strength
 # Adapted from https://github.com/filipekiss/pokemon-type-chart/blob/master/types.json
 # Using data fromm https://img.pokemondb.net/images/typechart-gen2345.png
-# Weakness = "Will recieve double damage from this type"
-# Strength = "Will do double damage 
-# Offensive table
 
 type_chart = pd.DataFrame(NORMAL_EFFECTIVE, 
               index=map(lambda x: x[0], models.Type.choices), 
