@@ -25,37 +25,73 @@
         <div class="stat_section" id="type">
             <h3>Type(s)</h3>
             <div class="stat_bubble">
-                <p>
-                    {{pokemon_data.type_one|typecolor}} {{pokemon_data.type_two|typecolor}}
-                </p>
+                <div class="stat_bubble_contents">
+                    <p>
+                        {{pokemon_data.type_one|typecolor}} {{pokemon_data.type_two|typecolor}}
+                    </p>
+                </div>
             </div>
         </div>
         <div class="stat_section" id="locations">
             <h3>Locations</h3>
             <div class="stat_bubble">
-       
-                    {% for location in pokemon_data.can_find_in.all %}
-                    <span>{{location.name}}</span>
-                    {% endfor %}
+                    <div class="stat_bubble_contents">
+                        <div class="pokemon_types_dashboard ">
+                            {% for location in pokemon_data.can_find_in.all %}
+                            <span class="location_name">{{location.name}}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+    
+                    
             </div>
         </div>
         <div class="stat_section" n id="effective">
-            <h4>Weaknesses</h4>
+            <h4>Effective Against</h4>
             <div class="stat_bubble">
-                <div class="pokemon_types_dashboard">
-                {% for type in pokemon_data.effective_against%}
-                            {{type|typecolor}}
-                {% endfor %}
+                <div class="stat_bubble_contents">
+                        <p class="damage_multiplier">400% Damage</p>
+                    <div class="pokemon_types_dashboard">
+                     
+                        {% for type in pokemon_data.offensive_4 %}
+                                    {{type|typecolor}}
+                        {% empty %}
+                            <p><i>none</i></p>
+                        {% endfor %}
+                  
+                    </div>
+                    <p class="damage_multiplier">200% Damage</p>
+                    <div class="pokemon_types_dashboard">
+                        {% for type in pokemon_data.offensive_2 %}
+                                    {{type|typecolor}}
+                        {% empty %}
+                            <p><i>none</i></p>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
         <div class="stat_section" id="weakness">
-            <h4>Resistances</h4>
+            <h4>Ineffective Against</h4>
             <div class="stat_bubble">
-                <div class="pokemon_types_dashboard">
-                {% for type in pokemon_data.ineffective_against%}
-                            {{type|typecolor}}
-                {% endfor %}
+                <div class="stat_bubble_contents">
+                    <p class="damage_multiplier">50% Damage</p>
+                        <div class="pokemon_types_dashboard">
+                            {% for type in pokemon_data.offensive_05 %}
+                                        {{type|typecolor}}
+                            {% empty %}
+                                <p><i>none</i></p>
+                            {% endfor %}
+                        </div>
+                        <p class="damage_multiplier">25% Damage</p>
+                    <div class="pokemon_types_dashboard">
+                        {% for type in pokemon_data.offensive_025%}
+                                {{type|typecolor}}
+                        {% empty %}
+                            <p><i>none</i></p>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -70,9 +106,14 @@
         <div class="stat_section" id="moves_section">
             <h3>Moves</h3>
             <div class="stat_bubble">
-                {% for move in pokemon_data.can_learn.all%}
-                <p>{{move}}</p>
-                {% endfor %}
+                <div class="stat_bubble_contents">
+                    {% for move in pokemon_data.can_learn.all%}
+                    <div class="move_description">
+                        <p>{{move}}</p>
+                        {{move.type|typecolor}}
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>

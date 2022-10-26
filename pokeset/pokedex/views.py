@@ -214,20 +214,26 @@ def update_pokemon_image(pokemon):
 # possible types.
 def get_type_info(pokemon):
     # TO-DO: Add "super effective against" and "no effect against" attributes.
-    pokemon.effective_against = []
-    pokemon.ineffective_against = []
+    pokemon.offensive_4 = []
+    pokemon.offensive_2 = []
+    pokemon.offensive_05 = []
+    pokemon.offensive_025 = []
     for (type, label) in models.Type.choices:
         # Really inelegant way of dropping the second type if there is none.
         if pokemon.type_two:
-            if type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() > 1:
-                pokemon.effective_against.append(type)
-            elif type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() < 1:
-                pokemon.ineffective_against.append(type)
+            if type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() == SUPER_EFFECTIVE:
+                pokemon.offensive_2.append(type)
+            elif type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() == SUPER_EFFECTIVE*SUPER_EFFECTIVE:
+                pokemon.offensive_4.append(type)
+            elif type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() == NOT_VERY_EFFECTIVE:
+                pokemon.offensive_05.append(type)
+            elif type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() == NOT_VERY_EFFECTIVE*NOT_VERY_EFFECTIVE:
+                pokemon.offensive_025.append(type)
         else:
-            if type_chart.loc[type, [pokemon.type_one]].product() > 1:
-                pokemon.effective_against.append(type)
-            elif type_chart.loc[type, [pokemon.type_one]].product() < 1:
-                pokemon.ineffective_against.append(type)     
+            if type_chart.loc[type, [pokemon.type_one]].product() == SUPER_EFFECTIVE:
+                pokemon.offensive_2.append(type)
+            elif type_chart.loc[type, [pokemon.type_one]].product() == NOT_VERY_EFFECTIVE:
+                pokemon.offensive_05.append(type)     
 
 
 # For type weakness and strength

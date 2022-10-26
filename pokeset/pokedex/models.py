@@ -82,7 +82,7 @@ class Move(models.Model):
         constraints = [models.UniqueConstraint(name="unique_moves", fields=["name", "profile"])]
 
     def __str__(self):
-        return self.name + ' (' + self.get_type_display() + ')'
+        return self.name
 
 # We want users to be able to record what abilities a Pokemon can have.
 # Abilities provide passive effects in battle or in the overworld.

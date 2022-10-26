@@ -205,6 +205,7 @@ footer {
     justify-content: center;
 }
 
+
 #stats h3, #stats h4 {
     margin: 0;
 
@@ -281,10 +282,33 @@ footer {
     border-radius: 30px;
     height: 100%;
     margin-top: 5px;
+    overflow-y: scroll;
+}
+
+.stat_bubble_contents {
+    padding: 5px 0px;
     display: flex;
     flex-direction: column;
-    overflow-y: scroll;
     justify-content: center;
+}
+
+.location_name {
+    background-color: #E3E3E3;
+    padding: 4px;
+    border-radius: 10px;
+  
+    margin-top: 4px;
+    margin-left: 4px;
+}
+
+.move_description {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    margin-top: 4px;
+    margin-left: 4px;
 }
 
 .big_bottom_button {
@@ -301,6 +325,8 @@ footer {
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.5);
     cursor: pointer;
 }
+
+
 
 .big_bottom_button:hover {
     top: 2px;

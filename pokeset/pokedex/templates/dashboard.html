@@ -80,8 +80,7 @@
                     <th>Name</th>
                     <th>Type</th>
                     <th>Location(s)</th>
-                    <th>Weaknesses</th>
-                    <th>Resistances</th>
+                    <th>Super Effective Against</th>
                 </tr>
                 <thead>
                     <tbody>
@@ -106,18 +105,21 @@
                             <td>{{pokemon.can_find_in.all|join:" "}}</td>
                             <td >
                                 <div class="pokemon_types_dashboard">
-                                    {% for type in pokemon.effective_against%}
+                                    {% for type in pokemon.offensive_2%}
+                                    {{type|typecolor}}
+                                     {% endfor %}
+                                     {% for type in pokemon.offensive_4%}
                                     {{type|typecolor}}
                                      {% endfor %}
                                 </div>
                             </td>
-                            <td >
+                            {% comment %} <td >
                                 <div class="pokemon_types_dashboard">
-                                    {% for type in pokemon.ineffective_against%}
+                                    {% for type in pokemon.offensive_0.5%}
                                     {{type|typecolor}}
                                     {% endfor %}
                                 </div>
-                            </td>
+                            </td> {% endcomment %}
                         </tr>
                         {% endfor %}
                     </tbody>
