@@ -13,4 +13,5 @@ urlpatterns = [
     path('new_location/<int:profile_id>', views.new_location, name="new_location"),
     path('new_move/<int:profile_id>', views.new_move, name="new_move"),
     path('new_ability/<int:profile_id>', views.new_ability, name="new_ability"),
+    path('delete_pokemon/<int:pokemon_id>/', views.delete_pokemon, name="delete_pokemon")
 ]

@@ -235,6 +235,17 @@ def get_type_info(pokemon):
             elif type_chart.loc[type, [pokemon.type_one]].product() == NOT_VERY_EFFECTIVE:
                 pokemon.offensive_05.append(type)     
 
+@login_required
+def delete_pokemon(req, pokemon_id):
+    
+    pokemon = get_object_or_404(models.Pokemon, id=pokemon_id)
+    profile = pokemon.profile
+    if req.user == profile.user:
+        pokemon.delete()
+        return redirect('dashboard', profile_id=profile.id)
+    else:
+        redirect('index')
+
 
 # For type weakness and strength
 # Adapted from https://github.com/filipekiss/pokemon-type-chart/blob/master/types.json

@@ -26,6 +26,7 @@
 
 
 <section class="poke_edit_section">
+    
 
     <h2>Editing {{pokemon_data.name}}</h2>
     <div = "info">Hold ctrl to select multiple</div>
@@ -86,9 +87,14 @@
             </button>
             
         </div>
-        <input id="submit_edit" type="submit" value="Save">
+            
+    
+
+        <div id="submit" class="submit_area">
+            <input class="big_bottom_button" type="submit" value="Save">
+            <button class="big_bottom_button" onclick="open_modal('delete_pokemon')" type="button">Delete</button>
+    
         </div>
-        
     </form>
     
 
@@ -136,9 +142,19 @@
         </div>
     </div>
  
+    <div style="display:none" class="profile_popup" id="delete_pokemon">
+        <div class="profiler_add">
+            <h1>Are you sure?</h1> 
+            <button type="button" onclick='location.href="{% url 'delete_pokemon' pokemon_data.id %}"'>Yes</button>
+            <br><br>
+            <button type="button" onclick='close_modal("delete_pokemon")'>Cancel</button>
+        </div>
+    </div>
 
 
 </section>
+
+
 
 <script>
 
