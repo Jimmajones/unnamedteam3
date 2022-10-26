@@ -93,9 +93,9 @@ main {
     border-radius: 10px;
     margin-top: 4px;
     margin-left: 4px;
-
+    font-weight: bold;
     color: white;
-    text-shadow: -0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000, 0.5px 0.5px 0 #000;
+    /* text-shadow: -0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000, 0.5px 0.5px 0 #000; */
 }
 
 .pokemon_types_dashboard {
