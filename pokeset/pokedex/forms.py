@@ -113,6 +113,15 @@ class NewPokemonForm(ModelForm):
 
 
 class EditPokemonForm(ModelForm):
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		if self.instance:
+			self.fields["evolves_from"].queryset = models.Pokemon.objects.filter(profile=self.instance.profile)
+			self.fields["can_learn"].queryset = models.Move.objects.filter(profile=self.instance.profile)
+			self.fields["can_find_in"].queryset = models.Location.objects.filter(profile=self.instance.profile)
+			self.fields["abilities"].queryset = models.Ability.objects.filter(profile=self.instance.profile)
+
+
 	class Meta:
 		model = models.Pokemon
 		fields = ['name', 'description', 'type_one', 'type_two', 'evolves_from', 'can_learn', 'can_find_in', 'abilities']

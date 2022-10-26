@@ -105,6 +105,8 @@ class Pokemon(SelfValidate):
     name            = models.CharField(max_length=20)
     description     = models.CharField(max_length=200, blank=True)
 
+    image_url       = models.URLField(max_length=200, blank=True)
+
     type_one        = models.CharField(max_length=3, choices=Type.choices)
     type_two        = models.CharField(max_length=3, choices=Type.choices, blank=True)
 

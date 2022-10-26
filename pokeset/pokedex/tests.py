@@ -597,54 +597,59 @@ class RecordingPokemonTestCases(StaticLiveServerTestCase):
 
         # Test editing moves
         self.driver.find_element(By.ID, "moves").find_element(By.TAG_NAME, "button").click()
-        self.driver.find_element(By.ID, "add_move").find_element(By.ID, "id_name").send_keys("electric attack")
-        self.driver.find_element(By.ID, "add_move").find_element(By.NAME, "type").send_keys("e" + Keys.ENTER)
+        self.driver.find_element(By.ID, "add_move").find_element(By.ID, "move_name").send_keys("electric attack")
+        self.driver.find_element(By.ID, "add_move").find_element(By.NAME, "move_type").send_keys("e" + Keys.ENTER)
         self.driver.find_element(By.ID, "add_move").find_element(By.CLASS_NAME, "confirm_button").click()
-        self.assertEqual(self.driver.current_url, url + "/dashboard/7")
+        self.assertEqual(self.driver.current_url, url + "/edit_pokemon/3/")
 
-        self.driver.find_element(By.CLASS_NAME, "sorting_1").click()
-        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
         self.assertEqual(self.driver.find_element(By.ID, "moves").find_element(By.NAME, "can_learn").find_element(
             By.TAG_NAME, "option").text, "electric attack (Electric)")
 
         # Test editing abilities
         self.driver.find_element(By.ID, "abilities").find_element(By.TAG_NAME, "button").click()
-        self.driver.find_element(By.ID, "add_ability").find_element(By.ID, "id_name").send_keys("dance")
+        self.driver.find_element(By.ID, "add_ability").find_element(By.ID, "ability_name").send_keys("dance")
         self.driver.find_element(By.ID, "add_ability").find_element(By.CLASS_NAME, "confirm_button").click()
-        self.assertEqual(self.driver.current_url, url + "/dashboard/7")
+        self.assertEqual(self.driver.current_url, url + "/edit_pokemon/3/")
 
-        self.driver.find_element(By.CLASS_NAME, "sorting_1").click()
-        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
         self.assertEqual(self.driver.find_element(By.ID, "abilities").find_element(By.NAME, "abilities").find_element(
             By.TAG_NAME, "option").text, "dance")
         
         # Test editing locations
         self.driver.find_element(By.ID, "location").find_element(By.TAG_NAME, "button").click()
-        self.driver.find_element(By.ID, "add_location").find_element(By.ID, "id_name").send_keys("the park")
+        self.driver.find_element(By.ID, "add_location").find_element(By.ID, "location_name").send_keys("the park")
         self.driver.find_element(By.ID, "add_location").find_element(By.CLASS_NAME, "confirm_button").click()
-        self.assertEqual(self.driver.current_url, url + "/dashboard/7")
+        self.assertEqual(self.driver.current_url, url + "/edit_pokemon/3/")
 
-        self.driver.find_element(By.CLASS_NAME, "sorting_1").click()
-        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
         self.assertEqual(self.driver.find_element(By.ID, "location").find_element(By.NAME, "can_find_in").find_element(
             By.TAG_NAME, "option").text, "the park")
-        
-        # Test adding another move
-        self.driver.find_element(By.ID, "moves").find_element(By.TAG_NAME, "button").click()
-        self.driver.find_element(By.ID, "add_move").find_element(By.ID, "id_name").send_keys("electric shock")
-        self.driver.find_element(By.ID, "add_move").find_element(By.NAME, "type").send_keys("n" + Keys.ENTER)
-        self.driver.find_element(By.ID, "add_move").find_element(By.CLASS_NAME, "confirm_button").click()
-        self.assertEqual(self.driver.current_url, url + "/dashboard/7")
-
-        self.driver.find_element(By.CLASS_NAME, "sorting_1").click()
-        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
-        self.assertEqual(self.driver.find_element(By.ID, "moves").find_element(By.NAME, "can_learn").find_elements(
-            By.TAG_NAME, "option")[1].text, "electric shock (Normal)")
 
         # Test that the correct sprite has loaded for the pokemon
         self.assertEqual(self.driver.find_element(By.ID, "poke_img").find_element(By.TAG_NAME, "img").get_attribute("src"),
             "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png")
+        
+        # test changing the name of the pokemon
+        self.driver.find_element(By.ID, "name").find_element(By.ID, "id_name").clear()
+        self.driver.find_element(By.ID, "name").find_element(By.ID, "id_name").send_keys("mew" + Keys.ENTER)
+        self.assertEqual(self.driver.current_url, url + "/detailed_view/3/")
+        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
+        self.assertEqual(self.driver.find_element(By.ID, "name").find_element(By.ID, "id_name").get_attribute("value"), "mew")
 
+        # test changing the description of the pokemon
+        self.driver.find_element(By.ID, "description").find_element(By.ID, "id_description").clear()
+        self.driver.find_element(By.ID, "description").find_element(By.ID, "id_description").send_keys("this is a pokemon" + Keys.ENTER)
+        self.assertEqual(self.driver.current_url, url + "/detailed_view/3/")
+        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
+        self.assertEqual(self.driver.find_element(By.ID, "description").find_element(By.ID, "id_description").get_attribute("value"), "this is a pokemon")
+
+         # test changing type one of the pokemon
+        self.driver.find_element(By.ID, "type_one").find_element(By.ID, "id_type_one").send_keys("p" + Keys.ENTER)
+        self.assertEqual(self.driver.find_element(By.ID, "type_one").find_element(By.ID, "id_type_one").get_attribute("value"), "PSY")
+
+        # test changing type two of the pokemon
+        self.driver.find_element(By.ID, "type_two").find_element(By.ID, "id_type_two").send_keys("s" + Keys.ENTER)
+        self.assertEqual(self.driver.find_element(By.ID, "type_two").find_element(By.ID, "id_type_two").get_attribute("value"), "STE")
+       
+       
         self.driver.find_element(By.CLASS_NAME, LOGOUT_CLASS).click()
         test_user.delete()
         user_profile.delete()

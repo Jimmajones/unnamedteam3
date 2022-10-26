@@ -80,8 +80,8 @@
                     <th>Name</th>
                     <th>Type</th>
                     <th>Location(s)</th>
-                    <th>Effective Against</th>
-                    <th>Ineffective Against</th>
+                    <th>Weaknesses</th>
+                    <th>Resistances</th>
                 </tr>
                 <thead>
                     <tbody>
@@ -89,8 +89,8 @@
                         <tr onclick="location.href='{% url 'detailed' pokemon.id %}'">
                             <td>   
                                 <div id="name_col">
-                                    {%if pokemon.img is not None %}
-                                    <img src="{{pokemon.img}}" loading="lazy">
+                                    {%if pokemon.image_url is not None %}
+                                    <img src="{{pokemon.image_url}}" loading="lazy">
                                     {% else %}
                                     {% load static %}
                                     <img src="{% static 'canvas.png' %}">
@@ -103,7 +103,7 @@
                                 </div>    
                                
                             </td>
-                            <td>{{pokemon.location|join:" "}}</td>
+                            <td>{{pokemon.can_find_in.all|join:" "}}</td>
                             <td >
                                 <div class="pokemon_types_dashboard">
                                     {% for type in pokemon.effective_against%}

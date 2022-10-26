@@ -11,14 +11,17 @@
     <div id="stats">
         <div id="profile">
             <h2>{{pokemon_data.name}}</h2>
-            {%if pokemon_data.img is not None %}
-            <img src="{{pokemon_data.img}}" loading="lazy">
+            {%if pokemon_data.image_url is not None %}
+            <img src="{{pokemon_data.image_url}}" loading="lazy">
             {% else %}
             {% load static %}
             <img src="{% static 'canvas.png' %}">
             {% endif %}
         </div>
-        <div id="evolution"></div>
+        <div id="evolution">
+            <h3>Description</h3>
+            <p>{{pokemon_data.description}}</p>
+        </div>
         <div class="stat_section" id="type">
             <h3>Type(s)</h3>
             <div class="stat_bubble">
@@ -31,13 +34,13 @@
             <h3>Locations</h3>
             <div class="stat_bubble">
        
-                    {% for location in locations %}
+                    {% for location in pokemon_data.can_find_in.all %}
                     <span>{{location.name}}</span>
                     {% endfor %}
             </div>
         </div>
         <div class="stat_section" n id="effective">
-            <h4>Effective Against</h4>
+            <h4>Weaknesses</h4>
             <div class="stat_bubble">
                 <div class="pokemon_types_dashboard">
                 {% for type in pokemon_data.effective_against%}
@@ -47,7 +50,7 @@
             </div>
         </div>
         <div class="stat_section" id="weakness">
-            <h4>Ineffective Against</h4>
+            <h4>Resistances</h4>
             <div class="stat_bubble">
                 <div class="pokemon_types_dashboard">
                 {% for type in pokemon_data.ineffective_against%}
@@ -59,7 +62,7 @@
         <div class="stat_section" id="abilities">
             <h3>Abilities</h3>
             <div class="stat_bubble">
-                {% for ability in abilities%}
+                {% for ability in pokemon_data.abilities.all%}
                 <p>{{ability}}</p>
                 {% endfor %}
             </div>
@@ -67,7 +70,7 @@
         <div class="stat_section" id="moves_section">
             <h3>Moves</h3>
             <div class="stat_bubble">
-                {% for move in moves%}
+                {% for move in pokemon_data.can_learn.all%}
                 <p>{{move}}</p>
                 {% endfor %}
             </div>
