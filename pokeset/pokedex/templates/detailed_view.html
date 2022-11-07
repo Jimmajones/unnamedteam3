@@ -1,6 +1,8 @@
 {% extends './main.html' %} {% block content %}
 {% load poll_extras %}
 
+<link rel="stylesheet" {% load static %} href="{% static 'style.css' %}?{% now "U" %}">
+
 <head>
     <title>Pokeset - Detailed View</title>
 </head>
@@ -18,7 +20,43 @@
             <img src="{% static 'canvas.png' %}">
             {% endif %}
         </div>
-        <div id="evolution">
+
+        <div class = "evolution_box">
+            <div class = "evolutions">
+                <button name = "from_pokemon" class = "add_evolution_circles">
+                    +
+                </button>
+            </div>
+            <div class ="evolution_column">
+            {% for evo_pokemon in pokemon_data.evolves_from.all%}
+                <div class ="evolutions">
+                    <button name = "{{evo_pokemon.name}}" class = "evolution_circles">
+                        <img src="{{evo_pokemon.image_url}}" loading="lazy">
+                    </button>
+                </div>
+            {% endfor %}
+            </div>
+            <div class ="evolutions">
+                <button name = "{{pokemon_data.name}}" class = "evolution_circles">
+                    <img src="{{pokemon_data.image_url}}" loading="lazy">
+                </button>
+            </div>
+
+            {% for evo_pokemon in pokemon_data.evolves_into.all%}
+                <div class ="evolutions">
+                    <button name = "{{evo_pokemon.name}}" class = "evolution_circles">
+                        <img src="{{evo_pokemon.image_url}}" loading="lazy">
+                    </button>
+                </div>
+            {% endfor %}
+             <div class = "evolutions">
+                <button name = "from_pokemon" class = "add_evolution_circles">
+                    +
+                </button>
+            </div>
+            
+        </div>
+        <div>
             <h3>Description</h3>
             <p>{{pokemon_data.description}}</p>
         </div>
@@ -95,6 +133,7 @@
                 </div>
             </div>
         </div>
+        
         <div class="stat_section" id="abilities">
             <h3>Abilities</h3>
             <div class="stat_bubble">
@@ -116,6 +155,7 @@
                 </div>
             </div>
         </div>
+        
     </div>
     <button class="big_bottom_button" onclick='location.href="{% url 'edit_pokemon' pokemon_data.id %}"'>Edit Pokemon</button>
 </section>
