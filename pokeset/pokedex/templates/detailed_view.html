@@ -48,10 +48,10 @@
             </div>
         </div>
         <div class="stat_section" n id="effective">
-            <h4>Effective Against</h4>
+            <h4>Weak To</h4>
             <div class="stat_bubble">
                 <div class="stat_bubble_contents">
-                        <p class="damage_multiplier">400% Damage</p>
+                        <p class="damage_multiplier">Takes 400% Damage</p>
                     <div class="pokemon_types_dashboard">
                      
                         {% for type in pokemon_data.offensive_4 %}
@@ -61,7 +61,7 @@
                         {% endfor %}
                   
                     </div>
-                    <p class="damage_multiplier">200% Damage</p>
+                    <p class="damage_multiplier">Takes 200% Damage</p>
                     <div class="pokemon_types_dashboard">
                         {% for type in pokemon_data.offensive_2 %}
                                     {{type|typecolor}}
@@ -73,10 +73,10 @@
             </div>
         </div>
         <div class="stat_section" id="weakness">
-            <h4>Ineffective Against</h4>
+            <h4>Resistant To</h4>
             <div class="stat_bubble">
                 <div class="stat_bubble_contents">
-                    <p class="damage_multiplier">50% Damage</p>
+                    <p class="damage_multiplier">Takes 50% Damage</p>
                         <div class="pokemon_types_dashboard">
                             {% for type in pokemon_data.offensive_05 %}
                                         {{type|typecolor}}
@@ -84,9 +84,17 @@
                                 <p><i>none</i></p>
                             {% endfor %}
                         </div>
-                        <p class="damage_multiplier">25% Damage</p>
+                        <p class="damage_multiplier">Takes 25% Damage</p>
                     <div class="pokemon_types_dashboard">
                         {% for type in pokemon_data.offensive_025%}
+                                {{type|typecolor}}
+                        {% empty %}
+                            <p><i>none</i></p>
+                        {% endfor %}
+                    </div>
+                    <p class="damage_multiplier">Takes 0% Damage</p>
+                    <div class="pokemon_types_dashboard">
+                        {% for type in pokemon_data.offensive_0%}
                                 {{type|typecolor}}
                         {% empty %}
                             <p><i>none</i></p>

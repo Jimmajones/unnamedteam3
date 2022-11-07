@@ -218,22 +218,31 @@ def get_type_info(pokemon):
     pokemon.offensive_2 = []
     pokemon.offensive_05 = []
     pokemon.offensive_025 = []
+    pokemon.offensive_0 = []
     for (type, label) in models.Type.choices:
         # Really inelegant way of dropping the second type if there is none.
         if pokemon.type_two:
-            if type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() == SUPER_EFFECTIVE:
+            if abs(type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() - SUPER_EFFECTIVE) < 0.01:
                 pokemon.offensive_2.append(type)
-            elif type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() == SUPER_EFFECTIVE*SUPER_EFFECTIVE:
+            elif abs(type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() - SUPER_EFFECTIVE*SUPER_EFFECTIVE) < 0.01:
                 pokemon.offensive_4.append(type)
-            elif type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() == NOT_VERY_EFFECTIVE:
+            elif abs(type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() - NOT_VERY_EFFECTIVE) < 0.01:
                 pokemon.offensive_05.append(type)
-            elif type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() == NOT_VERY_EFFECTIVE*NOT_VERY_EFFECTIVE:
+            elif abs(type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() - NOT_VERY_EFFECTIVE*NOT_VERY_EFFECTIVE) < 0.01:
                 pokemon.offensive_025.append(type)
+            elif abs(type_chart.loc[type, [pokemon.type_one, pokemon.type_two]].product() - NO_EFFECT) < 0.01:
+                pokemon.offensive_0.append(type)
         else:
-            if type_chart.loc[type, [pokemon.type_one]].product() == SUPER_EFFECTIVE:
+            if abs(type_chart.loc[type, [pokemon.type_one]].product() - SUPER_EFFECTIVE) < 0.01:
                 pokemon.offensive_2.append(type)
-            elif type_chart.loc[type, [pokemon.type_one]].product() == NOT_VERY_EFFECTIVE:
-                pokemon.offensive_05.append(type)     
+            elif abs(type_chart.loc[type, [pokemon.type_one]].product() - SUPER_EFFECTIVE*SUPER_EFFECTIVE) < 0.01:
+                pokemon.offensive_4.append(type)
+            elif abs(type_chart.loc[type, [pokemon.type_one]].product() - NOT_VERY_EFFECTIVE) < 0.01:
+                pokemon.offensive_05.append(type)
+            elif abs(type_chart.loc[type, [pokemon.type_one]].product() - NOT_VERY_EFFECTIVE*NOT_VERY_EFFECTIVE) < 0.01:
+                pokemon.offensive_025.append(type)
+            elif abs(type_chart.loc[type, [pokemon.type_one]].product() - NO_EFFECT) < 0.01:
+                pokemon.offensive_0.append(type)
 
 @login_required
 def delete_pokemon(req, pokemon_id):
@@ -275,12 +284,12 @@ type_chart.loc["ICE", ["FIR", "WAT", "ICE", "STE"]]                      = NOT_V
 type_chart.loc["ICE", ["GRA", "GRO", "FLY", "DRA"]]                      = SUPER_EFFECTIVE
 
 type_chart.loc["FIG", ["GHO"]]                                           = NO_EFFECT
-type_chart.loc["FIG", ["POI", "FLY", "PSY", "BUG"]]                      = NOT_VERY_EFFECTIVE
+type_chart.loc["FIG", ["POI", "FLY", "PSY", "BUG", "FAI"]]               = NOT_VERY_EFFECTIVE
 type_chart.loc["FIG", ["NOR", "ICE", "ROC", "DAR", "STE"]]               = SUPER_EFFECTIVE
 
 type_chart.loc["POI", ["STE"]]                                           = NO_EFFECT
 type_chart.loc["POI", ["POI", "GRO", "ROC", "GHO"]]                      = NOT_VERY_EFFECTIVE
-type_chart.loc["POI", ["GRA"]]                                           = SUPER_EFFECTIVE
+type_chart.loc["POI", ["GRA", "FAI"]]                                    = SUPER_EFFECTIVE
 
 type_chart.loc["GRO", ["FLY"]]                                           = NO_EFFECT
 type_chart.loc["GRO", ["GRA", "BUG"]]                                    = NOT_VERY_EFFECTIVE
@@ -293,7 +302,7 @@ type_chart.loc["PSY", ["DAR"]]                                           = NO_EF
 type_chart.loc["PSY", ["PSY", "STE"]]                                    = NOT_VERY_EFFECTIVE
 type_chart.loc["PSY", ["FIG", "POI"]]                                    = SUPER_EFFECTIVE
 
-type_chart.loc["BUG", ["FIR", "FIG", "POI", "FLY", "GHO", "STE"]]        = NOT_VERY_EFFECTIVE
+type_chart.loc["BUG", ["FIR", "FIG", "POI", "FLY", "GHO", "STE", "FAI"]] = NOT_VERY_EFFECTIVE
 type_chart.loc["BUG", ["GRA", "PSY", "DAR"]]                             = SUPER_EFFECTIVE
 
 type_chart.loc["ROC", ["FIG", "GRO", "STE"]]                             = NOT_VERY_EFFECTIVE
@@ -303,11 +312,15 @@ type_chart.loc["GHO", ["NOR"]]                                           = NO_EF
 type_chart.loc["GHO", ["DAR", "STE"]]                                    = NOT_VERY_EFFECTIVE
 type_chart.loc["GHO", ["PSY", "GHO"]]                                    = SUPER_EFFECTIVE
 
+type_chart.loc["DRA", ["FAI"]]                                           = NO_EFFECT
 type_chart.loc["DRA", ["STE"]]                                           = NOT_VERY_EFFECTIVE
 type_chart.loc["DRA", ["DRA"]]                                           = SUPER_EFFECTIVE
 
-type_chart.loc["DAR", ["FIG", "DAR", "STE"]]                             = NOT_VERY_EFFECTIVE
+type_chart.loc["DAR", ["FIG", "DAR", "STE", "FAI"]]                      = NOT_VERY_EFFECTIVE
 type_chart.loc["DAR", ["PSY", "GHO"]]                                    = SUPER_EFFECTIVE
 
 type_chart.loc["STE", ["FIR", "WAT", "ELE", "STE"]]                      = NOT_VERY_EFFECTIVE
-type_chart.loc["STE", ["ICE", "ROC"]]                                    = SUPER_EFFECTIVE
+type_chart.loc["STE", ["ICE", "ROC", "FAI"]]                             = SUPER_EFFECTIVE
+
+type_chart.loc["FAI", ["WAT", "POI", "STE"]]                             = NOT_VERY_EFFECTIVE
+type_chart.loc["FAI", ["FIG", "DRA", "DAR"]]                             = SUPER_EFFECTIVE
