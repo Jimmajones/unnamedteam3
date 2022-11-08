@@ -111,7 +111,7 @@ class Pokemon(SelfValidate):
     type_two        = models.CharField(max_length=3, choices=Type.choices, blank=True)
 
     # TO-DO: Want to store information about evolution conditions. (Tertiary relationship?)
-    evolves_from    = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True, related_name='evolves_into')
+    evolves_from    = models.ForeignKey('self', on_delete = models.SET_NULL, blank = True, null=True, related_name='evolves_into')
 
     can_learn       = models.ManyToManyField(Move, through='Learnable', blank=True, related_name='can_be_learned_by')
     can_find_in     = models.ManyToManyField(Location, through='Findable', blank=True, related_name='can_find')
@@ -125,10 +125,10 @@ class Pokemon(SelfValidate):
         # Want to raise multiple errors at a time, rather than just one.
         errors = []
         if (self.evolves_from is not None):
-            if self.evolves_from.id == self.id:
-                errors.append(ValidationError('A Pokemon cannot evolve from itself.'))
-            if self.evolves_from.profile.id != self.profile.id:
-                errors.append(ValidationError('Attempting to associate a Pokemon with a Pokemon from a different profile.'))
+                if self.evolves_from.id == self.id:
+                    errors.append(ValidationError('A Pokemon cannot evolve from itself.'))
+                if self.evolves_from.profile.id != self.profile.id:
+                    errors.append(ValidationError('Attempting to associate a Pokemon with a Pokemon from a different profile.'))
         if self.type_one == self.type_two:
             errors.append(ValidationError('A Pokemon cannot have two of the same type.'))
         

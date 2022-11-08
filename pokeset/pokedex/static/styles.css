@@ -582,5 +582,70 @@ select option:checked{
     margin: 0px 20px;
 }
 
+.evolution_box{
+
+    display: flex;
+    flex-direction: row;
+    align-items:center;
+    text-align: center;
+    justify-content: space-evenly;
+    height: 200px;
+    width: 300px;
+
+}
+.evolution_column{
+
+    display: flex;  
+    flex-direction: column;
+    align-items:center;
+    justify-content: space-evenly;
+    flex: 1;
 
 
+}
+.evolutions {
+
+    text-align: center;
+    overflow-wrap: break-word;
+
+}
+
+.evolution_circles{
+    box-sizing: border-box;
+    flex: 1;
+    width: 90px;
+    height: 90px;
+    font-size: 30px;
+    background: #FFFFFF;
+    border: 1px solid #000000;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 80px;
+    margin-right: 10px;
+    overflow: hidden;
+    transition: all 300ms ease;
+    
+}
+.evolution_circles:hover {
+    width: 100px;
+    height: 100px;
+}
+
+.evolution_into_circles{
+    box-sizing: border-box;
+    flex: 1;
+    width: 90px;
+    height: 90px;
+    font-size: 30px;
+    background: #FFFFFF;
+    border: 1px solid #000000;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 80px;
+    margin-right: 10px;
+    overflow: hidden;
+    transition: all 300ms ease;
+    
+}
+.evolution_into_circles:hover {
+    width: 110%;
+    height: 110%;
+}

@@ -45,7 +45,7 @@ class NewUserForm(UserCreationForm):
 		# First, save the fields that are in UserCreationForm.
 		user = super(NewUserForm, self).save(commit=False)
 		# Then, save the fields unique to NewUserForm.
-		user.email = self.cleaned_data['email']
+		user.email = self.cleaned_data["email"]
 		if commit:
 			user.save()
 		return user
@@ -70,8 +70,8 @@ class NewProfileForm(ModelForm):
 		fields = ["user", "name", "description"] 
 		widgets = {
 
-			'description': forms.TextInput(attrs = {
-				'size': '50'
+			"description": forms.TextInput(attrs = {
+				"size": "50"
 			}),
 		}
 
@@ -88,26 +88,26 @@ class NewPokemonForm(ModelForm):
 		model = models.Pokemon
 		fields = ["profile", "name", "description", "type_one", "type_two"]
 		widgets = {
-			'name': forms.TextInput(attrs = {
-				'id': 'pokemon_name_input',
-				'placeholder': 'Pokemon Name',
-				'class': 'new_pokemon_input'
+			"name": forms.TextInput(attrs = {
+				"id": "pokemon_name_input",
+				"placeholder": "Pokemon Name",
+				"class": "new_pokemon_input"
 			}),
-			'description': forms.TextInput(attrs = {
-				'id': 'pokemon_description',
-				'class': 'new_pokemon_input',
-				'size': '60'
+			"description": forms.TextInput(attrs = {
+				"id": "pokemon_description",
+				"class": "new_pokemon_input",
+				"size": "60"
 			}),
-			'type_one': forms.Select(attrs = {
-				'id': 'pokemon_name_input',
-				'class': 'new_pokemon_input'
+			"type_one": forms.Select(attrs = {
+				"id": "pokemon_name_input",
+				"class": "new_pokemon_input"
 			}),
-			'type_two': forms.Select(attrs = {
-				'id': 'pokemon_type_two_input',
-				'class': 'new_pokemon_input'
+			"type_two": forms.Select(attrs = {
+				"id": "pokemon_type_two_input",
+				"class": "new_pokemon_input"
 			}),
-			'profile':  forms.Select(attrs = {
-				'style': 'display: none;'
+			"profile":  forms.Select(attrs = {
+				"style": "display: none;"
 			})
 		}
 
@@ -116,7 +116,7 @@ class EditPokemonForm(ModelForm):
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		if self.instance:
-			self.fields["evolves_from"].queryset = models.Pokemon.objects.filter(profile=self.instance.profile)
+			self.fields["evolves_from"].queryset = models.Pokemon.objects.filter(profile=self.instance.profile,)
 			self.fields["can_learn"].queryset = models.Move.objects.filter(profile=self.instance.profile)
 			self.fields["can_find_in"].queryset = models.Location.objects.filter(profile=self.instance.profile)
 			self.fields["abilities"].queryset = models.Ability.objects.filter(profile=self.instance.profile)
@@ -124,7 +124,7 @@ class EditPokemonForm(ModelForm):
 
 	class Meta:
 		model = models.Pokemon
-		fields = ['name', 'description', 'type_one', 'type_two', 'evolves_from', 'can_learn', 'can_find_in', 'abilities']
+		fields = ["name", "description", "type_one", "type_two", "evolves_from", "can_learn", "can_find_in", "abilities"]
 
 class NewMoveForm(ModelForm):
 	def __init__(self, *args, **kwargs):
