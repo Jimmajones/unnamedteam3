@@ -86,7 +86,7 @@
                     <tbody>
                         {% for pokemon in pokemon_data %}
                         <tr onclick="location.href='{% url 'detailed' pokemon.id %}'">
-                            <td>   
+                            <td width="30%">   
                                 <div id="name_col">
                                     {%if pokemon.image_url is not None %}
                                     <img src="{{pokemon.image_url}}" loading="lazy">
@@ -96,14 +96,14 @@
                                     {% endif %}
                                     {{pokemon.name}}</div>
                             </td>
-                            <td>
+                            <td width="20%">
                                 <div class="pokemon_types_dashboard">
                                     {{pokemon.type_one|typecolor}} {%if pokemon.type_two is not None %}{{pokemon.type_two|typecolor}}{% endif %}
                                 </div>    
                                
                             </td>
                             <td>{{pokemon.can_find_in.all|join:" "}}</td>
-                            <td >
+                            <td width="30%">
                                 <div class="pokemon_types_dashboard">
                                     {% for type in pokemon.offensive_2%}
                                     {{type|typecolor}}
@@ -113,7 +113,7 @@
                                      {% endfor %}
                                 </div>
                             </td>
-                            {% comment %} <td >
+                            {% comment %} <td width="20%">
                                 <div class="pokemon_types_dashboard">
                                     {% for type in pokemon.offensive_0.5%}
                                     {{type|typecolor}}
