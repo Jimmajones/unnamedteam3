@@ -20,33 +20,20 @@
             <img src="{% static 'canvas.png' %}">
             {% endif %}
         </div>
-
-        <div class = "evolution_box" >
-
-            {% if pokemon_data.evolves_from %}
-                <div class ="evolutions">
-                    <button name = "evolution_from" class = "evolution_circles" onclick="location.href='{% url 'detailed' pokemon_data.evolves_from.id %}'">
-                        <img src="{{pokemon_data.evolves_from.image_url}}" loading="lazy">
-                    </button>
-                </div>
-            {%endif%}
-            <div class ="evolutions">
-                <button name = "Pokemon" class = "evolution_circles" onclick="location.href='{% url 'detailed' pokemon_data.id %}'">
-                    <img src="{{pokemon_data.image_url}}" loading="lazy">
-                </button>
+        <div class = "evolution_section">
+            <div class = "evolution_box" >
+                {% if pokemon_data.evolves_from %}
+                    <img class="evolution_circles" src="{{pokemon_data.evolves_from.image_url}}" loading="lazy" onclick="location.href='{% url 'detailed' pokemon_data.evolves_from.id %}'">
+                {%endif%}
             </div>
-
-            <div class = "evolution_column">
+            <div class = "evolution_box">
+                <img class="evolution_circles" src="{{pokemon_data.image_url}}" loading="lazy"  onclick="location.href='{% url 'detailed' pokemon_data.id %}'">
+            </div>
+            <div class = "evolution_box">
                 {% for evo_pokemon in pokemon_data.evolves_into.all%}
-                    <div class ="evolutions">
-                        <button name = "{{evo_pokemon.name}}" class = "evolution_into_circles" onclick="location.href='{% url 'detailed' evo_pokemon.id %}'">
-                            <img src="{{evo_pokemon.image_url}}" loading="lazy">
-                        </button>
-                    </div>
+                <img class = "evolution_circles" src="{{evo_pokemon.image_url}}" loading="lazy"  onclick="location.href='{% url 'detailed' evo_pokemon.id %}'">
                 {% endfor %}
             </div>
-
-            
         </div>
         <div>
             <h3>Description</h3>
