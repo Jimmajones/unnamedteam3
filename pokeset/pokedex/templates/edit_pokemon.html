@@ -105,7 +105,7 @@
             {% csrf_token %}
             <input type="text" class="profile_name_field" placeholder="Location Name" name="location_name" id="location_name">
             <br><br>   
-            <button type="submit" class="confirm_button"  onclick="submitLocation()">Save</button>
+            <button type="button" class="confirm_button"  onclick="submitLocation()">Save</button>
             <br><br> 
             <button type="button" class="link_button" onclick="close_modal('add_location')">Close</button> 
         </div>
@@ -123,7 +123,7 @@
                 <option value={{id}}>{{value}}</option>
                 {% endfor %}
             </select>
-            <button type="submit" class="confirm_button"  onclick="submitMove()">Save</button>  
+            <button type="button" class="confirm_button"  onclick="submitMove()">Save</button>  
             <br><br> 
             <button type="button" class="link_button" onclick="close_modal('add_move')">Close</button> 
         </div>
@@ -136,7 +136,7 @@
             {% csrf_token %}
             <input type="text" class="profile_name_field" placeholder="Ability Name" name="ability_name" id="ability_name">
             <br><br>   
-            <button type="submit" class="confirm_button"  onclick="submitAbility()">Save</button>
+            <button type="button" class="confirm_button"  onclick="submitAbility()">Save</button>
             <br><br> 
             <button type="button" class="link_button" onclick="close_modal('add_ability')">Close</button> 
         </div>
