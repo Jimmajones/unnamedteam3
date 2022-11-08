@@ -9,7 +9,7 @@
 
 <button onclick='location.href="{% url 'dashboard' profile_id %}"' class="back_button">Back</button>
 
-<section class="poke_view_section">
+<section class="poke_view_section" onload = " resize_elements()">
     <div id="stats">
         <div id="profile">
             <h2>{{pokemon_data.name}}</h2>
@@ -21,39 +21,31 @@
             {% endif %}
         </div>
 
-        <div class = "evolution_box">
-            <div class = "evolutions">
-                <button name = "from_pokemon" class = "add_evolution_circles">
-                    +
-                </button>
-            </div>
-            <div class ="evolution_column">
-            {% for evo_pokemon in pokemon_data.evolves_from.all%}
+        <div class = "evolution_box" >
+
+            {% if pokemon_data.evolves_from %}
                 <div class ="evolutions">
-                    <button name = "{{evo_pokemon.name}}" class = "evolution_circles">
-                        <img src="{{evo_pokemon.image_url}}" loading="lazy">
+                    <button name = "evolution_from" class = "evolution_circles" onclick="location.href='{% url 'detailed' pokemon_data.evolves_from.id %}'">
+                        <img src="{{pokemon_data.evolves_from.image_url}}" loading="lazy">
                     </button>
                 </div>
-            {% endfor %}
-            </div>
+            {%endif%}
             <div class ="evolutions">
-                <button name = "{{pokemon_data.name}}" class = "evolution_circles">
+                <button name = "Pokemon" class = "evolution_circles" onclick="location.href='{% url 'detailed' pokemon_data.id %}'">
                     <img src="{{pokemon_data.image_url}}" loading="lazy">
                 </button>
             </div>
 
-            {% for evo_pokemon in pokemon_data.evolves_into.all%}
-                <div class ="evolutions">
-                    <button name = "{{evo_pokemon.name}}" class = "evolution_circles">
-                        <img src="{{evo_pokemon.image_url}}" loading="lazy">
-                    </button>
-                </div>
-            {% endfor %}
-             <div class = "evolutions">
-                <button name = "from_pokemon" class = "add_evolution_circles">
-                    +
-                </button>
+            <div class = "evolution_column">
+                {% for evo_pokemon in pokemon_data.evolves_into.all%}
+                    <div class ="evolutions">
+                        <button name = "{{evo_pokemon.name}}" class = "evolution_into_circles" onclick="location.href='{% url 'detailed' evo_pokemon.id %}'">
+                            <img src="{{evo_pokemon.image_url}}" loading="lazy">
+                        </button>
+                    </div>
+                {% endfor %}
             </div>
+
             
         </div>
         <div>
@@ -159,4 +151,5 @@
     </div>
     <button class="big_bottom_button" onclick='location.href="{% url 'edit_pokemon' pokemon_data.id %}"'>Edit Pokemon</button>
 </section>
+
 {% endblock %}
