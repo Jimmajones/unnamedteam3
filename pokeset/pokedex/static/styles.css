@@ -437,6 +437,11 @@ footer {
     text-align: center;
 }
 
+select option:checked{
+    background: var(--primary_red);
+    color: white;
+  }
+
 .delete_icon {
     position: relative;
     left: 2px;
