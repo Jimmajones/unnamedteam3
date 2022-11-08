@@ -600,16 +600,18 @@ class RecordingPokemonTestCases(StaticLiveServerTestCase):
         self.driver.find_element(By.ID, "add_move").find_element(By.ID, "move_name").send_keys("electric attack")
         self.driver.find_element(By.ID, "add_move").find_element(By.NAME, "move_type").send_keys("e" + Keys.ENTER)
         self.driver.find_element(By.ID, "add_move").find_element(By.CLASS_NAME, "confirm_button").click()
-        self.assertEqual(self.driver.current_url, url + "/edit_pokemon/3/")
+        self.assertEqual(self.driver.current_url, url + "/detailed_view/3/")
+        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
 
         self.assertEqual(self.driver.find_element(By.ID, "moves").find_element(By.NAME, "can_learn").find_element(
-            By.TAG_NAME, "option").text, "electric attack (Electric)")
+            By.TAG_NAME, "option").text, "electric attack")
 
         # Test editing abilities
         self.driver.find_element(By.ID, "abilities").find_element(By.TAG_NAME, "button").click()
         self.driver.find_element(By.ID, "add_ability").find_element(By.ID, "ability_name").send_keys("dance")
         self.driver.find_element(By.ID, "add_ability").find_element(By.CLASS_NAME, "confirm_button").click()
-        self.assertEqual(self.driver.current_url, url + "/edit_pokemon/3/")
+        self.assertEqual(self.driver.current_url, url + "/detailed_view/3/")
+        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
 
         self.assertEqual(self.driver.find_element(By.ID, "abilities").find_element(By.NAME, "abilities").find_element(
             By.TAG_NAME, "option").text, "dance")
@@ -618,14 +620,11 @@ class RecordingPokemonTestCases(StaticLiveServerTestCase):
         self.driver.find_element(By.ID, "location").find_element(By.TAG_NAME, "button").click()
         self.driver.find_element(By.ID, "add_location").find_element(By.ID, "location_name").send_keys("the park")
         self.driver.find_element(By.ID, "add_location").find_element(By.CLASS_NAME, "confirm_button").click()
+        self.driver.find_element(By.CLASS_NAME, "big_bottom_button").click()
         self.assertEqual(self.driver.current_url, url + "/edit_pokemon/3/")
 
         self.assertEqual(self.driver.find_element(By.ID, "location").find_element(By.NAME, "can_find_in").find_element(
             By.TAG_NAME, "option").text, "the park")
-
-        # Test that the correct sprite has loaded for the pokemon
-        self.assertEqual(self.driver.find_element(By.ID, "poke_img").find_element(By.TAG_NAME, "img").get_attribute("src"),
-            "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png")
         
         # test changing the name of the pokemon
         self.driver.find_element(By.ID, "name").find_element(By.ID, "id_name").clear()
