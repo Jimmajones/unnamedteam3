@@ -29,13 +29,19 @@
     
 
     <h2>Editing {{pokemon_data.name}}</h2>
-    <div = "info">Hold ctrl to select multiple</div>
+    <div = "info">Hold ctrl to select multiple, ctrl click to deselect</div>
     <form  action="{% url 'edit_pokemon' pokemon_data.id %}" method="POST">
         <div id="edit_pokemon_form">
             {% csrf_token %}
         {{ form.non_field_errors }}
          <div class="fieldWrapper" id = "poke_img">
-            <img src="{{pokemon_data.img}}">
+            {%if pokemon.image_url is not None %}
+            <img src="{{pokemon.image_url}}" loading="lazy">
+            {% else %}
+            {% load static %}
+            <img src="{% static 'canvas.png' %}">
+            {% endif %}
+            {{pokemon.name}}
         </div> 
         <div id = "name" class="fieldWrapper">
             {{ form.name.errors }}
@@ -93,8 +99,9 @@
         <div id="submit" class="submit_area">
             <input class="big_bottom_button" type="submit" value="Save">
             <button class="big_bottom_button" onclick="open_modal('delete_pokemon')" type="button">Delete</button>
-    
+            <div class="bottom_spacer"> </div>
         </div>
+        
     </form>
     
 

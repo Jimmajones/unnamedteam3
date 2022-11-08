@@ -129,6 +129,7 @@ def get_edit_pokemon(req, pokemon_id):
 
     context = {}
     context["pokemon_data"] = pokemon
+    print(pokemon.__dict__)
     context["form"] = form
     context["pokemon_id"] = pokemon.id
     context["profile"] = pokemon.profile

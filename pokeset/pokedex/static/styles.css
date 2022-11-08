@@ -463,6 +463,34 @@ footer {
     height: 100%;
 }
 
+.bottom_spacer {
+    display: none;
+}
+
+
+@media (max-width: 1400px) {
+    #edit_pokemon_form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: center;
+    }
+    #edit_pokemon_form .fieldWrapper {
+        width: 60%;
+    }
+    .poke_edit_section {
+        overflow-y: scroll;
+   
+    }
+    .bottom_spacer {
+        display: block;
+        margin-top: 20px;
+        height: 20px;
+    }
+}
+
+
+
 .add_option {
     width: 20px;
     height: 20px;
