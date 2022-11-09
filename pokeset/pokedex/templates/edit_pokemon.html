@@ -72,35 +72,41 @@
             {{ form.can_learn.errors }}
             <label for="{{ form.can_learn.id_for_label }}">Moves:</label>
             {{ form.can_learn }}
-            <button type="button" class = "add_option" onclick='open_modal("add_move")'>
-                +
-            </button>
-            <button type="button" class = "add_option" onclick='open_modal("delete_move")'>
-                -
-            </button>
+            <div class="add_and_delete_buttons">
+                <button type="button" class = "add_option" onclick='open_modal("add_move")'>
+                    +
+                </button>
+                <button type="button" class = "add_option" onclick='open_modal("delete_move")'>
+                    -
+                </button>
+            </div>
+            
         </div>
         <div id="location" class="fieldWrapper">
             {{ form.can_find_in.errors }}
             <label for="{{ form.can_find_in.id_for_label }}">Locations:</label>
             {{ form.can_find_in}}
-            <button type="button" class = "add_option" onclick='open_modal("add_location")'>
-                +
-            </button>
-            <button type="button" class = "add_option" onclick='open_modal("delete_location")'>
-                -
-            </button>
+            <div class="add_and_delete_buttons">
+                <button type="button" class = "add_option" onclick='open_modal("add_location")'>
+                    +
+                </button>
+                <button type="button" class = "add_option" onclick='open_modal("delete_location")'>
+                    -
+                </button>
+            </div>
         </div>
         <div id="abilities" class="fieldWrapper">
             {{ form.abilities.errors }}
             <label for="{{ form.abilities.id_for_label }}">Abilities:</label>
             {{ form.abilities}}
-            <button type="button" class = "add_option" onclick='open_modal("add_ability")'>
-                +
-            </button>
-            <button type="button" class = "add_option" onclick='open_modal("delete_ability")'>
-                -
-            </button>
-            
+            <div class="add_and_delete_buttons">
+                <button type="button" class = "add_option" onclick='open_modal("add_ability")'>
+                    +
+                </button>
+                <button type="button" class = "add_option" onclick='open_modal("delete_ability")'>
+                    -
+                </button>
+            </div>
         </div>
             
     

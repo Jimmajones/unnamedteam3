@@ -432,7 +432,7 @@ footer {
     border: 1px solid #000000;
     box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.25);
     border-radius: 20px;
-    width: 50%;
+    width: 65%;
     height: 72vh;
     text-align: center;
 }
@@ -446,6 +446,12 @@ select option:checked{
     position: relative;
     left: 2px;
     top: 2px;
+}
+
+.add_and_delete_buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .poke_edit_section form {
