@@ -75,6 +75,9 @@
             <button type="button" class = "add_option" onclick='open_modal("add_move")'>
                 +
             </button>
+            <button type="button" class = "add_option" onclick='open_modal("delete_move")'>
+                -
+            </button>
         </div>
         <div id="location" class="fieldWrapper">
             {{ form.can_find_in.errors }}
@@ -83,6 +86,9 @@
             <button type="button" class = "add_option" onclick='open_modal("add_location")'>
                 +
             </button>
+            <button type="button" class = "add_option" onclick='open_modal("delete_location")'>
+                -
+            </button>
         </div>
         <div id="abilities" class="fieldWrapper">
             {{ form.abilities.errors }}
@@ -90,6 +96,9 @@
             {{ form.abilities}}
             <button type="button" class = "add_option" onclick='open_modal("add_ability")'>
                 +
+            </button>
+            <button type="button" class = "add_option" onclick='open_modal("delete_ability")'>
+                -
             </button>
             
         </div>
@@ -158,6 +167,35 @@
         </div>
     </div>
 
+    <div style="display:none" class="profile_popup" id="delete_location">
+        <div class="profiler_add">
+            <h1>Are you sure?</h1> 
+            <p>This will delete the Pokemon's current locations (for ALL Pokemon).</p>
+            <button type="button" onclick='location.href="{% url 'delete_locations' pokemon_data.id%}"'>Yes</button>
+            <br><br>
+            <button type="button" onclick='close_modal("delete_location")'>Cancel</button>
+        </div>
+    </div>
+
+    <div style="display:none" class="profile_popup" id="delete_move">
+        <div class="profiler_add">
+            <h1>Are you sure?</h1> 
+            <p>This will delete the Pokemon's current moves (for ALL Pokemon).</p>
+            <button type="button" onclick='location.href="{% url 'delete_moves' pokemon_data.id%}"'>Yes</button>
+            <br><br>
+            <button type="button" onclick='close_modal("delete_move")'>Cancel</button>
+        </div>
+    </div>
+
+    <div style="display:none" class="profile_popup" id="delete_ability">
+        <div class="profiler_add">
+            <h1>Are you sure?</h1> 
+            <p>This will delete the Pokemon's current abilities (for ALL Pokemon).</p>
+            <button type="button" onclick='location.href="{% url 'delete_abilities' pokemon_data.id%}"'>Yes</button>
+            <br><br>
+            <button type="button" onclick='close_modal("delete_ability")'>Cancel</button>
+        </div>
+    </div>
 
 </section>
 

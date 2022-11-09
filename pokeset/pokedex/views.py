@@ -256,6 +256,41 @@ def delete_pokemon(req, pokemon_id):
     else:
         redirect('index')
 
+@login_required
+def delete_moves(req, pokemon_id):
+    
+    pokemon = get_object_or_404(models.Pokemon, id=pokemon_id)
+    profile = pokemon.profile
+    if req.user == profile.user:
+        for move in pokemon.can_learn.all():
+            move.delete()
+        return redirect("edit_pokemon", pokemon_id=pokemon_id)
+    else:
+        redirect('index')
+
+@login_required
+def delete_abilities(req, pokemon_id):
+    
+    pokemon = get_object_or_404(models.Pokemon, id=pokemon_id)
+    profile = pokemon.profile
+    if req.user == profile.user:
+        for ability in pokemon.abilities.all():
+            ability.delete()
+        return redirect("edit_pokemon", pokemon_id=pokemon_id)
+    else:
+        redirect('index')
+
+@login_required
+def delete_locations(req, pokemon_id):
+    
+    pokemon = get_object_or_404(models.Pokemon, id=pokemon_id)
+    profile = pokemon.profile
+    if req.user == profile.user:
+        for location in pokemon.can_find_in.all():
+            location.delete()
+        return redirect("edit_pokemon", pokemon_id=pokemon_id)
+    else:
+        redirect('index')
 
 # For type weakness and strength
 # Adapted from https://github.com/filipekiss/pokemon-type-chart/blob/master/types.json
