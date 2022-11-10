@@ -35,8 +35,8 @@
             {% csrf_token %}
         {{ form.non_field_errors }}
          <div class="fieldWrapper" id = "poke_img">
-            {%if pokemon.image_url is not None %}
-            <img src="{{pokemon.image_url}}" loading="lazy">
+            {%if pokemon_data.image_url is not None %}
+            <img src="{{pokemon_data.image_url}}" loading="lazy">
             {% else %}
             {% load static %}
             <img src="{% static 'canvas.png' %}">
