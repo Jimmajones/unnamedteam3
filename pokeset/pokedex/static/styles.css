@@ -544,6 +544,10 @@ select option:checked{
     grid-area: image;
 }
 
+#poke_img img {
+	width: 50%;
+}
+
 #name {
     grid-area: name;
 }
