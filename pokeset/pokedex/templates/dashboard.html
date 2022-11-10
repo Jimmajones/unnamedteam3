@@ -46,7 +46,7 @@
     <input id ="nameInput" placeholder="Name" type="search"></input>
     <input id ="typeInput" placeholder="Type(s)" type="search"></input>
     <input id ="locationInput" placeholder="Location" type="search"></input>
-
+    <button onclick = "open_modal('delete_profile')">delete</button>
 </div>
 <section class="poke_table_section">
     <div id="poke_table_container">
@@ -124,9 +124,19 @@
                         {% endfor %}
                     </tbody>
         </table>
+        <div style="display:none" class="profile_popup" id="delete_profile">
+            <div class="profiler_add">
+                <h1>Are you sure?</h1> 
+                <p>This will delete the current profile</p>
+                <button type="button" onclick='location.href="{% url 'delete_profile' profile_id%}"'>Yes</button>
+                <br><br>
+                <button type="button" onclick='close_modal("delete_profile")'>Cancel</button>
+            </div>
+        </div>
 
         {% comment %}
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.css"> {% endcomment %}
+        <link rel="stylesheet" {% load static %} href="{% static 'style_login.css' %}?{% now "U" %}">
         <link rel="stylesheet" {% load static %} href="{% static 'table.css' %}">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.js"></script>
@@ -142,5 +152,15 @@
 
     </div>
     <button onclick="location.href='{% url 'create_pokemon' profile_id %}'" id="add_pokemon_button">Add Pokemon</button>
+    <script>
+        function open_modal(id) {
+            document.getElementById(id).style.display = "block";
+          }
+          
+          function close_modal(id) {
+            document.getElementById(id).style.display = "none";
+          }
+      
+    </script>
 </section>
 {% endblock %}

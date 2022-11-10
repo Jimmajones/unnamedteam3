@@ -17,4 +17,5 @@ urlpatterns = [
     path("delete_locations/<int:pokemon_id>/", views.delete_moves, name="delete_locations"),
     path("delete_moves/<int:pokemon_id>/", views.delete_moves, name="delete_moves"),
     path("delete_abilities/<int:pokemon_id>/", views.delete_moves, name="delete_abilities"),
+    path("delete_profile/<int:profile_id>/", views.delete_profile, name = "delete_profile"),
 ]

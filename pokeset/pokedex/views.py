@@ -246,6 +246,17 @@ def get_type_info(pokemon):
                 pokemon.offensive_0.append(type)
 
 @login_required
+def delete_profile(req, profile_id):
+
+    profile = get_object_or_404(models.Profile, id = profile_id)
+    if req.user == profile.user:
+        profile.delete()
+        return redirect("profiles")
+    else:
+        redirect("index")
+
+
+@login_required
 def delete_pokemon(req, pokemon_id):
     
     pokemon = get_object_or_404(models.Pokemon, id=pokemon_id)
@@ -287,6 +298,7 @@ def delete_locations(req, pokemon_id):
     profile = pokemon.profile
     if req.user == profile.user:
         for location in pokemon.can_find_in.all():
+            print(location)
             location.delete()
         return redirect("edit_pokemon", pokemon_id=pokemon_id)
     else:
