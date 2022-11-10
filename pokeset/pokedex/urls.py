@@ -14,7 +14,7 @@ urlpatterns = [
     path("new_move/<int:profile_id>", views.new_move, name="new_move"),
     path("new_ability/<int:profile_id>", views.new_ability, name="new_ability"),
     path("delete_pokemon/<int:pokemon_id>/", views.delete_pokemon, name="delete_pokemon"),
-    path("delete_locations/<int:pokemon_id>/", views.delete_moves, name="delete_locations"),
+    path("delete_locations/<int:pokemon_id>/", views.delete_locations, name="delete_locations"),
     path("delete_moves/<int:pokemon_id>/", views.delete_moves, name="delete_moves"),
-    path("delete_abilities/<int:pokemon_id>/", views.delete_moves, name="delete_abilities"),
+    path("delete_abilities/<int:pokemon_id>/", views.delete_abilities, name="delete_abilities"),
 ]
